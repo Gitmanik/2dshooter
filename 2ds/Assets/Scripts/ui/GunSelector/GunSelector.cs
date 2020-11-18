@@ -3,13 +3,15 @@
 public class GunSelector : MonoBehaviour
 {
     [SerializeField] private GameObject element;
-    [SerializeField] private Transform gunSelectorTransform;
-    
+    [SerializeField] private GameObject gunSelectorTransform;
+
+    public static GunSelector Instance;
+
     public bool Active { get { return gunSelectorTransform.gameObject.activeSelf; } }
 
     private void Start()
     {
-        Game.Instance.GunSelector = this;
+        Instance = this;
     }
 
     public void Toggle()
@@ -22,33 +24,33 @@ public class GunSelector : MonoBehaviour
 
     public void Enable()
     {
-        Game.Instance.LockInput = true;
-        gunSelectorTransform.gameObject.SetActive(true);
+        GameManager.Instance.LockInput = true;
+        gunSelectorTransform.SetActive(true);
         Populate();
     }
 
     public void Disable()
     {
-        Game.Instance.LockInput = false;
-        gunSelectorTransform.gameObject.SetActive(false);
+        GameManager.Instance.LockInput = false;
+        gunSelectorTransform.SetActive(false);
     }
 
     public void Populate()
     {
-        foreach (Transform child in gunSelectorTransform)
+        foreach (Transform child in gunSelectorTransform.transform)
         {
             Destroy(child.gameObject);
         }
-        foreach (Gun gun in Game.Instance.Guns)
+
+        for (int a = 0; a < GameManager.Instance.Guns.Length; a++)
         {
-            Instantiate(element, gunSelectorTransform).GetComponent<GunSelectorElement>().Setup(this, gun);
+            Instantiate(element, gunSelectorTransform.transform).GetComponent<GunSelectorElement>().Setup(this, GameManager.Instance.Guns[a], a);
         }
     }
 
-    internal void Selected(Gun gun)
+    internal void Selected(Gun gun, int idx)
     {
-        Debug.Log($"Selected {gun.name}");
-        Game.Instance.player.SetGun(gun);
+        Player.Local.CmdSetGun(idx);
         Disable();
     }
 }

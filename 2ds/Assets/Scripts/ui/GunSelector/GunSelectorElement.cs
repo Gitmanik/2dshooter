@@ -8,16 +8,18 @@ public class GunSelectorElement : MonoBehaviour
 
     private Gun gun;
     private GunSelector parent;
-    public void Setup(GunSelector parent, Gun gun)
+    private int idx;
+    public void Setup(GunSelector parent, Gun gun, int idx)
     {
+        this.idx = idx;
         this.gun = gun;
         this.parent = parent;
-        transform.name = gun.name;
+        transform.name = gun.title;
         image.sprite = gun.sprite;
-        text.text = gun.name;
+        text.text = gun.title;
     }
     public void OnClick()
     {
-        parent.Selected(gun);
+        parent.Selected(gun, idx);
     }
 }

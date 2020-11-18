@@ -10,8 +10,8 @@ public class IngameHUDManager : MonoBehaviour
         healthText.text = $"{value} HP";
     }
 
-    public void UpdateAmmo(Gun gun)
+    public void UpdateAmmo(Gun gun, GunData data)
     {
-        ammoText.text = $"{gun.currentAmmoInMagazine}/{gun.ammoInMagazine} ({gun.magazineCount})";
+        ammoText.text = $"{data.currentAmmo}/{gun.magazineCapacity} ({data.totalAmmo})";
     }
 }

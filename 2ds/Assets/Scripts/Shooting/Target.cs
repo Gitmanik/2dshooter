@@ -2,5 +2,5 @@
 
 public interface Target
 {
-    void Shot(GameObject x, float damage);
+    void Damage(GameObject x, float v);
 }

@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 
-public class DestroyableObject : MonoBehaviour, Target
+public class DestroyableObject : NetworkBehaviour, Target
 {
     public float health;
 
-    public void Shot(GameObject x, float damage)
+    [Server]
+    public void Damage(GameObject x, float damage)
     {
         health -= damage;
 
