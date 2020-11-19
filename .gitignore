@@ -5,7 +5,7 @@
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
-[Bb]uild/
+[Bb]uild*/
 [Bb]uilds/
 [Ll]ogs/
 [Mm]emoryCaptures/
@@ -57,4 +57,3 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
-

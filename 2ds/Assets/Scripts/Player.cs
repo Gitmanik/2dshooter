@@ -25,10 +25,12 @@ public class Player : NetworkBehaviour, Target
     [SyncVar(hook = nameof(OnChangedHealth))] public float health = -1f;
     [SyncVar] public bool isAlive = true;
 
+    [Header("Transforms to modify on events")]
+    [SerializeField] private Transform[] destroyOnNonLocal;
+    [SerializeField] private Transform[] DisableOnDead;
+
     [Header("Client-owned variables")]
     public float speed;
-    [SerializeField] private Transform[] nonLocal;
-    [SerializeField] private Transform[] onDied;
     private float shootDelay;
     private Vector3 change = Vector3.zero;
 
@@ -44,7 +46,7 @@ public class Player : NetworkBehaviour, Target
 
         if (!hasAuthority)
         {
-            foreach (Transform b in nonLocal)
+            foreach (Transform b in destroyOnNonLocal)
             {
                 DestroyImmediate(b.gameObject);
             }
@@ -56,6 +58,7 @@ public class Player : NetworkBehaviour, Target
 
         Local = this;
         hudman.Setup(this);
+        hudman.ToggleAlive(true);
 
         CameraFollow.instance.targetTransform = transform;
     }
@@ -171,21 +174,33 @@ public class Player : NetworkBehaviour, Target
         if (playerKiller != null)
             killer = playerKiller.info.Nickname;
         NotificationManager.Spawn($"{killer} > {info.Nickname}", new Color(0, 0, 0, 0.8f), 5f);
-        foreach(Transform toDisable in onDied)
+        foreach(Transform toDisable in DisableOnDead)
         {
-            toDisable.gameObject.SetActive(false);
+            if (toDisable != null)
+                toDisable.gameObject.SetActive(false);
+        }
+        if (hasAuthority)
+        {
+            hudman.ToggleAlive(false);
+            hudman.UpdateKilledBy(killer);
         }
     }
 
     [ClientRpc]
     private void RpcOnPlayerRespawned()
     {
-        NotificationManager.Spawn($"{info.Nickname} respawned!", new Color(0, 1, 0, 0.8f), 2f);
+        NotificationManager.Spawn($"{info.Nickname} respawned!", new Color(105f/255f, 181f/255f, 120f/255f, 0.4f), 1f);
         CameraFollow.instance.smooth = true;
         shootDelay = 0f;
-        foreach (Transform toDisable in onDied)
+        foreach (Transform toDisable in DisableOnDead)
         {
-            toDisable.gameObject.SetActive(true);
+            if (toDisable != null)
+                toDisable.gameObject.SetActive(true);
+        }
+
+        if (hasAuthority)
+        {
+            hudman.ToggleAlive(true);
         }
     }
 

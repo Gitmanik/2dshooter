@@ -46,7 +46,7 @@ public class PlayerInventory : NetworkBehaviour
 
     public void ResetInventory()
     {
-        OnStartServer();
         CurrentSlot = 0;
+        OnStartServer();
     }
 }
