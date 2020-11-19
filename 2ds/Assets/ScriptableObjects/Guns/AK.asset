@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: AK-47
   desc: piff
-  sprite: {fileID: 0}
+  sprite: {fileID: 7646507270721079681, guid: 4e8c5af5fd984f04a9aeb8bfcd3b53e8, type: 3}
   viewRadius: 4
   viewAngle: 75
   magazineCount: 3

@@ -6,13 +6,11 @@ public class GunSelectorElement : MonoBehaviour
     [SerializeField] private Image image;
     [SerializeField] private TMPro.TMP_Text text;
 
-    private Gun gun;
-    private GunSelector parent;
+    private IngameHUDManager parent;
     private int idx;
-    public void Setup(GunSelector parent, Gun gun, int idx)
+    public void Setup(IngameHUDManager parent, Gun gun, int idx)
     {
         this.idx = idx;
-        this.gun = gun;
         this.parent = parent;
         transform.name = gun.title;
         image.sprite = gun.sprite;
@@ -20,6 +18,6 @@ public class GunSelectorElement : MonoBehaviour
     }
     public void OnClick()
     {
-        parent.Selected(gun, idx);
+        parent.GunSelectorSelected(idx);
     }
 }

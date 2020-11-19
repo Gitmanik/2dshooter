@@ -1,6 +1,7 @@
 ﻿using Gitmanik.FOV2D;
 using Gitmanik.Notification;
 using Mirror;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInventory))]
 public class Player : NetworkBehaviour, Target
 {
+    public static List<Player> allPlayers = new List<Player>();
     public static Player Local;
 
     [Header("Component references")]
@@ -43,6 +45,7 @@ public class Player : NetworkBehaviour, Target
         i = GetComponent<PlayerInventory>();
         rb = GetComponent<Rigidbody2D>();
         rotateTransform = transform.GetChild(0);
+        allPlayers.Add(this);
 
         if (!hasAuthority)
         {
@@ -59,6 +62,7 @@ public class Player : NetworkBehaviour, Target
         Local = this;
         hudman.Setup(this);
         hudman.ToggleAlive(true);
+        hudman.OnGunSelectorSelected.AddListener(OnGunSelected);
 
         CameraFollow.instance.targetTransform = transform;
     }
@@ -71,20 +75,40 @@ public class Player : NetworkBehaviour, Target
 
         shootDelay -= Time.deltaTime;
 
-        if (GameManager.Instance.LockInput || !isAlive)
+        if (GameManager.Instance.LockInput)
             return;
 
-        if (shootDelay <= 0f && Input.GetKey(KeyCode.Mouse0) && i.CurrentGunData.currentAmmo > 0)
+        if (Input.GetKeyDown(KeyCode.Tab))
+            hudman.ToggleList(true);
+
+        if (Input.GetKeyUp(KeyCode.Tab))
+            hudman.ToggleList(false);
+
+        if (!isAlive)
+            return;
+
+
+        if (shootDelay <= 0f && Input.GetKey(KeyCode.Mouse0))
         {
             shootDelay = 1f / i.CurrentGun.firerate;
-            CmdShoot();
+            if (i.CurrentGunData.currentAmmo <= 0f)
+            {
+                PlaySound(GameManager.Instance.noAmmoSound);
+            }
+            else
+            {
+                CmdShoot();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R) && i.CurrentGunData.totalAmmo > 0)
             CmdReload();
 
         if (Input.GetKeyDown(KeyCode.T))
-            GunSelector.Instance.Enable();
+        {
+            hudman.ToggleGunSelector(true);
+            GameManager.Instance.LockInput = true;
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
             GameManager.Instance.ToggleOptionsMenu(true);
@@ -112,7 +136,11 @@ public class Player : NetworkBehaviour, Target
     #region SyncVar events
     private void OnSetInfo(PlayerInformation oldinfo, PlayerInformation newinfo)
     {
-        nickText.text = info.Nickname;
+        if (oldinfo.Nickname != newinfo.Nickname)
+            nickText.text = info.Nickname;
+
+        if (hasAuthority)
+            hudman.UpdatePlayerList();
     }
     private void OnChangedHealth(float _, float __)
     {
@@ -120,6 +148,12 @@ public class Player : NetworkBehaviour, Target
             hudman.UpdateHealth();
     }
     #endregion
+
+    private void OnGunSelected(int idx)
+    {
+        i.CmdSelectSlot(idx);
+        GameManager.Instance.LockInput = false;
+    }
 
     #region TargetRPCs
 
@@ -162,6 +196,7 @@ public class Player : NetworkBehaviour, Target
     [ClientRpc]
     internal void RpcOnPlayerShot(Vector3 pos)
     {
+        PlaySound(GameManager.Instance.hurtSound);
         ParticleManager.Spawn(EParticleType.BLOOD, pos);
     }
 
@@ -169,18 +204,19 @@ public class Player : NetworkBehaviour, Target
     internal void RpcOnPlayerDied(GameObject x)
     {
         Player playerKiller = x.GetComponent<Player>();
-        CameraFollow.instance.smooth = false;
         string killer = x.name;
         if (playerKiller != null)
             killer = playerKiller.info.Nickname;
         NotificationManager.Spawn($"{killer} > {info.Nickname}", new Color(0, 0, 0, 0.8f), 5f);
-        foreach(Transform toDisable in DisableOnDead)
+
+        foreach (Transform toDisable in DisableOnDead)
         {
             if (toDisable != null)
                 toDisable.gameObject.SetActive(false);
         }
         if (hasAuthority)
         {
+            CameraFollow.instance.smooth = false;
             hudman.ToggleAlive(false);
             hudman.UpdateKilledBy(killer);
         }
@@ -189,7 +225,7 @@ public class Player : NetworkBehaviour, Target
     [ClientRpc]
     private void RpcOnPlayerRespawned()
     {
-        NotificationManager.Spawn($"{info.Nickname} respawned!", new Color(105f/255f, 181f/255f, 120f/255f, 0.4f), 1f);
+        NotificationManager.Spawn($"{info.Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
         CameraFollow.instance.smooth = true;
         shootDelay = 0f;
         foreach (Transform toDisable in DisableOnDead)
@@ -285,6 +321,19 @@ public class Player : NetworkBehaviour, Target
         {
             isAlive = false;
             RpcOnPlayerDied(x);
+
+            PlayerInformation xx = info;
+            xx.deathCount++;
+            info = xx;
+
+            Player playerKiller = x.GetComponent<Player>();
+            if (playerKiller != null)
+            {
+                PlayerInformation asaa = playerKiller.info;
+                asaa.killCount++;
+                playerKiller.info = asaa;
+            }
+
             Invoke(nameof(Server_Respawn), 2.5f);
         }
     }
@@ -300,4 +349,11 @@ public class Player : NetworkBehaviour, Target
     }
     #endregion
 
+}
+
+public struct PlayerInformation
+{
+    public string Nickname;
+    public int killCount;
+    public int deathCount;
 }

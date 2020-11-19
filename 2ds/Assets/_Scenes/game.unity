@@ -8969,7 +8969,7 @@ MonoBehaviour:
   targetTransform: {fileID: 0}
   smooth: 1
   MaxOffset: {x: 2, y: 2}
-  OffsetMult: {x: 0.1, y: 0.1}
+  OffsetMult: {x: 0.15, y: 0.15}
   ZoomSpeed: 1
 --- !u!1 &1197250388
 GameObject:

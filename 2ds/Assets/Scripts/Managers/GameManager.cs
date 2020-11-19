@@ -38,4 +38,6 @@ public class GameManager : MonoBehaviour
 
     public AudioClip gunshot;
     public AudioClip reloadSound;
+    public AudioClip noAmmoSound;
+    public AudioClip hurtSound;
 }

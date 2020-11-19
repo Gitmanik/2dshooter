@@ -83,16 +83,15 @@ MonoBehaviour:
   autoStartServerBuild: 1
   showDebugMessages: 0
   serverTickRate: 30
-  offlineScene: Assets/Mirror/Examples/Cloud/PongWithListServer/Scenes/ListServerLobbyScenePong.unity
-  onlineScene: Assets/Mirror/Examples/Cloud/PongWithListServer/Scenes/PongGameScene.unity
+  offlineScene: 
+  onlineScene: 
   transport: {fileID: 7877660282335013212}
   networkAddress: localhost
   maxConnections: 2
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 1240244544407914, guid: 63ff03a40ac17a8488d37b9b4e1ffd3f,
-    type: 3}
+  playerPrefab: {fileID: 1240244544407914, guid: 63ff03a40ac17a8488d37b9b4e1ffd3f, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs:

@@ -17,7 +17,7 @@ public class PlayerInventory : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        inventory.Clear();
+        //inventory.Clear();
         inventory[0] = GameManager.Instance.Guns[0].GenerateGunData();
         inventory[1] = GameManager.Instance.Guns[1].GenerateGunData();
     }

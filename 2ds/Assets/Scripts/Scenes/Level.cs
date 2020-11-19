@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Gitmanik.Notification;
+using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,12 @@ public class Level : MonoBehaviour
         GameManager.Instance.SetBlackMask(true);
 
         NetworkManager.singleton.authenticator.OnServerAuthenticated.AddListener(SpawnPlayer);
+        CustomNetworkManager.instance.onClientDisconnected.AddListener(OnClientDisconnect);
+    }
+
+    internal void OnClientDisconnect(NetworkConnection conn)
+    {
+        NotificationManager.Spawn($"{players[conn].info.Nickname} has disconnected!", Color.magenta - new Color(0, 0, 0, 0.2f), 5f);
     }
 
     private GameObject InternalSpawnPlayer(NetworkConnection conn)
@@ -33,6 +40,8 @@ public class Level : MonoBehaviour
     {
         GameObject player = InternalSpawnPlayer(conn);
         NetworkServer.AddPlayerForConnection(conn, player);
+
+        NotificationManager.Spawn($"{players[conn].info.Nickname} has connected!", Color.blue - new Color(0, 0, 0, 0.2f), 5f);
     }
 
     private void OnDestroy()
