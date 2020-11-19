@@ -7,6 +7,8 @@ public class CameraFollow : MonoBehaviour
 
     public Transform targetTransform;
 
+    public bool smooth = true;
+
     [SerializeField] private Vector2 MaxOffset = new Vector2();
     [SerializeField] private Vector2 OffsetMult = new Vector2();
     [SerializeField] private float ZoomSpeed = 1f;
@@ -27,10 +29,12 @@ public class CameraFollow : MonoBehaviour
             Vector3 vec = targetTransform.position;
             vec.z = transform.position.z;
 
-            Vector3 relativePos = targetCamera.ScreenToWorldPoint(Input.mousePosition) - vec;
-
-            vec.x += Mathf.Clamp(relativePos.x * OffsetMult.x, -MaxOffset.x, MaxOffset.x);
-            vec.y += Mathf.Clamp(relativePos.y * OffsetMult.y, -MaxOffset.y, MaxOffset.y);
+            if (smooth)
+            {
+                Vector3 relativePos = targetCamera.ScreenToWorldPoint(Input.mousePosition) - vec;
+                vec.x += Mathf.Clamp(relativePos.x * OffsetMult.x, -MaxOffset.x, MaxOffset.x);
+                vec.y += Mathf.Clamp(relativePos.y * OffsetMult.y, -MaxOffset.y, MaxOffset.y);
+            }
 
             transform.position = vec;
         }

@@ -12,9 +12,9 @@ namespace Gitmanik.Notification
             Instance = this;
         }
 
-        public static void Spawn(string text, Color color)
+        public static void Spawn(string text, Color color, float aliveTime)
         {
-            Instantiate(Instance.notificationObject, Instance.transform).GetComponent<NotificationObject>().Setup(text, color, 1f);
+            Instantiate(Instance.notificationObject, Instance.transform).GetComponent<NotificationObject>().Setup(text, color, aliveTime);
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public Gun[] Guns;
+    public List<Gun> Guns;
 
     [Header("Game Info")]
     public int GameVersion = 0;
@@ -25,6 +26,13 @@ public class GameManager : MonoBehaviour
     public bool LockInput;
 
     public Transform blackMask;
+    public GameObject OptionsMenu;
+
+    public void ToggleOptionsMenu(bool v)
+    {
+        OptionsMenu.SetActive(v);
+        LockInput = v;
+    }
 
     public void SetBlackMask(bool v) => blackMask.gameObject.SetActive(v);
 

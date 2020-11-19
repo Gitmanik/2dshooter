@@ -17,12 +17,16 @@ namespace Gitmanik.FOV2D
         private float stepAngle;
         private List<Vector3> viewVertex = new List<Vector3>();
 
+        public void Setup()
+        {
+            stepCount = Mathf.RoundToInt(fov.viewAngle * meshResolution);
+            stepAngle = fov.viewAngle / stepCount;
+        }
 
         void Start()
         {
             mesh = GetComponent<MeshFilter>().mesh;
-            stepCount = Mathf.RoundToInt(fov.viewAngle * meshResolution);
-            stepAngle = fov.viewAngle / stepCount;
+            Setup();
         }
 
         public void UpdateMesh()

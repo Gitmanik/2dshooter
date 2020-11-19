@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GunSelector : MonoBehaviour
 {
@@ -42,15 +43,15 @@ public class GunSelector : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        for (int a = 0; a < GameManager.Instance.Guns.Length; a++)
+        foreach (KeyValuePair<int, GunData> gun in Player.Local.i.inventory)
         {
-            Instantiate(element, gunSelectorTransform.transform).GetComponent<GunSelectorElement>().Setup(this, GameManager.Instance.Guns[a], a);
+            Instantiate(element, gunSelectorTransform.transform).GetComponent<GunSelectorElement>().Setup(this, GameManager.Instance.Guns[gun.Value.gunIndex], gun.Key);
         }
     }
 
     internal void Selected(Gun gun, int idx)
     {
-        Player.Local.CmdSetGun(idx);
+        Player.Local.i.CmdSelectSlot(idx);
         Disable();
     }
 }

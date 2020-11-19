@@ -1,11 +1,11 @@
 ﻿using Gitmanik.FOV2D;
 using Gitmanik.Notification;
 using Mirror;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(PlayerInventory))]
 public class Player : NetworkBehaviour, Target
 {
     public static Player Local;
@@ -15,40 +15,22 @@ public class Player : NetworkBehaviour, Target
     [SerializeField] private FOVMesh fovmesh;
     [SerializeField] private TMP_Text nickText;
     [HideInInspector] public NetworkIdentity identity;
+    [HideInInspector] public PlayerInventory i;
     private Rigidbody2D rb;
     private AudioSource source;
     private Transform rotateTransform;
 
     [Header("Server-owned variables")]
-    [SyncVar(hook = nameof(UpdateNick))] public string nickname;
+    [SyncVar(hook = nameof(OnSetInfo))] public PlayerInformation info;
     [SyncVar(hook = nameof(OnChangedHealth))] public float health = -1f;
-    private Dictionary<int, GunData> gunPlayerInventory = new Dictionary<int, GunData>();
-
+    [SyncVar] public bool isAlive = true;
 
     [Header("Client-owned variables")]
-    [Tooltip("GameObjects to be deleted on remote cli ent.")]
     public float speed;
-    [SerializeField] private Transform[] toRemove;
+    [SerializeField] private Transform[] nonLocal;
+    [SerializeField] private Transform[] onDied;
     private float shootDelay;
     private Vector3 change = Vector3.zero;
-
-    private Gun gunInstance
-    {
-        get
-        {
-            if (NetworkServer.active)
-                return GameManager.Instance.Guns[serverGunIndex];
-            else
-                return GameManager.Instance.Guns[localPlayerGunData.gunIndex];
-        }
-    }
-
-    private int serverGunIndex;
-
-    private GunData serverPlayerGunData { get => gunPlayerInventory[serverGunIndex]; set => gunPlayerInventory[serverGunIndex] = value; }
-    private GunData localPlayerGunData;
-
-    private int lastGunIndex = -1;
 
     #region MonoBehaviour
 
@@ -56,23 +38,28 @@ public class Player : NetworkBehaviour, Target
     {
         identity = GetComponent<NetworkIdentity>();
         source = GetComponent<AudioSource>();
+        i = GetComponent<PlayerInventory>();
+        rb = GetComponent<Rigidbody2D>();
         rotateTransform = transform.GetChild(0);
 
         if (!hasAuthority)
         {
-            foreach (Transform b in toRemove)
+            foreach (Transform b in nonLocal)
             {
                 DestroyImmediate(b.gameObject);
             }
             return;
         }
-        rb = GetComponent<Rigidbody2D>();
+
+        i.OnSelectedSlot += OnSelectedSlot;
+        i.OnSlotUpdate += OnSlotUpdate;
 
         Local = this;
+        hudman.Setup(this);
+
         CameraFollow.instance.targetTransform = transform;
-        CmdSetGun(0);
-        hudman.UpdateHealth(health);
     }
+
 
     private void Update()
     {
@@ -81,20 +68,23 @@ public class Player : NetworkBehaviour, Target
 
         shootDelay -= Time.deltaTime;
 
-        if (GameManager.Instance.LockInput)
+        if (GameManager.Instance.LockInput || !isAlive)
             return;
 
-        if (shootDelay <= 0f && Input.GetKey(KeyCode.Mouse0) && localPlayerGunData.currentAmmo > 0)
+        if (shootDelay <= 0f && Input.GetKey(KeyCode.Mouse0) && i.CurrentGunData.currentAmmo > 0)
         {
-            shootDelay = 1f / gunInstance.firerate;
+            shootDelay = 1f / i.CurrentGun.firerate;
             CmdShoot();
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && localPlayerGunData.totalAmmo > 0)
+        if (Input.GetKeyDown(KeyCode.R) && i.CurrentGunData.totalAmmo > 0)
             CmdReload();
 
         if (Input.GetKeyDown(KeyCode.T))
             GunSelector.Instance.Enable();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            GameManager.Instance.ToggleOptionsMenu(true);
 
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
@@ -117,46 +107,38 @@ public class Player : NetworkBehaviour, Target
     #region Client
 
     #region SyncVar events
-    private void UpdateNick(string _, string __) => nickText.text = nickname;
+    private void OnSetInfo(PlayerInformation oldinfo, PlayerInformation newinfo)
+    {
+        nickText.text = info.Nickname;
+    }
     private void OnChangedHealth(float _, float __)
     {
         if (hasAuthority)
-            hudman.UpdateHealth(health);
+            hudman.UpdateHealth();
     }
     #endregion
 
     #region TargetRPCs
-    [TargetRpc]
-    private void TargetOnPlayerRespawned()
-    {
-    }
-    [TargetRpc]
-    private void TargetChangedGun(InventoryMessage newinv)
-    {
-        localPlayerGunData = newinv.slot1;
-        if (lastGunIndex != newinv.slot1.gunIndex)
-            shootDelay = 0f;
 
-        lastGunIndex = newinv.slot1.gunIndex;
-        fovmesh.fov.viewAngle = gunInstance.viewAngle;
-        fovmesh.fov.viewRadius = gunInstance.viewRadius;
+
+    private void OnSelectedSlot()
+    {
+        shootDelay = 0f;
+
+        fovmesh.fov.viewAngle = i.CurrentGun.viewAngle;
+        fovmesh.fov.viewRadius = i.CurrentGun.viewRadius;
+        fovmesh.Setup();
         fovmesh.UpdateMesh();
 
-        hudman.UpdateAmmo(gunInstance, localPlayerGunData);
-
+        hudman.UpdateAmmo();
     }
 
-    [TargetRpc]
-    private void TargetAmmoUpdate(InventoryMessage newinv)
+    private void OnSlotUpdate()
     {
-        localPlayerGunData = newinv.slot1;
-        hudman.UpdateAmmo(gunInstance, localPlayerGunData);
-    }
+        if (i.inventory.Count == 0)
+            return;
 
-    [TargetRpc]
-    private void TargetTeleport(Vector3 position)
-    {
-        transform.position = position;
+        hudman.UpdateAmmo();
     }
     #endregion
 
@@ -184,10 +166,33 @@ public class Player : NetworkBehaviour, Target
     internal void RpcOnPlayerDied(GameObject x)
     {
         Player playerKiller = x.GetComponent<Player>();
+        CameraFollow.instance.smooth = false;
         string killer = x.name;
         if (playerKiller != null)
-            killer = playerKiller.nickname;
-        NotificationManager.Spawn($"{killer} > {nickname}", new Color(0, 0, 0, 0.8f));
+            killer = playerKiller.info.Nickname;
+        NotificationManager.Spawn($"{killer} > {info.Nickname}", new Color(0, 0, 0, 0.8f), 5f);
+        foreach(Transform toDisable in onDied)
+        {
+            toDisable.gameObject.SetActive(false);
+        }
+    }
+
+    [ClientRpc]
+    private void RpcOnPlayerRespawned()
+    {
+        NotificationManager.Spawn($"{info.Nickname} respawned!", new Color(0, 1, 0, 0.8f), 2f);
+        CameraFollow.instance.smooth = true;
+        shootDelay = 0f;
+        foreach (Transform toDisable in onDied)
+        {
+            toDisable.gameObject.SetActive(true);
+        }
+    }
+
+    [TargetRpc]
+    private void TargetTeleport(Vector3 newPos)
+    {
+        transform.position = newPos;
     }
 
     #endregion
@@ -212,60 +217,47 @@ public class Player : NetworkBehaviour, Target
 
     public void Setup(AuthRequestMessage data)
     {
-        nickname = data.nick;
+        info = new PlayerInformation() { Nickname = data.nick };
         name = $"Player {data.nick}";
-    }
-
-    [Command] public void CmdSetGun(int g) => SrvSetGun(g);
-
-    [Server]
-    public void SrvSetGun(int g)
-    {
-        serverGunIndex = g;
-        if (!gunPlayerInventory.ContainsKey(g))
-        {
-            serverPlayerGunData = new GunData
-            {
-                totalAmmo = gunInstance.magazineCapacity * (gunInstance.magazineCount - 1),
-                currentAmmo = gunInstance.magazineCapacity,
-                gunIndex = g
-            };
-        }
-        TargetChangedGun(new InventoryMessage() { slot1 = serverPlayerGunData });
     }
 
     [Command]
     private void CmdReload()
     {
-        int zaladowane = Mathf.Min(gunInstance.magazineCapacity - serverPlayerGunData.currentAmmo, serverPlayerGunData.totalAmmo);
+        int zaladowane = Mathf.Min(i.CurrentGun.magazineCapacity - i.CurrentGunData.currentAmmo, i.CurrentGunData.totalAmmo);
 
-        GunData gd = serverPlayerGunData;
+
+        GunData gd = i.CurrentGunData;
 
         gd.totalAmmo -= zaladowane;
         gd.currentAmmo += zaladowane;
 
-        serverPlayerGunData = gd;
+        i.CurrentGunData = gd;
 
-        TargetAmmoUpdate(new InventoryMessage() { slot1 = serverPlayerGunData });
         RpcReload();
     }
 
     [Command]
     private void CmdShoot()
     {
-        GunData gd = serverPlayerGunData;
+        GunData gd = i.CurrentGunData;
+        if (gd.currentAmmo <= 0)
+        {
+            Debug.LogWarning("Tried to shoot with 0 ammo.");
+            return;
+        }
+
         gd.currentAmmo--;
-        serverPlayerGunData = gd;
+        i.CurrentGunData = gd;
 
         RpcAfterShoot();
-        TargetAmmoUpdate(new InventoryMessage() { slot1 = serverPlayerGunData });
 
         RaycastHit2D hit = Physics2D.Raycast(rotateTransform.position, rotateTransform.right, 99f);
         Target t;
         if (hit.collider != null)
         {
             t = hit.transform.GetComponent<Target>();
-            t?.Damage(gameObject, gunInstance.damageCurve.Evaluate(hit.distance) * gunInstance.damage);
+            t?.Damage(gameObject, i.CurrentGun.damageCurve.Evaluate(hit.distance) * i.CurrentGun.damage);
         }
     }
 
@@ -276,8 +268,9 @@ public class Player : NetworkBehaviour, Target
         health -= damage;
         if (health <= 0f)
         {
+            isAlive = false;
             RpcOnPlayerDied(x);
-            Server_Respawn();
+            Invoke(nameof(Server_Respawn), 2.5f);
         }
     }
 
@@ -285,10 +278,10 @@ public class Player : NetworkBehaviour, Target
     private void Server_Respawn()
     {
         health = 100;
-        transform.position = NetworkManager.singleton.GetStartPosition().position;
-        gunPlayerInventory.Clear();
-        SrvSetGun(0);
-        TargetOnPlayerRespawned();
+        TargetTeleport(NetworkManager.singleton.GetStartPosition().position);
+        i.ResetInventory();
+        isAlive = true;
+        RpcOnPlayerRespawned();
     }
     #endregion
 

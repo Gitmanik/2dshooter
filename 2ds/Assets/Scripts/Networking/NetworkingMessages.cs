@@ -1,15 +1,8 @@
 ﻿using Mirror;
 
-public class InventoryMessage : NetworkMessage
+public struct PlayerInformation : NetworkMessage
 {
-    public GunData slot1;
-}
-
-public struct GunData
-{
-    public int gunIndex;
-    public int totalAmmo;
-    public int currentAmmo;
+    public string Nickname;
 }
 
 public class AuthRequestMessage : NetworkMessage
