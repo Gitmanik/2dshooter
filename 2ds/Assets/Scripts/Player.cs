@@ -1,6 +1,7 @@
 ﻿using Gitmanik.FOV2D;
 using Gitmanik.Notification;
 using Mirror;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -57,7 +58,7 @@ public class Player : NetworkBehaviour, Target
         }
 
         i.OnSelectedSlot += OnSelectedSlot;
-        i.OnSlotUpdate += OnSlotUpdate;
+        i.OnSlotUpdate += hudman.UpdateAmmo;
 
         Local = this;
         hudman.Setup(this);
@@ -66,7 +67,6 @@ public class Player : NetworkBehaviour, Target
 
         CameraFollow.instance.targetTransform = transform;
     }
-
 
     private void Update()
     {
@@ -169,14 +169,6 @@ public class Player : NetworkBehaviour, Target
 
         hudman.UpdateAmmo();
     }
-
-    private void OnSlotUpdate()
-    {
-        if (i.inventory.Count == 0)
-            return;
-
-        hudman.UpdateAmmo();
-    }
     #endregion
 
     #region ClientRPCs
@@ -241,7 +233,7 @@ public class Player : NetworkBehaviour, Target
     }
 
     [TargetRpc]
-    private void TargetTeleport(Vector3 newPos)
+    public void TargetTeleport(Vector3 newPos)
     {
         transform.position = newPos;
     }
@@ -272,11 +264,17 @@ public class Player : NetworkBehaviour, Target
         name = $"Player {data.nick}";
     }
 
+    [Server]
+    internal void Respawn()
+    {
+        isAlive = true;
+        RpcOnPlayerRespawned();
+    }
+
     [Command]
     private void CmdReload()
     {
         int zaladowane = Mathf.Min(i.CurrentGun.magazineCapacity - i.CurrentGunData.currentAmmo, i.CurrentGunData.totalAmmo);
-
 
         GunData gd = i.CurrentGunData;
 
@@ -313,20 +311,20 @@ public class Player : NetworkBehaviour, Target
     }
 
     [Server]
-    public void Damage(GameObject x, float damage)
+    public void Damage(GameObject from, float damage)
     {
         RpcOnPlayerShot(transform.position);
         health -= damage;
         if (health <= 0f)
         {
             isAlive = false;
-            RpcOnPlayerDied(x);
+            RpcOnPlayerDied(from);
 
             PlayerInformation xx = info;
             xx.deathCount++;
             info = xx;
 
-            Player playerKiller = x.GetComponent<Player>();
+            Player playerKiller = from.GetComponent<Player>();
             if (playerKiller != null)
             {
                 PlayerInformation asaa = playerKiller.info;
@@ -334,18 +332,8 @@ public class Player : NetworkBehaviour, Target
                 playerKiller.info = asaa;
             }
 
-            Invoke(nameof(Server_Respawn), 2.5f);
+            Level.Instance.PlayerDied(this, from);
         }
-    }
-
-    [Server]
-    private void Server_Respawn()
-    {
-        health = 100;
-        TargetTeleport(NetworkManager.singleton.GetStartPosition().position);
-        i.ResetInventory();
-        isAlive = true;
-        RpcOnPlayerRespawned();
     }
     #endregion
 

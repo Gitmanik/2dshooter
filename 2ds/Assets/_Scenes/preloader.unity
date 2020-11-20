@@ -1125,6 +1125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df0c57818134744fb88691499cdd5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CompileText: 20.11.2020 B1
   Guns:
   - {fileID: 11400000, guid: e06568e7f2867184e90c42e2a864034f, type: 2}
   - {fileID: 11400000, guid: 1f0cc845ae7b4dd4c920512cad7fff8f, type: 2}
@@ -1146,7 +1147,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1036736808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   OnClientConnected:
@@ -1173,12 +1174,14 @@ MonoBehaviour:
   OnServerDisconnected:
     m_PersistentCalls:
       m_Calls: []
-  port: 7777
+  Port: 7777
   NoDelay: 1
-  serverMaxMessageSize: 16384
-  serverMaxReceivesPerTick: 10000
-  clientMaxMessageSize: 16384
-  clientMaxReceivesPerTick: 1000
+  Interval: 10
+  FastResend: 0
+  CongestionWindow: 1
+  SendWindowSize: 128
+  ReceiveWindowSize: 128
+  debugGUI: 0
 --- !u!114 &1036736812
 MonoBehaviour:
   m_ObjectHideFlags: 0

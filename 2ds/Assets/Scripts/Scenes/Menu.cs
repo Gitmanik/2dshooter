@@ -33,6 +33,7 @@ public class Menu : MonoBehaviour
         joinButton.interactable = InputValid();
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
+        compileDate.text = GameManager.Instance.CompileText;
     }
 
     public void OnConnectClick()

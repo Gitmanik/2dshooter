@@ -2228,7 +2228,7 @@ MonoBehaviour:
   nickInput: {fileID: 727443629}
   ipInput: {fileID: 1205943666}
   joinButton: {fileID: 1614433526}
-  compileDate: {fileID: 0}
+  compileDate: {fileID: 811881822}
 --- !u!1 &1955998097
 GameObject:
   m_ObjectHideFlags: 0

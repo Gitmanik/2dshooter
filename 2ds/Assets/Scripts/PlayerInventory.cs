@@ -40,7 +40,6 @@ public class PlayerInventory : NetworkBehaviour
 
     public void SlotChanged(int oldslot, int newslot)
     {
-        Debug.Log($"{name} changed slot from {oldslot} to {newslot}");
         OnSelectedSlot?.Invoke();
     }
 
