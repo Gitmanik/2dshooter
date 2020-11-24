@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mirror;
+using System;
 using UnityEngine;
 [CreateAssetMenu()]
 public class Gun : ScriptableObject
@@ -26,8 +27,7 @@ public class Gun : ScriptableObject
     }
 }
 
-[Serializable]
-public class GunData
+public struct GunData : NetworkMessage
 {
     public int gunIndex;
     public int totalAmmo;

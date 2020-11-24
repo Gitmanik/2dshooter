@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,9 +18,14 @@ public class PlayerInventory : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        //inventory.Clear();
-        inventory[0] = GameManager.Instance.Guns[0].GenerateGunData();
-        inventory[1] = GameManager.Instance.Guns[1].GenerateGunData();
+        inventory.Clear();
+        if (Random.Range(0,2) == 1)
+            inventory[0] = GameManager.Instance.Guns[0].GenerateGunData();
+
+        if (Random.Range(0, 2) == 1)
+            inventory[1] = GameManager.Instance.Guns[1].GenerateGunData();
+
+        CurrentSlot = inventory.Keys.FirstOrDefault();
     }
 
     public override void OnStartClient()

@@ -16,7 +16,7 @@ MonoBehaviour:
   desc: Sniper Rifle
   sprite: {fileID: -818659787113659478, guid: 4e8c5af5fd984f04a9aeb8bfcd3b53e8, type: 3}
   viewRadius: 10
-  viewAngle: 15
+  viewAngle: 20
   magazineCount: 2
   magazineCapacity: 10
   damageCurve:

@@ -24,7 +24,7 @@ public class CameraFollow : MonoBehaviour
 
     private void Update()
     {
-        if (targetTransform != null && !GameManager.Instance.LockInput)
+        if (targetTransform != null && (Player.Local != null && !Player.Local.LockMovement))
         {
             Vector3 vec = targetTransform.position;
             vec.z = transform.position.z;

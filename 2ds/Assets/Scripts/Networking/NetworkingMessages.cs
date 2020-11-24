@@ -1,13 +1,21 @@
 ﻿using Mirror;
+using UnityEngine;
 
-public class AuthRequestMessage : NetworkMessage
+public struct AuthRequestMessage : NetworkMessage
 {
     public string nick;
     public int version;
 }
 
-public class AuthResponseMessage : NetworkMessage
+public struct AuthResponseMessage : NetworkMessage
 {
     public bool success;
     public string message;
+}
+
+public struct NotificationMessage : NetworkMessage
+{
+    public string text;
+    public float aliveTime;
+    public Color color;
 }

@@ -12,5 +12,6 @@ public class Preloader : MonoBehaviour
     {
         loadingBar.value = 1;
         SceneManager.LoadScene(SceneName);
+        DataManager.Load();
     }
 }

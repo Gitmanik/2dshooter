@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.unity.2d.tilemap.extras": "https://github.com/Unity-Technologies/2d-extras.git#master",
     "com.gitmanik.base": "file:C:/Users/thegi/Documents/GitHub/GitmanikUtils/GitmanikUtilsUnityProject/Assets/Base",
     "com.gitmanik.gitmanikconsole": "file:C:/Users/thegi/Documents/GitHub/GitmanikUtils/GitmanikUtilsUnityProject/Assets/GitmanikConsole",
     "com.unity.2d.sprite": "1.0.0",

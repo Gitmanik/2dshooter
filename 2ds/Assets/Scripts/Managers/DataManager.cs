@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class DataManager : MonoBehaviour
     public static float MainVolume
     {
         get => PlayerPrefs.GetFloat("MainVolume", 1f);
-        set => PlayerPrefs.GetFloat("MainVolume", value);
+        set => PlayerPrefs.SetFloat("MainVolume", value);
     }
 
     public static int MaxFPS
@@ -36,4 +37,10 @@ public class DataManager : MonoBehaviour
         get => PlayerPrefs.GetInt("MaxFPS");
         set => PlayerPrefs.SetInt("MaxFPS", value);
     }
+
+    public static void Load()
+    {
+        AudioListener.volume = MainVolume;
+    }
+
 }

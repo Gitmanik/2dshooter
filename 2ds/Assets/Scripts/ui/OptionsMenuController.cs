@@ -1,8 +1,22 @@
 ﻿using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionsMenuController : MonoBehaviour
 {
+    [SerializeField] private Slider VolumeSlider;
+    private void OnEnable()
+    {
+        VolumeSlider.value = AudioListener.volume;
+        VolumeSlider.onValueChanged.RemoveAllListeners();
+        VolumeSlider.onValueChanged.AddListener(OnChangedVolume);
+    }
+    private void OnChangedVolume(float newv)
+    {
+        AudioListener.volume = newv;
+        DataManager.MainVolume = newv;
+    }
+
     public void OnDisconnectClick()
     {
         NetworkManager manager = NetworkManager.singleton;
@@ -21,12 +35,6 @@ public class OptionsMenuController : MonoBehaviour
                 manager.StopClient();
                 break;
         }
-        GameManager.Instance.ToggleOptionsMenu(false);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            GameManager.Instance.ToggleOptionsMenu(false);
+        IngameHUDManager.Instance.ToggleOptionsMenu(false);
     }
 }

@@ -24,16 +24,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = DataManager.MaxFPS;
     }
 
-    public bool LockInput;
-
     public Transform blackMask;
-    public GameObject OptionsMenu;
-
-    public void ToggleOptionsMenu(bool v)
-    {
-        OptionsMenu.SetActive(v);
-        LockInput = v;
-    }
 
     public void SetBlackMask(bool v) => blackMask.gameObject.SetActive(v);
 

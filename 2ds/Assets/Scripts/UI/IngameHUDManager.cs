@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class IngameHUDManager : MonoBehaviour
 {
+    public static IngameHUDManager Instance;
+
     [Header("Alive")]
     [SerializeField] private GameObject alivePanel;
     [SerializeField] private TMPro.TMP_Text healthText;
@@ -19,11 +22,46 @@ public class IngameHUDManager : MonoBehaviour
     [Header("Inventory Selector")]
     [SerializeField] private GameObject gunSelectorPanel;
     [SerializeField] private GameObject gunSelectorEntryPrefab;
-    public UnityEvent<int> OnGunSelectorSelected;
+    public bool GunSelectorActive { get => gunSelectorPanel.activeSelf; }
+
+    [Header("Ingame Options")]
+    [SerializeField] private GameObject optionsPanel;
+    public bool OptionsActive { get => optionsPanel.activeSelf; }
+
+    internal void Disable()
+    {
+        alivePanel.SetActive(false);
+        deadPanel.SetActive(false);
+        gunSelectorPanel.SetActive(false);
+        listPanel.SetActive(false);
+        optionsPanel.SetActive(false);
+    }
+
+    public UnityAction<int> OnGunSelectorSelected;
 
     private Player owner;
 
-    public void Setup(Player o)
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public void Escape()
+    {
+        print("X");
+        if (GunSelectorActive)
+        {
+            ToggleGunSelector(false);
+            return;
+        }
+        if (OptionsActive)
+        {
+            ToggleOptionsMenu(false);
+            return;
+        }
+    }
+
+    public void SetupPlayer(Player o)
     {
         owner = o;
         UpdateHealth();
@@ -41,6 +79,7 @@ public class IngameHUDManager : MonoBehaviour
     public void UpdateHealth()
     {
         healthText.text = $"{owner.health} HP";
+        healthText.color = new Color(1f - owner.health * 0.01f, owner.health * 0.01f, 0f);
     }
 
     public void UpdateAmmo()
@@ -48,6 +87,7 @@ public class IngameHUDManager : MonoBehaviour
         if (!owner.i.HasAnyGun)
         {
             ammoText.text = "--";
+            return;
         }
         ammoText.text = $"{owner.i.CurrentGunData.currentAmmo}/{owner.i.CurrentGun.magazineCapacity} ({owner.i.CurrentGunData.totalAmmo})";
     }
@@ -68,8 +108,6 @@ public class IngameHUDManager : MonoBehaviour
         if (v)
             UpdatePlayerList();
     }
-
-
     public void UpdatePlayerList()
     {
         if (!listPanel.activeSelf)
@@ -107,12 +145,18 @@ public class IngameHUDManager : MonoBehaviour
             }
         }
     }
-
     internal void GunSelectorSelected(int idx)
     {
         OnGunSelectorSelected?.Invoke(idx);
         ToggleGunSelector(false);
     }
 
+    #endregion
+
+    #region Options
+    public void ToggleOptionsMenu(bool v)
+    {
+        optionsPanel.SetActive(v);
+    }
     #endregion
 }
