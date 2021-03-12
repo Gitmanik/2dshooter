@@ -64,8 +64,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   prefabs:
-  - {fileID: 4465015508297205403, guid: e7aa8d0164321a04f929f3982d49d62a, type: 3}
-  - {fileID: 2137812554204783410, guid: 8dc06234764d2ea40b0389bfd5ddf2db, type: 3}
+  - {fileID: 2778795413667025991, guid: 99a3061e1e3484a43af60f2c6c779522, type: 3}
+  - {fileID: 8648603307421891811, guid: 9d8b6cff1283499469d82ce9947cfeb5, type: 3}
   spawnEvery: 25
 --- !u!212 &8419746065771396635
 SpriteRenderer:

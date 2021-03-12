@@ -7,6 +7,7 @@ namespace Gitmanik.FOV2D
     {
         [Header("Configuration")]
         public FOV fov;
+        [SerializeField] private MeshFilter meshFilter;
         [Tooltip("1 for one step every angle")] [Range(0,5)] [SerializeField] private float meshResolution;
         
         private Mesh mesh;
@@ -23,9 +24,9 @@ namespace Gitmanik.FOV2D
             stepAngle = fov.viewAngle / stepCount;
         }
 
-        void Start()
+        void Awake()
         {
-            mesh = GetComponent<MeshFilter>().mesh;
+            mesh = meshFilter.mesh;
             Setup();
         }
 

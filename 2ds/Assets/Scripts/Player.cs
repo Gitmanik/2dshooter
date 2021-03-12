@@ -1,4 +1,5 @@
 ﻿using Gitmanik.FOV2D;
+using Gitmanik.Multiplayer.Inventory;
 using Mirror;
 using System.Collections.Generic;
 using TMPro;
@@ -58,13 +59,13 @@ public class Player : NetworkBehaviour, Target
 
         i.OnSelectedSlot += OnSelectedSlot;
         i.OnSlotUpdate += IngameHUDManager.Instance.UpdateAmmo;
-
-        Local = this;
         IngameHUDManager.Instance.SetupPlayer(this);
         IngameHUDManager.Instance.ToggleAlive(true);
         IngameHUDManager.Instance.OnGunSelectorSelected += OnGunSelected;
-
+        Local = this;
         CameraFollow.instance.targetTransform = transform;
+
+        OnSelectedSlot(); //Force Fovmesh generation
     }
 
     private void OnDestroy()
@@ -165,6 +166,12 @@ public class Player : NetworkBehaviour, Target
 
     private void OnSelectedSlot()
     {
+        if (!i.HasAnyGun)
+        {
+            print("spawned with no gun");
+            return;
+        }
+
         shootDelay = 0f;
 
         fovmesh.fov.viewAngle = i.CurrentGun.viewAngle;
@@ -188,7 +195,7 @@ public class Player : NetworkBehaviour, Target
     private void RpcAfterShoot()
     {
         ParticleManager.Spawn(EParticleType.SHOOT, rotateTransform);
-        PlaySound(GameManager.Instance.gunshot);
+        PlaySound(i.CurrentGun.shootSount);
     }
 
     [ClientRpc]

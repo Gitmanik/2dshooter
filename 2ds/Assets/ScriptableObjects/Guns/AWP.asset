@@ -45,3 +45,4 @@ MonoBehaviour:
     m_RotationOrder: 4
   firerate: 1
   damage: 150
+  shootSount: {fileID: 8300000, guid: af66162561d2eed40ad49268cab318bb, type: 3}

@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
 
     public void SetBlackMask(bool v) => blackMask.gameObject.SetActive(v);
 
-    public AudioClip gunshot;
     public AudioClip reloadSound;
     public AudioClip noAmmoSound;
     public AudioClip hurtSound;

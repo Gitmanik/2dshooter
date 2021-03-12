@@ -615,6 +615,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fov: {fileID: 2156891486414423316}
   meshResolution: 1
+  meshFilter: {fileID: 3485887597660020238}
 --- !u!1 &3485887599398561575
 GameObject:
   m_ObjectHideFlags: 0

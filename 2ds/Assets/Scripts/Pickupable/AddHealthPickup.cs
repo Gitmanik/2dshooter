@@ -1,7 +1,6 @@
-﻿using Mirror;
-using UnityEngine;
+﻿using UnityEngine;
 
-class AddHealthPickup : Pickupable
+public class AddHealthPickup : Pickupable
 {
     public int healthAmount;
     public override void OnTrigger(Player player)
@@ -9,6 +8,5 @@ class AddHealthPickup : Pickupable
         base.OnTrigger(player);
         player.health += healthAmount;
         CustomNetworkManager.instance.SpawnNotification($"{player.info.Nickname} has picked up HealthPack for {healthAmount}!", Color.yellow - new Color(0, 0, 0, 0.4f), 1f);
-        NetworkServer.Destroy(gameObject);
     }
 }

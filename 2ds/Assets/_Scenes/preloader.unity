@@ -1393,7 +1393,6 @@ MonoBehaviour:
   GameVersion: 0
   MaxFPS: 150
   blackMask: {fileID: 1164248923}
-  gunshot: {fileID: 8300000, guid: 296b9d020efb4574ab6e9e6e197df4f7, type: 3}
   reloadSound: {fileID: 8300000, guid: eb1f2a378000e654882d359829c61bc1, type: 3}
   noAmmoSound: {fileID: 8300000, guid: 24c399d9c82ba074a9217e9be3403dbd, type: 3}
   hurtSound: {fileID: 8300000, guid: 676e26a70252b9048b0a57276a2ad921, type: 3}
@@ -1468,8 +1467,8 @@ MonoBehaviour:
   autoCreatePlayer: 0
   playerSpawnMethod: 1
   spawnPrefabs:
-  - {fileID: 4465015508297205403, guid: e7aa8d0164321a04f929f3982d49d62a, type: 3}
-  - {fileID: 2137812554204783410, guid: 8dc06234764d2ea40b0389bfd5ddf2db, type: 3}
+  - {fileID: 2778795413667025991, guid: 99a3061e1e3484a43af60f2c6c779522, type: 3}
+  - {fileID: 8648603307421891811, guid: 9d8b6cff1283499469d82ce9947cfeb5, type: 3}
   onClientDisconnected:
     m_PersistentCalls:
       m_Calls: []

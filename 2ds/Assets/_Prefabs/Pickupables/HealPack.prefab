@@ -1,24 +1,24 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &5964321436268115672
+--- !u!114 &3072621970102783600
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8648603307421891811}
+  m_GameObject: {fileID: 2778795413667025991}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56b376f894cc22f47948da5ad9131f5b, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c8b83fb96c391f43898f660b0195aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
   parent: {fileID: 0}
-  playOnPickup: {fileID: 8300000, guid: b1b9c1f0ea1fcae439ed1a4d44ff05fd, type: 3}
-  sprite: {fileID: 8648603306794793685}
-  magazineCount: 1
---- !u!1001 &5784075345187979531
+  playOnPickup: {fileID: 8300000, guid: c48a972d3d024c2408a3331750786a29, type: 3}
+  sprite: {fileID: 2778795414117700209}
+  healthAmount: 25
+--- !u!1001 &1068312675718244783
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -28,10 +28,10 @@ PrefabInstance:
     - target: {fileID: 2901209877659778016, guid: f89a4920692e56b4cb8f080b98672151, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -2839497429789917817, guid: ff6a69bf866c4b44b912fe41bfef4c2a, type: 3}
+      objectReference: {fileID: 4666598180101275726, guid: ff6a69bf866c4b44b912fe41bfef4c2a, type: 3}
     - target: {fileID: 2901209878286581224, guid: f89a4920692e56b4cb8f080b98672151, type: 3}
       propertyPath: m_Name
-      value: AmmoPack
+      value: HealPack
       objectReference: {fileID: 0}
     - target: {fileID: 2901209878286581225, guid: f89a4920692e56b4cb8f080b98672151, type: 3}
       propertyPath: m_RootOrder
@@ -87,13 +87,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f89a4920692e56b4cb8f080b98672151, type: 3}
---- !u!1 &8648603307421891811 stripped
+--- !u!1 &2778795413667025991 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2901209878286581224, guid: f89a4920692e56b4cb8f080b98672151, type: 3}
-  m_PrefabInstance: {fileID: 5784075345187979531}
+  m_PrefabInstance: {fileID: 1068312675718244783}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &8648603306794793685 stripped
+--- !u!1 &2778795414117700209 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2901209877659778014, guid: f89a4920692e56b4cb8f080b98672151, type: 3}
-  m_PrefabInstance: {fileID: 5784075345187979531}
+  m_PrefabInstance: {fileID: 1068312675718244783}
   m_PrefabAsset: {fileID: 0}

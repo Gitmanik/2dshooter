@@ -3,55 +3,82 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerInventory : NetworkBehaviour
+namespace Gitmanik.Multiplayer.Inventory
 {
-    public readonly SyncDictionary<int, GunData> inventory = new SyncDictionary<int, GunData>();
-
-    public UnityAction OnSelectedSlot;
-    public UnityAction OnSlotUpdate;
-
-    [SyncVar(hook = nameof(SlotChanged))] public int CurrentSlot = 0;
-    public GunData CurrentGunData { get => inventory[CurrentSlot]; set => inventory[CurrentSlot] = value; }
-    public Gun CurrentGun => GameManager.Instance.Guns[CurrentGunData.gunIndex];
-
-    public bool HasAnyGun => inventory.Count > 0;
-
-    public override void OnStartServer()
+    public class PlayerInventory : NetworkBehaviour
     {
-        inventory.Clear();
-        if (Random.Range(0,2) == 1)
+        public readonly SyncDictionary<int, GunData> inventory = new SyncDictionary<int, GunData>();
+
+        public UnityAction OnSelectedSlot;
+        public UnityAction OnSlotUpdate;
+
+        [SyncVar(hook = nameof(SlotChanged))] public int CurrentSlot = 0;
+        public GunData CurrentGunData
+        {
+            get
+            {
+                if (inventory.ContainsKey(CurrentSlot))
+                    return inventory[CurrentSlot];
+                else return new GunData { gunIndex = -1 };
+            }
+            set => inventory[CurrentSlot] = value;
+        }
+        public Gun CurrentGun
+        {
+            get
+            {
+                return CurrentGunData.gunIndex == -1 ? null : GameManager.Instance.Guns[CurrentGunData.gunIndex];
+            }
+        }
+
+        public bool HasAnyGun => inventory.Count > 0 && inventory.ContainsKey(CurrentSlot);
+
+        public override void OnStartServer()
+        {
+            inventory.Clear();
             inventory[0] = GameManager.Instance.Guns[0].GenerateGunData();
-
-        if (Random.Range(0, 2) == 1)
             inventory[1] = GameManager.Instance.Guns[1].GenerateGunData();
+            Debug.Log("halo");
 
-        CurrentSlot = inventory.Keys.FirstOrDefault();
+            CurrentSlot = 0;
+        }
+
+        public override void OnStartClient()
+        {
+            inventory.Callback += OnInventoryUpdate;
+        }
+
+        private void OnInventoryUpdate(SyncIDictionary<int, GunData>.Operation op, int key, GunData item)
+        {
+            OnSlotUpdate?.Invoke();
+        }
+
+        [Command]
+        public void CmdSelectSlot(int slot)
+        {
+            CurrentSlot = slot;
+        }
+
+        public void SlotChanged(int oldslot, int newslot)
+        {
+            OnSelectedSlot?.Invoke();
+        }
+
+        public void ResetInventory()
+        {
+            CurrentSlot = 0;
+            OnStartServer();
+        }
     }
 
-    public override void OnStartClient()
+    public abstract class IIntentoryItem
     {
-        inventory.Callback += OnInventoryUpdate;
-    }
+        string itemName;
+        string itemDescription;
 
-    private void OnInventoryUpdate(SyncIDictionary<int, GunData>.Operation op, int key, GunData item)
-    {
-        OnSlotUpdate?.Invoke();
-    }
-
-    [Command]
-    public void CmdSelectSlot(int slot)
-    {
-        CurrentSlot = slot;
-    }
-
-    public void SlotChanged(int oldslot, int newslot)
-    {
-        OnSelectedSlot?.Invoke();
-    }
-
-    public void ResetInventory()
-    {
-        CurrentSlot = 0;
-        OnStartServer();
+        void Use()
+        {
+            Debug.Log($"Used {itemName}");
+        }
     }
 }

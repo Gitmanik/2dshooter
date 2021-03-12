@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 public class IngameHUDManager : MonoBehaviour
@@ -30,11 +29,11 @@ public class IngameHUDManager : MonoBehaviour
 
     internal void Disable()
     {
-        alivePanel.SetActive(false);
-        deadPanel.SetActive(false);
-        gunSelectorPanel.SetActive(false);
-        listPanel.SetActive(false);
-        optionsPanel.SetActive(false);
+        if (alivePanel != null) alivePanel.SetActive(false);
+        if (deadPanel != null) deadPanel.SetActive(false);
+        if (gunSelectorPanel != null) gunSelectorPanel.SetActive(false);
+        if (listPanel != null) listPanel.SetActive(false);
+        if (optionsPanel != null) optionsPanel.SetActive(false);
     }
 
     public UnityAction<int> OnGunSelectorSelected;
@@ -48,7 +47,6 @@ public class IngameHUDManager : MonoBehaviour
 
     public void Escape()
     {
-        print("X");
         if (GunSelectorActive)
         {
             ToggleGunSelector(false);

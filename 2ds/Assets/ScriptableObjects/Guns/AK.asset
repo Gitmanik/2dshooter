@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0048f3afbd94f4146bb9d4c41978f954, type: 3}
   m_Name: AK
   m_EditorClassIdentifier: 
-  title: AK-47
+  title: SMG
   desc: piff
   sprite: {fileID: 7646507270721079681, guid: 4e8c5af5fd984f04a9aeb8bfcd3b53e8, type: 3}
   viewRadius: 4
@@ -45,3 +45,4 @@ MonoBehaviour:
     m_RotationOrder: 4
   firerate: 10
   damage: 10
+  shootSount: {fileID: 8300000, guid: 3061c7b9b32d894478e4126ccce25ca3, type: 3}

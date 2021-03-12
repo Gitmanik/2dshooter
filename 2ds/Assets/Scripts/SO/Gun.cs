@@ -1,5 +1,4 @@
 ﻿using Mirror;
-using System;
 using UnityEngine;
 [CreateAssetMenu()]
 public class Gun : ScriptableObject
@@ -15,6 +14,7 @@ public class Gun : ScriptableObject
     public float firerate;
     public float damage;
 
+    public AudioClip shootSount;
 
     public GunData GenerateGunData()
     {
