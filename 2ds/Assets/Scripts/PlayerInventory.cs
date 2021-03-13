@@ -38,7 +38,6 @@ namespace Gitmanik.Multiplayer.Inventory
             inventory.Clear();
             inventory[0] = GameManager.Instance.Guns[0].GenerateGunData();
             inventory[1] = GameManager.Instance.Guns[1].GenerateGunData();
-            Debug.Log("halo");
 
             CurrentSlot = 0;
         }
