@@ -1,13 +1,9 @@
 ﻿using Mirror;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Level : MonoBehaviour
 {
     public static Level Instance;
-
-    public Dictionary<NetworkConnection, Player> players = new Dictionary<NetworkConnection, Player>();
-
     public Transform preGameMask;
 
     #region MonoBehaviour
@@ -31,19 +27,18 @@ public class Level : MonoBehaviour
     {
         Transform startPos = NetworkManager.singleton.GetStartPosition();
 
-        GameObject player = Instantiate(NetworkManager.singleton.playerPrefab, startPos.position, startPos.rotation);
-        players[conn] = player.GetComponent<Player>();
-        players[conn].Setup((AuthRequestMessage)conn.authenticationData);
+        Player player = Instantiate(NetworkManager.singleton.playerPrefab, startPos.position, startPos.rotation).GetComponent<Player>();
+        player.Setup((AuthRequestMessage)conn.authenticationData);
 
-        NetworkServer.AddPlayerForConnection(conn, player);
+        NetworkServer.AddPlayerForConnection(conn, player.gameObject);
 
         if (!conn.identity.isLocalPlayer)
-            CustomNetworkManager.instance.SpawnNotification($"{players[conn].info.Nickname} has connected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
+            CustomNetworkManager.instance.SpawnNotification($"{player.info.Nickname} has connected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
     }
 
     internal void OnClientDisconnect(NetworkConnection conn)
     {
-        CustomNetworkManager.instance.SpawnNotification($"{players[conn].info.Nickname} has disconnected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
+        CustomNetworkManager.instance.SpawnNotification($"{Player.allPlayers.Find(x => x.connectionToClient == conn).info.Nickname} has disconnected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
     }
 
     private void RespawnPlayer(Player player, Vector3 newPos)

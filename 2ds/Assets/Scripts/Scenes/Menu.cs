@@ -1,6 +1,8 @@
-﻿using Mirror;
+﻿using Gitmanik.BaseCode;
+using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
@@ -8,6 +10,7 @@ public class Menu : MonoBehaviour
     [SerializeField] private TMP_InputField nickInput;
     [SerializeField] private TMP_InputField ipInput;
     [SerializeField] private Button joinButton;
+    [SerializeField] private Button hostButton;
     [SerializeField] private TMP_Text compileDate;
 
     void OnValueChanged(string _)
@@ -24,7 +27,17 @@ public class Menu : MonoBehaviour
         }
     }
 
-    private bool InputValid() => !string.IsNullOrWhiteSpace(nickInput.text) && !string.IsNullOrWhiteSpace(ipInput.text);
+    private bool InputValid() => !string.IsNullOrWhiteSpace(DataManager.Name) && !string.IsNullOrWhiteSpace(DataManager.RecentIP);
+
+    private void Awake()
+    {
+        if (GameManager.Instance == null)
+        {
+            SceneManager.LoadScene("Preloader");
+            DestroyImmediate(this);
+        }
+
+    }
 
     void Start()
     {
@@ -33,25 +46,17 @@ public class Menu : MonoBehaviour
         joinButton.interactable = InputValid();
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
-        compileDate.text = GameManager.Instance.CompileText;
+        compileDate.text = $"{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}";
     }
 
     public void OnConnectClick()
     {
-        if (string.IsNullOrWhiteSpace(DataManager.Name))
-        {
-            Debug.LogError("Wrong Nickname");
+        if (!InputValid())
             return;
-        }
-
-        if (string.IsNullOrWhiteSpace(DataManager.RecentIP))
-        {
-            Debug.LogError("Wrong IP");
-            return;
-        }
 
         NetworkManager.singleton.networkAddress = DataManager.RecentIP;
         NetworkManager.singleton.StartClient();
+        hostButton.interactable = false;
     }
 
     public void OnHostClick()

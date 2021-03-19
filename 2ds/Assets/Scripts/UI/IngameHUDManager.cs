@@ -118,7 +118,7 @@ public class IngameHUDManager : MonoBehaviour
 
         foreach (Player p in Player.allPlayers)
         {
-            Instantiate(panelEntryPrefab, listPanel.transform).GetComponent<PlayerListEntry>().Setup(p.info);
+            Instantiate(panelEntryPrefab, listPanel.transform).GetComponent<PlayerListEntry>().Setup(p.info, p.ping);
         }
     }
 

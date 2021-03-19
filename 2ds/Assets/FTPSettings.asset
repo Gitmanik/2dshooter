@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: b8be5e0f206cf1f4cb7ad732059bc530, type: 3}
   m_Name: FTPSettings
-  m_EditorClassIdentifier: Assembly-CSharp-Editor::FTPUploaderData
+  m_EditorClassIdentifier: 
   address: 
   username: 
   password: 

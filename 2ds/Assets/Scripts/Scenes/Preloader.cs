@@ -10,8 +10,8 @@ public class Preloader : MonoBehaviour
 
     void Start()
     {
+        DataManager.Load();
         loadingBar.value = 1;
         SceneManager.LoadScene(SceneName);
-        DataManager.Load();
     }
 }

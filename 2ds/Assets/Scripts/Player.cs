@@ -1,6 +1,7 @@
 ﻿using Gitmanik.FOV2D;
 using Gitmanik.Multiplayer.Inventory;
 using Mirror;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -27,6 +28,7 @@ public class Player : NetworkBehaviour, Target
     [SyncVar(hook = nameof(OnSetInfo))] public PlayerInformation info;
     [SyncVar(hook = nameof(OnChangedHealth))] public float health = -1f;
     [SyncVar] public bool isAlive = true;
+    [SyncVar(hook = nameof(OnUpdatePing))] public int ping = -1;
 
     [Header("Transforms to modify on events")]
     [SerializeField] private Transform[] destroyOnNonLocal;
@@ -36,6 +38,8 @@ public class Player : NetworkBehaviour, Target
     public float speed;
     private float shootDelay;
     private Vector3 change = Vector3.zero;
+
+    public float pingCtr = 0;
 
     #region MonoBehaviour
 
@@ -78,6 +82,14 @@ public class Player : NetworkBehaviour, Target
     {
         if (!hasAuthority)
             return;
+
+        pingCtr += Time.unscaledDeltaTime;
+
+        if (pingCtr >= .5f)
+        {
+            NetworkClient.Send(new PlayerPingMessage { ping = (int)(NetworkTime.rtt * 1000) });
+            pingCtr = 0;
+        }
 
         shootDelay -= Time.deltaTime;
 
@@ -154,6 +166,12 @@ public class Player : NetworkBehaviour, Target
         if (hasAuthority)
             IngameHUDManager.Instance.UpdateHealth();
     }
+
+    private void OnUpdatePing(int a, int b)
+    {
+        IngameHUDManager.Instance.UpdatePlayerList();
+    }
+
     #endregion
 
     private void OnGunSelected(int idx)

@@ -1,0 +1,17 @@
+{
+    "name": "Gitmanik.FTPUploader",
+    "references": [
+        "GUID:7c5a16f59d65b1046aee64f168d50b58"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
