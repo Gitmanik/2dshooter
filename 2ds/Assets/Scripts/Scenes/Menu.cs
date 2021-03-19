@@ -47,6 +47,11 @@ public class Menu : MonoBehaviour
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
         compileDate.text = $"{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}";
+
+        if (ParrelSync.ClonesManager.IsClone())
+        {
+            NetworkManager.singleton.StartServer();
+        }
     }
 
     public void OnConnectClick()

@@ -29,17 +29,16 @@ public class Player : NetworkBehaviour, Target
     [SyncVar(hook = nameof(OnChangedHealth))] public float health = -1f;
     [SyncVar] public bool isAlive = true;
     [SyncVar(hook = nameof(OnUpdatePing))] public int ping = -1;
+    [SyncVar] public float speed;
 
     [Header("Transforms to modify on events")]
     [SerializeField] private Transform[] destroyOnNonLocal;
     [SerializeField] private Transform[] DisableOnDead;
 
     [Header("Client-owned variables")]
-    public float speed;
     private float shootDelay;
     private Vector3 change = Vector3.zero;
-
-    public float pingCtr = 0;
+    private float pingCtr = 0;
 
     #region MonoBehaviour
 
@@ -65,6 +64,7 @@ public class Player : NetworkBehaviour, Target
         i.OnSlotUpdate += IngameHUDManager.Instance.UpdateAmmo;
         IngameHUDManager.Instance.SetupPlayer(this);
         IngameHUDManager.Instance.ToggleAlive(true);
+        IngameHUDManager.Instance.ToggleDebug(true);
         IngameHUDManager.Instance.OnGunSelectorSelected += OnGunSelected;
         CameraFollow.instance.targetTransform = transform;
 
@@ -83,6 +83,8 @@ public class Player : NetworkBehaviour, Target
     {
         if (!hasAuthority)
             return;
+
+        IngameHUDManager.Instance.UpdateDebug();
 
         pingCtr += Time.unscaledDeltaTime;
 
@@ -134,7 +136,10 @@ public class Player : NetworkBehaviour, Target
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
         if (LockMovement)
+        {
+            rb.velocity = Vector2.zero;
             return;
+        }
 
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");

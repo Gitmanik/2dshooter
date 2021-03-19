@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using TMPro;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class IngameHUDManager : MonoBehaviour
@@ -7,12 +9,12 @@ public class IngameHUDManager : MonoBehaviour
 
     [Header("Alive")]
     [SerializeField] private GameObject alivePanel;
-    [SerializeField] private TMPro.TMP_Text healthText;
-    [SerializeField] private TMPro.TMP_Text ammoText;
+    [SerializeField] private TMP_Text healthText;
+    [SerializeField] private TMP_Text ammoText;
 
     [Header("Dead")]
     [SerializeField] private GameObject deadPanel;
-    [SerializeField] private TMPro.TMP_Text killedBy;
+    [SerializeField] private TMP_Text killedBy;
 
     [Header("Player List")]
     [SerializeField] private GameObject listPanel;
@@ -22,6 +24,9 @@ public class IngameHUDManager : MonoBehaviour
     [SerializeField] private GameObject gunSelectorPanel;
     [SerializeField] private GameObject gunSelectorEntryPrefab;
     public bool GunSelectorActive { get => gunSelectorPanel.activeSelf; }
+
+    [Header("Debug Info")]
+    [SerializeField] private TMP_Text debugPanel;
 
     [Header("Ingame Options")]
     [SerializeField] private GameObject optionsPanel;
@@ -34,6 +39,7 @@ public class IngameHUDManager : MonoBehaviour
         if (gunSelectorPanel != null) gunSelectorPanel.SetActive(false);
         if (listPanel != null) listPanel.SetActive(false);
         if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (debugPanel != null) debugPanel.gameObject.SetActive(false);
     }
 
     public UnityAction<int> OnGunSelectorSelected;
@@ -43,6 +49,16 @@ public class IngameHUDManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    public void ToggleDebug(bool v)
+    {
+        debugPanel.gameObject.SetActive(v);
+    }
+
+    public void UpdateDebug()
+    {
+        debugPanel.text = string.Format("ping: {0}ms\nvar: {0}ms", (int)(NetworkTime.rtt * 1000), NetworkTime.rttVar * 1000d);
     }
 
     public void Escape()

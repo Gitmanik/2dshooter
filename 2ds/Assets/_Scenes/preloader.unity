@@ -605,12 +605,12 @@ GameObject:
   - component: {fileID: 374982374}
   - component: {fileID: 374982373}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: DebugPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &374982372
 RectTransform:
   m_ObjectHideFlags: 0
@@ -618,12 +618,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 374982371}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1932660045}
-  m_RootOrder: 2
+  m_Father: {fileID: 3300616737994952072}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -681,8 +681,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1486,7 +1486,6 @@ GameObject:
   - component: {fileID: 1036736816}
   - component: {fileID: 1036736815}
   - component: {fileID: 1036736814}
-  - component: {fileID: 1036736813}
   - component: {fileID: 1036736811}
   m_Layer: 0
   m_Name: P_GameManager
@@ -1591,7 +1590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   runInBackground: 1
-  autoStartServerBuild: 1
+  autoStartServerBuild: 0
   showDebugMessages: 0
   serverTickRate: 60
   offlineScene: Assets/_Scenes/menu.unity
@@ -1611,19 +1610,6 @@ MonoBehaviour:
   onClientDisconnected:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1036736813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1036736808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5081c6e47fb479546a778ecc21420ae6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  t: {fileID: 374982373}
 --- !u!82 &1036736814
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2377,7 +2363,6 @@ RectTransform:
   m_Children:
   - {fileID: 3300616737994952072}
   - {fileID: 1821526488}
-  - {fileID: 374982372}
   m_Father: {fileID: 1036736809}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2692,6 +2677,7 @@ MonoBehaviour:
   panelEntryPrefab: {fileID: 5401146192481147097, guid: 421c5e170359dc74f99db44717af2279, type: 3}
   gunSelectorPanel: {fileID: 9005264516495311515}
   gunSelectorEntryPrefab: {fileID: 5293245615370927217, guid: 98ca01723158af84487a0d5c54b30da6, type: 3}
+  debugPanel: {fileID: 374982373}
   optionsPanel: {fileID: 158752061}
 --- !u!222 &2537425222879364039
 CanvasRenderer:
@@ -2737,6 +2723,7 @@ RectTransform:
   - {fileID: 3300616738917608894}
   - {fileID: 5645914214130046677}
   - {fileID: 9005264516495311514}
+  - {fileID: 374982372}
   m_Father: {fileID: 1932660045}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

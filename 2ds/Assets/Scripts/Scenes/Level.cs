@@ -16,9 +16,11 @@ public class Level : MonoBehaviour
         NetworkManager.singleton.authenticator.OnServerAuthenticated.AddListener(OnPlayerConnected);
         CustomNetworkManager.instance.onClientDisconnected.AddListener(OnClientDisconnect);
     }
+
     private void OnDestroy()
     {
         IngameHUDManager.Instance.Disable();
+
         NetworkManager.singleton.authenticator.OnServerAuthenticated.RemoveListener(OnPlayerConnected);
     }
     #endregion
