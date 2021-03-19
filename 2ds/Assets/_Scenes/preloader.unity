@@ -1528,7 +1528,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e06568e7f2867184e90c42e2a864034f, type: 2}
   - {fileID: 11400000, guid: 1f0cc845ae7b4dd4c920512cad7fff8f, type: 2}
   GameVersion: 0
-  MaxFPS: 150
+  MaxFPS: 60
   blackMask: {fileID: 1164248923}
   reloadSound: {fileID: 8300000, guid: eb1f2a378000e654882d359829c61bc1, type: 3}
   noAmmoSound: {fileID: 8300000, guid: 24c399d9c82ba074a9217e9be3403dbd, type: 3}

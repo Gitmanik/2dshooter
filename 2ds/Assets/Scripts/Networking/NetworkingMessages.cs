@@ -20,12 +20,6 @@ public struct NotificationMessage : NetworkMessage
     public Color color;
 }
 
-public struct PlayersPingMessage : NetworkMessage
-{
-    public int[] ids;
-    public int[] pings;
-}
-
 public struct PlayerPingMessage : NetworkMessage
 {
     public int ping;

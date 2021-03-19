@@ -66,8 +66,9 @@ public class Player : NetworkBehaviour, Target
         IngameHUDManager.Instance.SetupPlayer(this);
         IngameHUDManager.Instance.ToggleAlive(true);
         IngameHUDManager.Instance.OnGunSelectorSelected += OnGunSelected;
-        Local = this;
         CameraFollow.instance.targetTransform = transform;
+
+        Local = this;
 
         OnSelectedSlot(); //Force Fovmesh generation
     }
@@ -132,20 +133,18 @@ public class Player : NetworkBehaviour, Target
         if (Input.GetKeyDown(KeyCode.Escape))
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
-        change.x = Input.GetAxisRaw("Horizontal");
-        change.y = Input.GetAxisRaw("Vertical");
-    }
-
-    private void FixedUpdate()
-    {
-        if (!hasAuthority || LockMovement)
+        if (LockMovement)
             return;
 
-        Vector3 newPos = change.normalized * speed * Time.fixedDeltaTime;
-        rb.MovePosition(transform.position + newPos);
+        change.x = Input.GetAxisRaw("Horizontal");
+        change.y = Input.GetAxisRaw("Vertical");
+
+        Vector3 newPos = change.normalized * speed * Time.deltaTime * 60f;
+        rb.velocity = newPos;
 
         if (Rotate() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
+
     }
 
     #endregion
