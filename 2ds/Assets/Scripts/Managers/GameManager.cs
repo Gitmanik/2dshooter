@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,4 +31,14 @@ public class GameManager : MonoBehaviour
     public AudioClip reloadSound;
     public AudioClip noAmmoSound;
     public AudioClip hurtSound;
+
+    public static bool CheckScene()
+    {
+        if (Instance == null)
+        {
+            SceneManager.LoadScene("Preloader");
+            return false;
+        }
+        return true;
+    }
 }

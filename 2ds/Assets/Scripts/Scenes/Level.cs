@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Gitmanik.Networked;
+using Mirror;
 using UnityEngine;
 
 public class Level : MonoBehaviour
@@ -7,23 +8,36 @@ public class Level : MonoBehaviour
     public Transform preGameMask;
 
     #region MonoBehaviour
+    private void Awake()
+    {
+        if (!GameManager.CheckScene())
+            DestroyImmediate(this);
+    }
+
     void Start()
     {
         Instance = this;
-        preGameMask.gameObject.SetActive(false);
+        Destroy(preGameMask.gameObject);
         GameManager.Instance.SetBlackMask(true);
 
         NetworkManager.singleton.authenticator.OnServerAuthenticated.AddListener(OnPlayerConnected);
-        CustomNetworkManager.instance.onClientDisconnected.AddListener(OnClientDisconnect);
+        CustomNetworkManager.Instance.onClientDisconnected.AddListener(OnClientDisconnect);
+
+        NetworkServer.RegisterHandler<PlayerPingMessage>(OnServerReceivePing);
     }
 
     private void OnDestroy()
     {
-        IngameHUDManager.Instance.Disable();
-
+        IngameHUDManager.Instance.DisableAll();
         NetworkManager.singleton.authenticator.OnServerAuthenticated.RemoveListener(OnPlayerConnected);
     }
     #endregion
+
+    private void OnServerReceivePing(NetworkConnection conn, PlayerPingMessage message)
+    {
+        Player.allPlayers.Find(x => x.connectionToClient == conn).ping = message.ping;
+    }
+
 
     public void OnPlayerConnected(NetworkConnection conn)
     {
@@ -35,12 +49,12 @@ public class Level : MonoBehaviour
         NetworkServer.AddPlayerForConnection(conn, player.gameObject);
 
         if (!conn.identity.isLocalPlayer)
-            CustomNetworkManager.instance.SpawnNotification($"{player.info.Nickname} has connected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
+            NetworkedNotification.Spawn($"{player.info.Nickname} has connected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
     }
 
     internal void OnClientDisconnect(NetworkConnection conn)
     {
-        CustomNetworkManager.instance.SpawnNotification($"{Player.allPlayers.Find(x => x.connectionToClient == conn).info.Nickname} has disconnected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
+        NetworkedNotification.Spawn($"{Player.allPlayers.Find(x => x.connectionToClient == conn).info.Nickname} has disconnected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
     }
 
     private void RespawnPlayer(Player player, Vector3 newPos)
@@ -49,7 +63,7 @@ public class Level : MonoBehaviour
         player.TargetTeleport(newPos);
         player.i.ResetInventory();
         player.Respawn();
-        CustomNetworkManager.instance.SpawnNotification($"{player.info.Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
+        NetworkedNotification.Spawn($"{player.info.Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
     }
 
     public void PlayerDied(Player player, GameObject from)
@@ -59,7 +73,7 @@ public class Level : MonoBehaviour
         if (playerKiller != null)
             killer = playerKiller.info.Nickname;
 
-        CustomNetworkManager.instance.SpawnNotification($"{killer} > {player.info.Nickname}", new Color(0, 0, 0, 0.8f), 5f);
+        NetworkedNotification.Spawn($"{killer} > {player.info.Nickname}", new Color(0, 0, 0, 0.8f), 5f);
         LeanTween.delayedCall(2.5f, () => RespawnPlayer(player, NetworkManager.singleton.GetStartPosition().position));
     }
 }

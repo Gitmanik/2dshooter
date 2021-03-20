@@ -31,12 +31,8 @@ public class Menu : MonoBehaviour
 
     private void Awake()
     {
-        if (GameManager.Instance == null)
-        {
-            SceneManager.LoadScene("Preloader");
+        if (!GameManager.CheckScene())
             DestroyImmediate(this);
-        }
-
     }
 
     void Start()

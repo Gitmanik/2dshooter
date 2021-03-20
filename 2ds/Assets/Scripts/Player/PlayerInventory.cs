@@ -68,15 +68,4 @@ namespace Gitmanik.Multiplayer.Inventory
             OnStartServer();
         }
     }
-
-    public abstract class IIntentoryItem
-    {
-        string itemName;
-        string itemDescription;
-
-        void Use()
-        {
-            Debug.Log($"Used {itemName}");
-        }
-    }
 }

@@ -18,7 +18,6 @@ public class Player : NetworkBehaviour, Target
     [Header("Component references")]
     [SerializeField] private FOVMesh fovmesh;
     [SerializeField] private TMP_Text nickText;
-    [HideInInspector] public NetworkIdentity identity;
     [HideInInspector] public PlayerInventory i;
     private Rigidbody2D rb;
     private AudioSource source;
@@ -27,8 +26,8 @@ public class Player : NetworkBehaviour, Target
     [Header("Server-owned variables")]
     [SyncVar(hook = nameof(OnSetInfo))] public PlayerInformation info;
     [SyncVar(hook = nameof(OnChangedHealth))] public float health = -1f;
-    [SyncVar] public bool isAlive = true;
     [SyncVar(hook = nameof(OnUpdatePing))] public int ping = -1;
+    [SyncVar] public bool isAlive = true;
     [SyncVar] public float speed;
 
     [Header("Transforms to modify on events")]
@@ -37,14 +36,13 @@ public class Player : NetworkBehaviour, Target
 
     [Header("Client-owned variables")]
     private float shootDelay;
-    private Vector3 change = Vector3.zero;
+    private Vector2 change = Vector2.zero;
     private float pingCtr = 0;
 
     #region MonoBehaviour
 
     private void Start()
     {
-        identity = GetComponent<NetworkIdentity>();
         source = GetComponent<AudioSource>();
         i = GetComponent<PlayerInventory>();
         rb = GetComponent<Rigidbody2D>();
@@ -99,8 +97,7 @@ public class Player : NetworkBehaviour, Target
         if (LockMovement)
         {
             if (Input.GetKeyDown(KeyCode.Escape))
-                IngameHUDManager.Instance.Escape();
-
+                IngameHUDManager.Instance.ToggleOptions();
             return;
         }
 
@@ -110,8 +107,11 @@ public class Player : NetworkBehaviour, Target
         if (Input.GetKeyUp(KeyCode.Tab))
             IngameHUDManager.Instance.ToggleList(false);
 
-        if (!isAlive)
+        if (!isAlive || LockMovement)
+        {
+            rb.velocity = Vector2.zero;
             return;
+        }
 
         if (i.HasAnyGun && shootDelay <= 0f && Input.GetKey(KeyCode.Mouse0))
         {
@@ -135,21 +135,14 @@ public class Player : NetworkBehaviour, Target
         if (Input.GetKeyDown(KeyCode.Escape))
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
-        if (LockMovement)
-        {
-            rb.velocity = Vector2.zero;
-            return;
-        }
-
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
 
-        Vector3 newPos = change.normalized * speed * Time.deltaTime * 60f;
+        Vector2 newPos = change.normalized * speed * Time.deltaTime * 60f;
         rb.velocity = newPos;
 
         if (Rotate() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
-
     }
 
     #endregion

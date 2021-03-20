@@ -32,7 +32,7 @@ public class IngameHUDManager : MonoBehaviour
     [SerializeField] private GameObject optionsPanel;
     public bool OptionsActive { get => optionsPanel.activeSelf; }
 
-    internal void Disable()
+    internal void DisableAll()
     {
         if (alivePanel != null) alivePanel.SetActive(false);
         if (deadPanel != null) deadPanel.SetActive(false);
@@ -61,7 +61,7 @@ public class IngameHUDManager : MonoBehaviour
         debugPanel.text = string.Format("ping: {0}ms\nvar: {0}ms", (int)(NetworkTime.rtt * 1000), NetworkTime.rttVar * 1000d);
     }
 
-    public void Escape()
+    public void ToggleOptions()
     {
         if (GunSelectorActive)
         {

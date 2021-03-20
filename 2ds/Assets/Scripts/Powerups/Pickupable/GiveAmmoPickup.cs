@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Gitmanik.Networked;
+using UnityEngine;
 
 public class GiveAmmoPickup : Pickupable
 {
@@ -12,6 +13,6 @@ public class GiveAmmoPickup : Pickupable
         GunData newgundata = player.i.CurrentGunData;
         newgundata.totalAmmo += player.i.CurrentGun.magazineCapacity * magazineCount;
         player.i.CurrentGunData = newgundata;
-        CustomNetworkManager.instance.SpawnNotification($"{player.info.Nickname} has picked up AmmoPack!", Color.yellow - new Color(0, 0, 0, 0.4f), 1f);
+        NetworkedNotification.Spawn($"{player.info.Nickname} has picked up AmmoPack!", Color.yellow - new Color(0, 0, 0, 0.4f), 1f);
     }
 }

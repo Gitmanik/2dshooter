@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 
 namespace Gitmanik.Notification
 {
@@ -12,7 +13,7 @@ namespace Gitmanik.Notification
             Instance = this;
         }
 
-        public static void Spawn(string text, Color color, float aliveTime)
+        public void Spawn(string text, Color color, float aliveTime)
         {
             Instantiate(Instance.notificationObject, Instance.transform).GetComponent<NotificationObject>().Setup(text, color, aliveTime);
         }
