@@ -25,3 +25,11 @@ public struct PlayerPingMessage : NetworkMessage
 {
     public int ping;
 }
+
+public struct PlayerInformation : NetworkMessage
+{
+    public int SkinIndex;
+    public string Nickname;
+    public int killCount;
+    public int deathCount;
+}

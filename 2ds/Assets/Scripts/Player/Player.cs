@@ -131,7 +131,7 @@ public class Player : NetworkBehaviour, Target
             if (i.CurrentGunData.currentAmmo <= 0f)
             {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
-                    CmdNoAmmo();
+                    CmdPlayEvent(SoundType.NO_AMMO);
             }
             else
             {
@@ -154,90 +154,45 @@ public class Player : NetworkBehaviour, Target
         Vector2 newPos = change.normalized * speed * Time.deltaTime * 60f;
         rb.velocity = newPos;
 
-        if (Rotate() || newPos.x != 0 || newPos.y != 0)
+        if (RotateTowardsCamera() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
     }
 
     #endregion
 
-    #region Client
+    #region EventPlayer
 
-    #region SyncVar events
-    private void OnSetInfo(PlayerInformation oldinfo, PlayerInformation newinfo)
+    private enum SoundType
     {
-        if (oldinfo.Nickname != newinfo.Nickname)
-            nickText.text = info.Nickname;
-
-        if (hasAuthority)
-            IngameHUDManager.Instance.UpdatePlayerList();
+        NO_AMMO,
+        RELOAD,
+        SHOOT,
+        DAMAGED
     }
-    private void OnChangedHealth(float _, float __)
-    {
-        if (hasAuthority)
-            IngameHUDManager.Instance.UpdateHealth();
-    }
-
-    private void OnUpdatePing(int a, int b)
-    {
-        IngameHUDManager.Instance.UpdatePlayerList();
-    }
-
-    #endregion
-
-    #region TargetRPCs
-
-
-    private void OnSelectedSlot()
-    {
-        if (!i.HasAnyGun)
-        {
-            print("spawned with no gun");
-            return;
-        }
-
-        shootDelay = 0f;
-
-        fovmesh.fov.viewAngle = i.CurrentGun.viewAngle;
-        fovmesh.fov.viewRadius = i.CurrentGun.viewRadius;
-        fovmesh.Setup();
-        fovmesh.UpdateMesh();
-
-        IngameHUDManager.Instance.UpdateAmmo();
-    }
-    #endregion
-
-    #region ClientRPCs
 
     [Command]
-    private void CmdNoAmmo()
-    {
-        RpcNoAmmoSound();
-    }
+    private void CmdPlayEvent(SoundType s) => RpcPlayEvent(s);
 
     [ClientRpc]
-    private void RpcNoAmmoSound()
+    private void RpcPlayEvent(SoundType s)
     {
-        PlaySound(GameManager.Instance.noAmmoSound);
-    }
-
-    [ClientRpc]
-    private void RpcStartReloadSound()
-    {
-        PlaySound(GameManager.Instance.reloadSound);
-    }
-
-    [ClientRpc]
-    private void RpcAfterShoot()
-    {
-        ParticleManager.Spawn(EParticleType.SHOOT, rotateTransform);
-        PlaySound(i.CurrentGun.shootSount);
-    }
-
-    [ClientRpc]
-    internal void RpcOnPlayerShot(Vector3 pos)
-    {
-        PlaySound(GameManager.Instance.hurtSound);
-        ParticleManager.Spawn(EParticleType.BLOOD, pos);
+        switch (s)
+        {
+            case SoundType.NO_AMMO:
+                PlaySound(GameManager.Instance.noAmmoSound);
+                break;
+            case SoundType.RELOAD:
+                PlaySound(GameManager.Instance.reloadSound);
+                break;
+            case SoundType.SHOOT:
+                ParticleManager.Spawn(EParticleType.SHOOT, rotateTransform);
+                PlaySound(i.CurrentGun.shootSount);
+                break;
+            case SoundType.DAMAGED:
+                PlaySound(GameManager.Instance.hurtSound);
+                ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
+                break;
+        }
     }
 
     [ClientRpc]
@@ -277,6 +232,46 @@ public class Player : NetworkBehaviour, Target
             IngameHUDManager.Instance.ToggleAlive(true);
         }
     }
+    #endregion
+
+    #region SyncVar events
+    private void OnSetInfo(PlayerInformation oldinfo, PlayerInformation newinfo)
+    {
+        if (oldinfo.Nickname != newinfo.Nickname)
+            nickText.text = info.Nickname;
+
+        if (hasAuthority)
+            IngameHUDManager.Instance.UpdatePlayerList();
+    }
+    private void OnChangedHealth(float _, float __)
+    {
+        if (hasAuthority)
+            IngameHUDManager.Instance.UpdateHealth();
+    }
+    private void OnUpdatePing(int a, int b)
+    {
+        IngameHUDManager.Instance.UpdatePlayerList();
+    }
+
+    #endregion
+
+    private void OnSelectedSlot()
+    {
+        if (!i.HasAnyGun)
+        {
+            print("spawned with no gun");
+            return;
+        }
+
+        shootDelay = 0f;
+
+        fovmesh.fov.viewAngle = i.CurrentGun.viewAngle;
+        fovmesh.fov.viewRadius = i.CurrentGun.viewRadius;
+        fovmesh.Setup();
+        fovmesh.UpdateMesh();
+
+        IngameHUDManager.Instance.UpdateAmmo();
+    }
 
     [TargetRpc]
     public void TargetTeleport(Vector3 newPos)
@@ -284,15 +279,13 @@ public class Player : NetworkBehaviour, Target
         transform.position = newPos;
     }
 
-    #endregion
-
     private void PlaySound(AudioClip clip)
     {
         source.clip = clip;
         source.Play();
     }
 
-    private bool Rotate()
+    private bool RotateTowardsCamera()
     {
         Vector3 dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -300,8 +293,6 @@ public class Player : NetworkBehaviour, Target
         rotateTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         return r != rotateTransform.rotation;
     }
-
-    #endregion
 
     #region Server
 
@@ -343,7 +334,7 @@ public class Player : NetworkBehaviour, Target
         reloadingState = i.CurrentGun.reloadTime;
         isReloading = true;
 
-        RpcStartReloadSound();
+        RpcPlayEvent(SoundType.RELOAD);
     }
 
     [Command]
@@ -359,7 +350,7 @@ public class Player : NetworkBehaviour, Target
         gd.currentAmmo--;
         i.CurrentGunData = gd;
 
-        RpcAfterShoot();
+        RpcPlayEvent(SoundType.SHOOT);
 
         RaycastHit2D hit = Physics2D.Raycast(rotateTransform.position, rotateTransform.right, 99f);
         Target t;
@@ -373,7 +364,6 @@ public class Player : NetworkBehaviour, Target
     [Server]
     public void Damage(GameObject from, float damage)
     {
-        RpcOnPlayerShot(transform.position);
         health -= damage;
         if (health <= 0f)
         {
@@ -397,12 +387,4 @@ public class Player : NetworkBehaviour, Target
     }
     #endregion
 
-}
-
-public struct PlayerInformation : NetworkMessage
-{
-    public int SkinIndex;
-    public string Nickname;
-    public int killCount;
-    public int deathCount;
 }
