@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class Gun : ScriptableObject
 {
+    public SkinIndex SkinIndex;
     public string title, desc;
     public Sprite uiSprite;
     public float viewRadius, viewAngle;

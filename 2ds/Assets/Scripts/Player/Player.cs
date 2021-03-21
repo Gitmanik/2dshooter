@@ -53,6 +53,8 @@ public class Player : NetworkBehaviour, Target
         rotateTransform = transform.GetChild(0);
         allPlayers.Add(this);
 
+        skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
+
         if (!hasAuthority)
         {
             foreach (Transform b in destroyOnNonLocal)
@@ -110,6 +112,8 @@ public class Player : NetworkBehaviour, Target
         {
             if (Input.GetKeyDown(KeyCode.Escape))
                 IngameHUDManager.Instance.ToggleOptions();
+
+            rb.velocity = Vector2.zero;
             return;
         }
 
@@ -119,13 +123,13 @@ public class Player : NetworkBehaviour, Target
         if (Input.GetKeyUp(KeyCode.Tab))
             IngameHUDManager.Instance.ToggleList(false);
 
-        if (!isAlive || LockMovement)
+        if (!isAlive)
         {
             rb.velocity = Vector2.zero;
             return;
         }
 
-        if (i.HasAnyGun && shootDelay <= 0f && (i.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse0)))
+        if (!isReloading && i.HasAnyGun && shootDelay <= 0f && (i.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
             shootDelay = 1f / i.CurrentGun.firerate;
             if (i.CurrentGunData.currentAmmo <= 0f)
@@ -139,7 +143,7 @@ public class Player : NetworkBehaviour, Target
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && i.CurrentGunData.totalAmmo > 0)
+        if (Input.GetKeyDown(KeyCode.R) && i.CurrentGunData.totalAmmo > 0 && i.CurrentGunData.currentAmmo != i.CurrentGun.magazineCapacity)
             CmdStartReload();
 
         if (Input.GetKeyDown(KeyCode.T))
@@ -255,6 +259,12 @@ public class Player : NetworkBehaviour, Target
 
     #endregion
 
+    [ClientRpc]
+    private void RpcSetSkin(SkinIndex s)
+    {
+        skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, s);
+    }
+
     private void OnSelectedSlot()
     {
         if (!i.HasAnyGun)
@@ -269,6 +279,9 @@ public class Player : NetworkBehaviour, Target
         fovmesh.fov.viewRadius = i.CurrentGun.viewRadius;
         fovmesh.Setup();
         fovmesh.UpdateMesh();
+
+        skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
+
 
         IngameHUDManager.Instance.UpdateAmmo();
     }
@@ -299,7 +312,6 @@ public class Player : NetworkBehaviour, Target
     public void Setup(AuthRequestMessage data)
     {
         info = new PlayerInformation() { Nickname = data.nick, SkinIndex = data.skinindex };
-        skin.sprite = GameManager.Instance.PlayerSkins[data.skinindex];
         name = $"Player {data.nick}";
     }
 
@@ -316,6 +328,7 @@ public class Player : NetworkBehaviour, Target
         i.CurrentGunData = gd;
         reloadingState = 0f;
         isReloading = false;
+        RpcSetSkin(i.CurrentGun.SkinIndex);
     }
 
     [Server]
@@ -335,6 +348,7 @@ public class Player : NetworkBehaviour, Target
         isReloading = true;
 
         RpcPlayEvent(SoundType.RELOAD);
+        RpcSetSkin(SkinIndex.HOLD);
     }
 
     [Command]

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0048f3afbd94f4146bb9d4c41978f954, type: 3}
   m_Name: Pistol
   m_EditorClassIdentifier: 
+  SkinIndex: 2
   title: Pistol
   desc: pistol
   uiSprite: {fileID: 21300000, guid: 406a0c1002b5b864680080bad5374f13, type: 3}
-  viewRadius: 10
+  viewRadius: 7
   viewAngle: 60
   autofire: 0
   reloadTime: 0.5

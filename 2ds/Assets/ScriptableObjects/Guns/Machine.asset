@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0048f3afbd94f4146bb9d4c41978f954, type: 3}
   m_Name: Machine
   m_EditorClassIdentifier: 
+  SkinIndex: 4
   title: Machine
   desc: gun
   uiSprite: {fileID: 21300000, guid: 1371ae3d4dca6ae43acb6be241e9c5d6, type: 3}

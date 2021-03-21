@@ -26,7 +26,6 @@ public class CustomAuthenticator : NetworkAuthenticator
         if (authData.version == GameManager.Instance.GameVersion)
         {
             conn.Send(new AuthResponseMessage() { message = "Welcome!", success = true });
-            authData.skinindex = Random.Range(0, GameManager.Instance.PlayerSkins.Length - 1); //TODO ???
             conn.authenticationData = authData;
             OnServerAuthenticated.Invoke(conn);
         }
@@ -58,7 +57,7 @@ public class CustomAuthenticator : NetworkAuthenticator
     public override void OnClientAuthenticate(NetworkConnection conn)
     {
         print("Authenticating..");
-        NetworkClient.Send(new AuthRequestMessage { nick = DataManager.Name, version = GameManager.Instance.GameVersion });
+        NetworkClient.Send(new AuthRequestMessage { nick = DataManager.Name, version = GameManager.Instance.GameVersion, skinindex = Random.Range(0, SkinManager.Instance.AllSkins.Length - 1) });
     }
 
     public void OnAuthResponseMessage(NetworkConnection conn, AuthResponseMessage arg2)

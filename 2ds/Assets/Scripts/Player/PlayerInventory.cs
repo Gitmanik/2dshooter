@@ -36,8 +36,10 @@ namespace Gitmanik.Multiplayer.Inventory
         public override void OnStartServer()
         {
             inventory.Clear();
-            inventory[0] = GameManager.Instance.Guns[0].GenerateGunData();
-            inventory[1] = GameManager.Instance.Guns[1].GenerateGunData();
+            for (int i = 0; i < GameManager.Instance.Guns.Count; i++)
+            {
+                inventory[i] = GameManager.Instance.Guns[i].GenerateGunData();
+            }
 
             CurrentSlot = 0;
         }

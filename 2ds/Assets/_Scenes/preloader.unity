@@ -1486,6 +1486,7 @@ GameObject:
   - component: {fileID: 1036736816}
   - component: {fileID: 1036736815}
   - component: {fileID: 1036736814}
+  - component: {fileID: 1036736813}
   - component: {fileID: 1036736811}
   m_Layer: 0
   m_Name: P_GameManager
@@ -1523,19 +1524,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df0c57818134744fb88691499cdd5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerSkins:
-  - {fileID: 3560902887738871759, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: -3937051225183529335, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: 702057652663933282, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: -949701291326283495, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: 8204577768401382756, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: 2116482373527051185, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: -5210457191197276843, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: -7092766342402841306, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
-  - {fileID: 5716647354995436865, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
   Guns:
   - {fileID: 11400000, guid: e06568e7f2867184e90c42e2a864034f, type: 2}
   - {fileID: 11400000, guid: 1f0cc845ae7b4dd4c920512cad7fff8f, type: 2}
+  - {fileID: 11400000, guid: 4b54bb6929789e44b8ac9fdffebb8722, type: 2}
   GameVersion: 0
   MaxFPS: 60
   blackMask: {fileID: 1164248923}
@@ -1551,7 +1543,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1036736808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   OnClientConnected:
@@ -1578,14 +1570,12 @@ MonoBehaviour:
   OnServerDisconnected:
     m_PersistentCalls:
       m_Calls: []
-  Port: 7777
+  port: 25565
   NoDelay: 1
-  Interval: 10
-  FastResend: 0
-  CongestionWindow: 1
-  SendWindowSize: 128
-  ReceiveWindowSize: 128
-  debugGUI: 0
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
 --- !u!114 &1036736812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1620,6 +1610,91 @@ MonoBehaviour:
   onClientDisconnected:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1036736813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036736808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b36fac953c8ad1d49b9e4e2e6e03a731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AllSkins:
+  - Sprites:
+    - {fileID: 21300000, guid: 0c45f157509713c4f975db7feee49527, type: 3}
+    - {fileID: 21300000, guid: 516694a4f9fe08646b47beb4c1304763, type: 3}
+    - {fileID: 21300000, guid: cbb694bbda752394682df339e116b3ae, type: 3}
+    - {fileID: 21300000, guid: 423385a008b929143bc9e760d5b7ff51, type: 3}
+    - {fileID: 21300000, guid: 2a9f8eb844b6d0646aadfee1ebb86bc6, type: 3}
+    - {fileID: 21300000, guid: 1eeaf4cce3bae2542a3029e6755fbdb5, type: 3}
+    Name: Soldier
+  - Sprites:
+    - {fileID: 21300000, guid: 789567d954ac5f0489796dd0c346b4c1, type: 3}
+    - {fileID: 21300000, guid: eb19fed28094a634982b9210e0b96fbe, type: 3}
+    - {fileID: 21300000, guid: 4ee82d804e268364fbfecff5d33add29, type: 3}
+    - {fileID: 21300000, guid: c7adb1862df6cd5439d8bb7476c1b824, type: 3}
+    - {fileID: 21300000, guid: ec5876e7500ee2b48ae25fc4ae5347cc, type: 3}
+    - {fileID: 21300000, guid: 518de1332f31d054a9d40df884ae943d, type: 3}
+    Name: Man Blue
+  - Sprites:
+    - {fileID: 21300000, guid: 6e8ac297f0ce80241b2fd22696eadaa2, type: 3}
+    - {fileID: 21300000, guid: 5aa196872a5c3414eaf63233a1b906d1, type: 3}
+    - {fileID: 21300000, guid: 1a0c216f918037240846a3589538e78d, type: 3}
+    - {fileID: 21300000, guid: 652e96449f494784788611c037f5c943, type: 3}
+    - {fileID: 21300000, guid: d9e5318b08a21754582814d45fbcd83c, type: 3}
+    - {fileID: 21300000, guid: eb1d4b29a6c92d344b9443a03c909ece, type: 3}
+    Name: Hitman
+  - Sprites:
+    - {fileID: 21300000, guid: a05ece73ae991cc41994efa9cc57fba6, type: 3}
+    - {fileID: 21300000, guid: 78d8c6a88c2be7c47949f5f1ed3e2168, type: 3}
+    - {fileID: 21300000, guid: 4e56daac0babc8445af926d1e189ca16, type: 3}
+    - {fileID: 21300000, guid: 8bef83e6803616245a97106b4304e92b, type: 3}
+    - {fileID: 21300000, guid: 3fd773402ab702848a97c93c39002ac9, type: 3}
+    - {fileID: 21300000, guid: dd05b59d0a780f442bd6ef82ee985290, type: 3}
+    Name: Man Brown
+  - Sprites:
+    - {fileID: 21300000, guid: 340bc20911ba3364cbacd1ac540b7c6d, type: 3}
+    - {fileID: 21300000, guid: 3512a98fbda29a040b7463befc50b395, type: 3}
+    - {fileID: 21300000, guid: a26e5c4dd667b0341892b91d1fadfa2e, type: 3}
+    - {fileID: 21300000, guid: eb92c5c70dd03094ca94d0ee1825944c, type: 3}
+    - {fileID: 21300000, guid: 6c9e46da02659274ebe4ba3f7f1b95a6, type: 3}
+    - {fileID: 21300000, guid: 6b65eca8301958b4291bc2489f8ed12c, type: 3}
+    Name: Man Old
+  - Sprites:
+    - {fileID: 21300000, guid: 77837f3f18ffd214f82fea62e13966cb, type: 3}
+    - {fileID: 21300000, guid: e215c01016243704ab3c31c4e4877a93, type: 3}
+    - {fileID: 21300000, guid: a34052f3ba0a1bb48acccdfd3a940ab5, type: 3}
+    - {fileID: 21300000, guid: 04bfe9bd7ab83504386b17025da52e75, type: 3}
+    - {fileID: 21300000, guid: bc53380d3aaaea4469c421429e7b5893, type: 3}
+    - {fileID: 21300000, guid: 21968507f6f37614bbe3dd32ea5517fd, type: 3}
+    Name: Robot
+  - Sprites:
+    - {fileID: 21300000, guid: 619f59e0e32a4654582ad1af6d319378, type: 3}
+    - {fileID: 21300000, guid: 7f4242d1a59cb1441b4e96cc0105139f, type: 3}
+    - {fileID: 21300000, guid: 67177f2e27fbf7b4f91072d6df56518a, type: 3}
+    - {fileID: 21300000, guid: 28fd4a1de64ec744ca66a1bd0e051241, type: 3}
+    - {fileID: 21300000, guid: 1f148331c3aa9b940ab8416c73574500, type: 3}
+    - {fileID: 21300000, guid: 10b63a1842de04948bb4068b7b95979e, type: 3}
+    Name: Survivor
+  - Sprites:
+    - {fileID: 21300000, guid: a35c1220335c24f4da4e8fe21cab7069, type: 3}
+    - {fileID: 21300000, guid: cb7f0ea5362b06147999cf4b0f9f4d3d, type: 3}
+    - {fileID: 21300000, guid: 2be5d052c43cd254f9867707f86f98d5, type: 3}
+    - {fileID: 21300000, guid: e006d7793d9905d498fcdc08d4ed56aa, type: 3}
+    - {fileID: 21300000, guid: 2d5d181bf6bdb784e900ac63fc88f14c, type: 3}
+    - {fileID: 21300000, guid: 2cfeb1ff68d45b645ac141b67ec94cc0, type: 3}
+    Name: Woman Green
+  - Sprites:
+    - {fileID: 21300000, guid: aa1d0ba43c82f4c4d8a52c264d19d331, type: 3}
+    - {fileID: 21300000, guid: ee6ea098e9267a5449c156ba43b31429, type: 3}
+    - {fileID: 21300000, guid: 6a33ac333c314d642ad3a643bb7e020e, type: 3}
+    - {fileID: 21300000, guid: 83f4926185385da47a430d2f129cfc36, type: 3}
+    - {fileID: 21300000, guid: d98c2d70d9e10d144a46d3e8ad5852bc, type: 3}
+    - {fileID: 21300000, guid: 91e83d3b4007a1d49a3abe1ba1e1942e, type: 3}
+    Name: Zombie
 --- !u!82 &1036736814
 AudioSource:
   m_ObjectHideFlags: 0

@@ -44,10 +44,12 @@ public class Menu : MonoBehaviour
         ipInput.onValueChanged.AddListener(OnValueChanged);
         compileDate.text = $"{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}";
 
+#if UNITY_EDITOR
         if (ParrelSync.ClonesManager.IsClone())
         {
             NetworkManager.singleton.StartServer();
         }
+#endif
     }
 
     public void OnConnectClick()
