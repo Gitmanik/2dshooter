@@ -13,7 +13,7 @@ public class GunSelectorElement : MonoBehaviour
         this.idx = idx;
         this.parent = parent;
         transform.name = gun.title;
-        image.sprite = gun.sprite;
+        image.sprite = gun.uiSprite;
         text.text = gun.title;
     }
     public void OnClick()

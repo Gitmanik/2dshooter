@@ -4,8 +4,11 @@ using UnityEngine;
 public class Gun : ScriptableObject
 {
     public string title, desc;
-    public Sprite sprite;
+    public Sprite uiSprite;
     public float viewRadius, viewAngle;
+
+    public bool autofire;
+    public float reloadTime;
 
     public int magazineCount;
     public int magazineCapacity;

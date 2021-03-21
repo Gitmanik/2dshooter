@@ -1,11 +1,12 @@
 ﻿using Mirror;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace Gitmanik.Multiplayer.Inventory
 {
     public class PlayerInventory : NetworkBehaviour
     {
+        public Player parent;
+
         public readonly SyncDictionary<int, GunData> inventory = new SyncDictionary<int, GunData>();
 
         public UnityAction OnSelectedSlot;
@@ -55,6 +56,8 @@ namespace Gitmanik.Multiplayer.Inventory
         public void CmdSelectSlot(int slot)
         {
             CurrentSlot = slot;
+            parent.isReloading = false;
+            parent.reloadingState = -1f;
         }
 
         public void SlotChanged(int oldslot, int newslot)

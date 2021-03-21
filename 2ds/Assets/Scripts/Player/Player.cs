@@ -18,6 +18,7 @@ public class Player : NetworkBehaviour, Target
     [Header("Component references")]
     [SerializeField] private FOVMesh fovmesh;
     [SerializeField] private TMP_Text nickText;
+    [SerializeField] private SpriteRenderer skin;
     [HideInInspector] public PlayerInventory i;
     private Rigidbody2D rb;
     private AudioSource source;
@@ -28,6 +29,8 @@ public class Player : NetworkBehaviour, Target
     [SyncVar(hook = nameof(OnChangedHealth))] public float health = -1f;
     [SyncVar(hook = nameof(OnUpdatePing))] public int ping = -1;
     [SyncVar] public bool isAlive = true;
+    [SyncVar] public bool isReloading = false;
+    [SyncVar] public float reloadingState;
     [SyncVar] public float speed;
 
     [Header("Transforms to modify on events")]
@@ -45,6 +48,7 @@ public class Player : NetworkBehaviour, Target
     {
         source = GetComponent<AudioSource>();
         i = GetComponent<PlayerInventory>();
+        i.parent = this;
         rb = GetComponent<Rigidbody2D>();
         rotateTransform = transform.GetChild(0);
         allPlayers.Add(this);
@@ -63,7 +67,7 @@ public class Player : NetworkBehaviour, Target
         IngameHUDManager.Instance.SetupPlayer(this);
         IngameHUDManager.Instance.ToggleAlive(true);
         IngameHUDManager.Instance.ToggleDebug(true);
-        IngameHUDManager.Instance.OnGunSelectorSelected += OnGunSelected;
+        IngameHUDManager.Instance.OnGunSelectorSelected += i.CmdSelectSlot;
         CameraFollow.instance.targetTransform = transform;
 
         Local = this;
@@ -73,12 +77,20 @@ public class Player : NetworkBehaviour, Target
 
     private void OnDestroy()
     {
-        IngameHUDManager.Instance.OnGunSelectorSelected -= OnGunSelected;
+        IngameHUDManager.Instance.OnGunSelectorSelected -= i.CmdSelectSlot;
         allPlayers.Remove(this);
     }
 
     private void Update()
     {
+        if (isReloading && NetworkServer.active)
+        {
+            if (reloadingState >= 0f)
+                reloadingState -= Time.deltaTime;
+            else
+                ServerGunReloaded();
+        }
+
         if (!hasAuthority)
             return;
 
@@ -113,12 +125,13 @@ public class Player : NetworkBehaviour, Target
             return;
         }
 
-        if (i.HasAnyGun && shootDelay <= 0f && Input.GetKey(KeyCode.Mouse0))
+        if (i.HasAnyGun && shootDelay <= 0f && (i.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
             shootDelay = 1f / i.CurrentGun.firerate;
             if (i.CurrentGunData.currentAmmo <= 0f)
             {
-                PlaySound(GameManager.Instance.noAmmoSound);
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                    CmdNoAmmo();
             }
             else
             {
@@ -127,7 +140,7 @@ public class Player : NetworkBehaviour, Target
         }
 
         if (Input.GetKeyDown(KeyCode.R) && i.CurrentGunData.totalAmmo > 0)
-            CmdReload();
+            CmdStartReload();
 
         if (Input.GetKeyDown(KeyCode.T))
             IngameHUDManager.Instance.ToggleGunSelector(true);
@@ -171,11 +184,6 @@ public class Player : NetworkBehaviour, Target
 
     #endregion
 
-    private void OnGunSelected(int idx)
-    {
-        i.CmdSelectSlot(idx);
-    }
-
     #region TargetRPCs
 
 
@@ -200,8 +208,20 @@ public class Player : NetworkBehaviour, Target
 
     #region ClientRPCs
 
+    [Command]
+    private void CmdNoAmmo()
+    {
+        RpcNoAmmoSound();
+    }
+
     [ClientRpc]
-    private void RpcReload()
+    private void RpcNoAmmoSound()
+    {
+        PlaySound(GameManager.Instance.noAmmoSound);
+    }
+
+    [ClientRpc]
+    private void RpcStartReloadSound()
     {
         PlaySound(GameManager.Instance.reloadSound);
     }
@@ -271,6 +291,7 @@ public class Player : NetworkBehaviour, Target
         source.clip = clip;
         source.Play();
     }
+
     private bool Rotate()
     {
         Vector3 dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
@@ -286,8 +307,24 @@ public class Player : NetworkBehaviour, Target
 
     public void Setup(AuthRequestMessage data)
     {
-        info = new PlayerInformation() { Nickname = data.nick };
+        info = new PlayerInformation() { Nickname = data.nick, SkinIndex = data.skinindex };
+        skin.sprite = GameManager.Instance.PlayerSkins[data.skinindex];
         name = $"Player {data.nick}";
+    }
+
+    [Server]
+    private void ServerGunReloaded()
+    {
+        int zaladowane = Mathf.Min(i.CurrentGun.magazineCapacity - i.CurrentGunData.currentAmmo, i.CurrentGunData.totalAmmo);
+
+        GunData gd = i.CurrentGunData;
+
+        gd.totalAmmo -= zaladowane;
+        gd.currentAmmo += zaladowane;
+
+        i.CurrentGunData = gd;
+        reloadingState = 0f;
+        isReloading = false;
     }
 
     [Server]
@@ -298,18 +335,15 @@ public class Player : NetworkBehaviour, Target
     }
 
     [Command]
-    private void CmdReload()
+    private void CmdStartReload()
     {
-        int zaladowane = Mathf.Min(i.CurrentGun.magazineCapacity - i.CurrentGunData.currentAmmo, i.CurrentGunData.totalAmmo);
+        if (reloadingState > 0f)
+            return;
 
-        GunData gd = i.CurrentGunData;
+        reloadingState = i.CurrentGun.reloadTime;
+        isReloading = true;
 
-        gd.totalAmmo -= zaladowane;
-        gd.currentAmmo += zaladowane;
-
-        i.CurrentGunData = gd;
-
-        RpcReload();
+        RpcStartReloadSound();
     }
 
     [Command]
@@ -367,6 +401,7 @@ public class Player : NetworkBehaviour, Target
 
 public struct PlayerInformation : NetworkMessage
 {
+    public int SkinIndex;
     public string Nickname;
     public int killCount;
     public int deathCount;

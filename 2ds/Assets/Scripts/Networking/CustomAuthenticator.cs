@@ -26,6 +26,7 @@ public class CustomAuthenticator : NetworkAuthenticator
         if (authData.version == GameManager.Instance.GameVersion)
         {
             conn.Send(new AuthResponseMessage() { message = "Welcome!", success = true });
+            authData.skinindex = Random.Range(0, GameManager.Instance.PlayerSkins.Length - 1); //TODO ???
             conn.authenticationData = authData;
             OnServerAuthenticated.Invoke(conn);
         }

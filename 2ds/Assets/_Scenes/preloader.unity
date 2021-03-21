@@ -1523,6 +1523,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df0c57818134744fb88691499cdd5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerSkins:
+  - {fileID: 3560902887738871759, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: -3937051225183529335, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: 702057652663933282, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: -949701291326283495, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: 8204577768401382756, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: 2116482373527051185, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: -5210457191197276843, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: -7092766342402841306, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
+  - {fileID: 5716647354995436865, guid: 6701ea4b7268cab449701b8c1f23115a, type: 3}
   Guns:
   - {fileID: 11400000, guid: e06568e7f2867184e90c42e2a864034f, type: 2}
   - {fileID: 11400000, guid: 1f0cc845ae7b4dd4c920512cad7fff8f, type: 2}
@@ -1592,7 +1602,7 @@ MonoBehaviour:
   runInBackground: 1
   autoStartServerBuild: 0
   showDebugMessages: 0
-  serverTickRate: 60
+  serverTickRate: 90
   offlineScene: Assets/_Scenes/menu.unity
   onlineScene: Assets/_Scenes/game.unity
   transport: {fileID: 1036736811}
@@ -1603,7 +1613,7 @@ MonoBehaviour:
   authenticator: {fileID: 1036736816}
   playerPrefab: {fileID: 2344367693849449933, guid: efe58a77361f5a848afe42e86c50f057, type: 3}
   autoCreatePlayer: 0
-  playerSpawnMethod: 1
+  playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 2778795413667025991, guid: 99a3061e1e3484a43af60f2c6c779522, type: 3}
   - {fileID: 8648603307421891811, guid: 9d8b6cff1283499469d82ce9947cfeb5, type: 3}

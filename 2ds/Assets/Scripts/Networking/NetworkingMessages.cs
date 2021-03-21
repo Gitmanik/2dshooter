@@ -4,6 +4,7 @@ using UnityEngine;
 public struct AuthRequestMessage : NetworkMessage
 {
     public string nick;
+    public int skinindex;
     public int version;
 }
 

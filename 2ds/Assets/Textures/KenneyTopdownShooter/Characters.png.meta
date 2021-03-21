@@ -34,7 +34,7 @@ TextureImporter:
     second: spritesheet_characters_9
   - first:
       213: -7092766342402841306
-    second: spritesheet_characters_10
+    second: Zombie
   - first:
       213: 2943193483566114709
     second: spritesheet_characters_11
@@ -61,13 +61,13 @@ TextureImporter:
     second: spritesheet_characters_18
   - first:
       213: 5716647354995436865
-    second: spritesheet_characters_19
+    second: Woman
   - first:
       213: -7480173722642222655
     second: spritesheet_characters_20
   - first:
       213: 3560902887738871759
-    second: spritesheet_characters_21
+    second: BrownMan
   - first:
       213: 5006946705111556243
     second: spritesheet_characters_22
@@ -100,7 +100,7 @@ TextureImporter:
     second: spritesheet_characters_31
   - first:
       213: 8204577768401382756
-    second: spritesheet_characters_32
+    second: Robot
   - first:
       213: -4908990663583209473
     second: spritesheet_characters_33
@@ -124,16 +124,16 @@ TextureImporter:
     second: spritesheet_characters_39
   - first:
       213: 2116482373527051185
-    second: spritesheet_characters_40
+    second: Soldier
   - first:
       213: -2231885273710382416
     second: spritesheet_characters_41
   - first:
       213: -5210457191197276843
-    second: spritesheet_characters_42
+    second: BrownMan2
   - first:
       213: -949701291326283495
-    second: spritesheet_characters_43
+    second: OldMan
   - first:
       213: 5908810436121774924
     second: spritesheet_characters_44
@@ -160,10 +160,10 @@ TextureImporter:
     second: spritesheet_characters_51
   - first:
       213: -3937051225183529335
-    second: spritesheet_characters_52
+    second: Hiker
   - first:
       213: 702057652663933282
-    second: spritesheet_characters_53
+    second: Hitman
   - first:
       213: 3645343731816310795
     second: spritesheet_characters_54
@@ -208,7 +208,7 @@ TextureImporter:
     second: spritesheet_characters_9
   - first:
       213: 6932229381745601940
-    second: spritesheet_characters_10
+    second: Zombie
   - first:
       213: 4994351057197207538
     second: spritesheet_characters_11
@@ -235,13 +235,13 @@ TextureImporter:
     second: spritesheet_characters_18
   - first:
       213: 7552843831807578434
-    second: spritesheet_characters_19
+    second: Woman
   - first:
       213: 9163994702103780121
     second: spritesheet_characters_20
   - first:
       213: -4648545346294195029
-    second: spritesheet_characters_21
+    second: BrownMan
   - first:
       213: -5920189037028407492
     second: spritesheet_characters_22
@@ -274,7 +274,7 @@ TextureImporter:
     second: spritesheet_characters_31
   - first:
       213: 3999127063530733379
-    second: spritesheet_characters_32
+    second: Robot
   - first:
       213: 7112079357618657221
     second: spritesheet_characters_33
@@ -298,16 +298,16 @@ TextureImporter:
     second: spritesheet_characters_39
   - first:
       213: 1876259331527467640
-    second: spritesheet_characters_40
+    second: Soldier
   - first:
       213: -5837093396475538659
     second: spritesheet_characters_41
   - first:
       213: -17725255625284247
-    second: spritesheet_characters_42
+    second: BrownMan2
   - first:
       213: 8794334373847299866
-    second: spritesheet_characters_43
+    second: OldMan
   - first:
       213: -3435636380415608670
     second: spritesheet_characters_44
@@ -334,10 +334,10 @@ TextureImporter:
     second: spritesheet_characters_51
   - first:
       213: 3031564758083659993
-    second: spritesheet_characters_52
+    second: Hiker
   - first:
       213: 8240033630717068527
-    second: spritesheet_characters_53
+    second: Hitman
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -647,7 +647,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_10
+      name: Zombie
       rect:
         serializedVersion: 2
         x: 460
@@ -836,7 +836,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_19
+      name: Woman
       rect:
         serializedVersion: 2
         x: 386
@@ -878,7 +878,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_21
+      name: BrownMan
       rect:
         serializedVersion: 2
         x: 459
@@ -1109,7 +1109,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_32
+      name: Robot
       rect:
         serializedVersion: 2
         x: 458
@@ -1277,7 +1277,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_40
+      name: Soldier
       rect:
         serializedVersion: 2
         x: 353
@@ -1319,7 +1319,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_42
+      name: BrownMan2
       rect:
         serializedVersion: 2
         x: 426
@@ -1340,7 +1340,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_43
+      name: OldMan
       rect:
         serializedVersion: 2
         x: 460
@@ -1529,7 +1529,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_52
+      name: Hiker
       rect:
         serializedVersion: 2
         x: 390
@@ -1550,7 +1550,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spritesheet_characters_53
+      name: Hitman
       rect:
         serializedVersion: 2
         x: 426
