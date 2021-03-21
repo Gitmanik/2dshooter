@@ -56,7 +56,8 @@ namespace Gitmanik.Multiplayer.Inventory
         public void CmdSelectSlot(int slot)
         {
             CurrentSlot = slot;
-            parent.reloadingState = Player.Cancelled
+            parent.isReloading = false;
+            parent.reloadingState = -1f;
         }
 
         public void SlotChanged(int oldslot, int newslot)
