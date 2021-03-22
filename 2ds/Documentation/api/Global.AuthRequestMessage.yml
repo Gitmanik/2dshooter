@@ -1,0 +1,151 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.AuthRequestMessage
+  commentId: T:Global.AuthRequestMessage
+  id: AuthRequestMessage
+  parent: Global
+  children:
+  - Global.AuthRequestMessage.nick
+  - Global.AuthRequestMessage.skinindex
+  - Global.AuthRequestMessage.version
+  langs:
+  - csharp
+  - vb
+  name: AuthRequestMessage
+  nameWithType: AuthRequestMessage
+  fullName: AuthRequestMessage
+  type: Struct
+  source:
+    id: AuthRequestMessage
+    path: ''
+    startLine: 28858
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public struct AuthRequestMessage : NetworkMessage'
+    content.vb: >-
+      Public Structure AuthRequestMessage
+          Implements NetworkMessage
+  implements:
+  - Global.NetworkMessage
+  modifiers.csharp:
+  - public
+  - struct
+  modifiers.vb:
+  - Public
+  - Structure
+- uid: Global.AuthRequestMessage.nick
+  commentId: F:Global.AuthRequestMessage.nick
+  id: nick
+  parent: Global.AuthRequestMessage
+  langs:
+  - csharp
+  - vb
+  name: nick
+  nameWithType: AuthRequestMessage.nick
+  fullName: AuthRequestMessage.nick
+  type: Field
+  source:
+    id: nick
+    path: ''
+    startLine: 28860
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public string nick
+    return:
+      type: System.String
+    content.vb: Public nick As String
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.AuthRequestMessage.skinindex
+  commentId: F:Global.AuthRequestMessage.skinindex
+  id: skinindex
+  parent: Global.AuthRequestMessage
+  langs:
+  - csharp
+  - vb
+  name: skinindex
+  nameWithType: AuthRequestMessage.skinindex
+  fullName: AuthRequestMessage.skinindex
+  type: Field
+  source:
+    id: skinindex
+    path: ''
+    startLine: 28861
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public int skinindex
+    return:
+      type: System.Int32
+    content.vb: Public skinindex As Integer
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.AuthRequestMessage.version
+  commentId: F:Global.AuthRequestMessage.version
+  id: version
+  parent: Global.AuthRequestMessage
+  langs:
+  - csharp
+  - vb
+  name: version
+  nameWithType: AuthRequestMessage.version
+  fullName: AuthRequestMessage.version
+  type: Field
+  source:
+    id: version
+    path: ''
+    startLine: 28862
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public int version
+    return:
+      type: System.Int32
+    content.vb: Public version As Integer
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.NetworkMessage
+  isExternal: true
+  name: NetworkMessage
+  nameWithType: NetworkMessage
+  fullName: NetworkMessage
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  name: String
+  nameWithType: String
+  fullName: System.String
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32

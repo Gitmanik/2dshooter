@@ -1,0 +1,87 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.OptionsMenuController
+  commentId: T:Global.OptionsMenuController
+  id: OptionsMenuController
+  parent: Global
+  children:
+  - Global.OptionsMenuController.OnDisconnectClick
+  langs:
+  - csharp
+  - vb
+  name: OptionsMenuController
+  nameWithType: OptionsMenuController
+  fullName: OptionsMenuController
+  type: Class
+  source:
+    id: OptionsMenuController
+    path: ''
+    startLine: 29893
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class OptionsMenuController : MonoBehaviour'
+    content.vb: >-
+      Public Class OptionsMenuController
+          Inherits MonoBehaviour
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.OptionsMenuController.OnDisconnectClick
+  commentId: M:Global.OptionsMenuController.OnDisconnectClick
+  id: OnDisconnectClick
+  parent: Global.OptionsMenuController
+  langs:
+  - csharp
+  - vb
+  name: OnDisconnectClick()
+  nameWithType: OptionsMenuController.OnDisconnectClick()
+  fullName: OptionsMenuController.OnDisconnectClick()
+  type: Method
+  source:
+    id: OnDisconnectClick
+    path: ''
+    startLine: 29908
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void OnDisconnectClick()
+    content.vb: Public Sub OnDisconnectClick
+  overload: Global.OptionsMenuController.OnDisconnectClick*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Global.OptionsMenuController.OnDisconnectClick*
+  commentId: Overload:Global.OptionsMenuController.OnDisconnectClick
+  name: OnDisconnectClick
+  nameWithType: OptionsMenuController.OnDisconnectClick
+  fullName: OptionsMenuController.OnDisconnectClick

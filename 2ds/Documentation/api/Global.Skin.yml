@@ -1,0 +1,142 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.Skin
+  commentId: T:Global.Skin
+  id: Skin
+  parent: Global
+  children:
+  - Global.Skin.Name
+  - Global.Skin.Sprites
+  langs:
+  - csharp
+  - vb
+  name: Skin
+  nameWithType: Skin
+  fullName: Skin
+  type: Class
+  source:
+    id: Skin
+    path: ''
+    startLine: 28668
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public class Skin
+    content.vb: Public Class Skin
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.Skin.Sprites
+  commentId: F:Global.Skin.Sprites
+  id: Sprites
+  parent: Global.Skin
+  langs:
+  - csharp
+  - vb
+  name: Sprites
+  nameWithType: Skin.Sprites
+  fullName: Skin.Sprites
+  type: Field
+  source:
+    id: Sprites
+    path: ''
+    startLine: 28671
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public Sprite[] Sprites
+    return:
+      type: Global.Sprite[]
+    content.vb: Public Sprites As Sprite()
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.Skin.Name
+  commentId: F:Global.Skin.Name
+  id: Name
+  parent: Global.Skin
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: Skin.Name
+  fullName: Skin.Name
+  type: Field
+  source:
+    id: Name
+    path: ''
+    startLine: 28672
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public string Name
+    return:
+      type: System.String
+    content.vb: Public Name As String
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Global.Sprite[]
+  isExternal: true
+  name: Sprite[]
+  nameWithType: Sprite[]
+  fullName: Sprite[]
+  nameWithType.vb: Sprite()
+  fullName.vb: Sprite()
+  name.vb: Sprite()
+  spec.csharp:
+  - uid: Global.Sprite
+    name: Sprite
+    nameWithType: Sprite
+    fullName: Sprite
+    isExternal: true
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+  spec.vb:
+  - uid: Global.Sprite
+    name: Sprite
+    nameWithType: Sprite
+    fullName: Sprite
+    isExternal: true
+  - name: ()
+    nameWithType: ()
+    fullName: ()
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  name: String
+  nameWithType: String
+  fullName: System.String

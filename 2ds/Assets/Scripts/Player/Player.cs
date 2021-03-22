@@ -19,10 +19,11 @@ public class Player : NetworkBehaviour, Target
     [SerializeField] private FOVMesh fovmesh;
     [SerializeField] private TMP_Text nickText;
     [SerializeField] private SpriteRenderer skin;
-    [HideInInspector] public PlayerInventory i;
-    private Rigidbody2D rb;
-    private AudioSource source;
-    private Transform rotateTransform;
+    [SerializeField] public PlayerInventory i;
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private AudioSource source;
+    [SerializeField] private Transform rotateTransform;
+    [SerializeField] private Transform muzzleTransform;
 
     [Header("Server-owned variables")]
     [SyncVar(hook = nameof(OnSetInfo))] public PlayerInformation info;
@@ -46,11 +47,6 @@ public class Player : NetworkBehaviour, Target
 
     private void Start()
     {
-        source = GetComponent<AudioSource>();
-        i = GetComponent<PlayerInventory>();
-        i.parent = this;
-        rb = GetComponent<Rigidbody2D>();
-        rotateTransform = transform.GetChild(0);
         allPlayers.Add(this);
 
         skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
@@ -101,6 +97,7 @@ public class Player : NetworkBehaviour, Target
         pingCtr += Time.unscaledDeltaTime;
 
         if (pingCtr >= .5f)
+
         {
             NetworkClient.Send(new PlayerPingMessage { ping = (int)(NetworkTime.rtt * 1000) });
             pingCtr = 0;
@@ -117,11 +114,16 @@ public class Player : NetworkBehaviour, Target
             return;
         }
 
+        #region PlayerList
         if (Input.GetKeyDown(KeyCode.Tab))
             IngameHUDManager.Instance.ToggleList(true);
 
         if (Input.GetKeyUp(KeyCode.Tab))
             IngameHUDManager.Instance.ToggleList(false);
+        #endregion
+
+        if (Input.GetKeyDown(KeyCode.K))
+            CmdSetSkinIndex((info.SkinIndex + 1) % SkinManager.Instance.AllSkins.Length);
 
         if (!isAlive)
         {
@@ -132,15 +134,7 @@ public class Player : NetworkBehaviour, Target
         if (!isReloading && i.HasAnyGun && shootDelay <= 0f && (i.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
             shootDelay = 1f / i.CurrentGun.firerate;
-            if (i.CurrentGunData.currentAmmo <= 0f)
-            {
-                if (Input.GetKeyDown(KeyCode.Mouse0))
-                    CmdPlayEvent(SoundType.NO_AMMO);
-            }
-            else
-            {
-                CmdShoot();
-            }
+            CmdShoot(Input.GetKeyDown(KeyCode.Mouse0));
         }
 
         if (Input.GetKeyDown(KeyCode.R) && i.CurrentGunData.totalAmmo > 0 && i.CurrentGunData.currentAmmo != i.CurrentGun.magazineCapacity)
@@ -166,7 +160,7 @@ public class Player : NetworkBehaviour, Target
 
     #region EventPlayer
 
-    private enum SoundType
+    private enum EventType
     {
         NO_AMMO,
         RELOAD,
@@ -175,24 +169,24 @@ public class Player : NetworkBehaviour, Target
     }
 
     [Command]
-    private void CmdPlayEvent(SoundType s) => RpcPlayEvent(s);
+    private void CmdPlayEvent(EventType s) => RpcPlayEvent(s);
 
     [ClientRpc]
-    private void RpcPlayEvent(SoundType s)
+    private void RpcPlayEvent(EventType s)
     {
         switch (s)
         {
-            case SoundType.NO_AMMO:
+            case EventType.NO_AMMO:
                 PlaySound(GameManager.Instance.noAmmoSound);
                 break;
-            case SoundType.RELOAD:
+            case EventType.RELOAD:
                 PlaySound(GameManager.Instance.reloadSound);
                 break;
-            case SoundType.SHOOT:
-                ParticleManager.Spawn(EParticleType.SHOOT, rotateTransform);
+            case EventType.SHOOT:
+                ParticleManager.Spawn(EParticleType.SHOOT, muzzleTransform);
                 PlaySound(i.CurrentGun.shootSount);
                 break;
-            case SoundType.DAMAGED:
+            case EventType.DAMAGED:
                 PlaySound(GameManager.Instance.hurtSound);
                 ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
                 break;
@@ -244,20 +238,33 @@ public class Player : NetworkBehaviour, Target
         if (oldinfo.Nickname != newinfo.Nickname)
             nickText.text = info.Nickname;
 
+        if (i.CurrentGun != null)
+            skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
+
+        name = $"Player {info.Nickname}";
+
         if (hasAuthority)
             IngameHUDManager.Instance.UpdatePlayerList();
     }
-    private void OnChangedHealth(float _, float __)
+    private void OnChangedHealth(float a, float b)
     {
         if (hasAuthority)
             IngameHUDManager.Instance.UpdateHealth();
     }
-    private void OnUpdatePing(int a, int b)
+    private void OnUpdatePing(int _, int __)
     {
         IngameHUDManager.Instance.UpdatePlayerList();
     }
 
     #endregion
+
+    [Command]
+    private void CmdSetSkinIndex(int SkinIndex){
+        PlayerInformation x = info;
+        x.SkinIndex = SkinIndex;
+        info = x;
+        print(SkinIndex);
+    }
 
     [ClientRpc]
     private void RpcSetSkin(SkinIndex s)
@@ -267,12 +274,6 @@ public class Player : NetworkBehaviour, Target
 
     private void OnSelectedSlot()
     {
-        if (!i.HasAnyGun)
-        {
-            print("spawned with no gun");
-            return;
-        }
-
         shootDelay = 0f;
 
         fovmesh.fov.viewAngle = i.CurrentGun.viewAngle;
@@ -281,7 +282,6 @@ public class Player : NetworkBehaviour, Target
         fovmesh.UpdateMesh();
 
         skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
-
 
         IngameHUDManager.Instance.UpdateAmmo();
     }
@@ -292,12 +292,20 @@ public class Player : NetworkBehaviour, Target
         transform.position = newPos;
     }
 
+    /// <summary>
+    /// Sets sound to attached AudioSource and plays it.
+    /// </summary>
+    /// <param name="clip">Sound to play</param>
     private void PlaySound(AudioClip clip)
     {
         source.clip = clip;
         source.Play();
     }
 
+
+    /// <summary>
+    /// Rotates rotateTransform towards mouse pointer.
+    /// </summary>
     private bool RotateTowardsCamera()
     {
         Vector3 dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
@@ -309,10 +317,13 @@ public class Player : NetworkBehaviour, Target
 
     #region Server
 
+    /// <summary>
+    /// Sets up client's representation.
+    /// </summary>
+    /// <param name="data">Client data</param>
     public void Setup(AuthRequestMessage data)
     {
         info = new PlayerInformation() { Nickname = data.nick, SkinIndex = data.skinindex };
-        name = $"Player {data.nick}";
     }
 
     [Server]
@@ -347,37 +358,39 @@ public class Player : NetworkBehaviour, Target
         reloadingState = i.CurrentGun.reloadTime;
         isReloading = true;
 
-        RpcPlayEvent(SoundType.RELOAD);
+        RpcPlayEvent(EventType.RELOAD);
         RpcSetSkin(SkinIndex.HOLD);
     }
 
     [Command]
-    private void CmdShoot()
+    private void CmdShoot(bool mouseDown)
     {
         GunData gd = i.CurrentGunData;
-        if (gd.currentAmmo <= 0)
+        if (!i.CurrentGun.melee && gd.currentAmmo <= 0)
         {
-            Debug.LogWarning("Tried to shoot with 0 ammo.");
+            if (mouseDown)
+                RpcPlayEvent(EventType.NO_AMMO);
             return;
         }
 
         gd.currentAmmo--;
         i.CurrentGunData = gd;
 
-        RpcPlayEvent(SoundType.SHOOT);
-
         RaycastHit2D hit = Physics2D.Raycast(rotateTransform.position, rotateTransform.right, 99f);
-        Target t;
+        if (i.CurrentGun.melee && hit.distance > 1.5f)
+            return;
+
+        RpcPlayEvent(EventType.SHOOT);
         if (hit.collider != null)
         {
-            t = hit.transform.GetComponent<Target>();
-            t?.Damage(gameObject, i.CurrentGun.damageCurve.Evaluate(hit.distance) * i.CurrentGun.damage);
+            hit.transform.GetComponent<Target>()?.Damage(gameObject, i.CurrentGun.damageCurve.Evaluate(hit.distance) * i.CurrentGun.damage);
         }
     }
 
     [Server]
     public void Damage(GameObject from, float damage)
     {
+        RpcPlayEvent(EventType.DAMAGED);
         health -= damage;
         if (health <= 0f)
         {

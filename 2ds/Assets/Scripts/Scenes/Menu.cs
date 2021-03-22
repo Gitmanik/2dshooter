@@ -2,7 +2,6 @@
 using Mirror;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
@@ -15,11 +14,12 @@ public class Menu : MonoBehaviour
 
     void OnValueChanged(string _)
     {
+        DataManager.Name = nickInput.text;
+        DataManager.RecentIP = ipInput.text;
+
         if (InputValid())
         {
             joinButton.interactable = true;
-            DataManager.Name = nickInput.text;
-            DataManager.RecentIP = ipInput.text;
         }
         else
         {
@@ -43,13 +43,6 @@ public class Menu : MonoBehaviour
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
         compileDate.text = $"{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}";
-
-#if UNITY_EDITOR
-        if (ParrelSync.ClonesManager.IsClone())
-        {
-            NetworkManager.singleton.StartServer();
-        }
-#endif
     }
 
     public void OnConnectClick()

@@ -58,7 +58,7 @@ public class IngameHUDManager : MonoBehaviour
 
     public void UpdateDebug()
     {
-        debugPanel.text = string.Format("ping: {0}ms\nvar: {0}ms", (int)(NetworkTime.rtt * 1000), NetworkTime.rttVar * 1000d);
+        debugPanel.text = string.Format("ping: {0}ms", (int)(NetworkTime.rtt * 1000));
     }
 
     public void ToggleOptions()
@@ -98,7 +98,7 @@ public class IngameHUDManager : MonoBehaviour
 
     public void UpdateAmmo()
     {
-        if (!owner.i.HasAnyGun)
+        if (!owner.i.HasAnyGun || owner.i.CurrentGun.melee)
         {
             ammoText.text = "--";
             return;

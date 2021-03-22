@@ -1,0 +1,449 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.GameManager
+  commentId: T:Global.GameManager
+  id: GameManager
+  parent: Global
+  children:
+  - Global.GameManager.blackMask
+  - Global.GameManager.CheckScene
+  - Global.GameManager.GameVersion
+  - Global.GameManager.Guns
+  - Global.GameManager.hurtSound
+  - Global.GameManager.Instance
+  - Global.GameManager.noAmmoSound
+  - Global.GameManager.reloadSound
+  - Global.GameManager.SetBlackMask(System.Boolean)
+  langs:
+  - csharp
+  - vb
+  name: GameManager
+  nameWithType: GameManager
+  fullName: GameManager
+  type: Class
+  source:
+    id: GameManager
+    path: ''
+    startLine: 28581
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class GameManager : MonoBehaviour'
+    content.vb: >-
+      Public Class GameManager
+          Inherits MonoBehaviour
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.GameManager.Instance
+  commentId: P:Global.GameManager.Instance
+  id: Instance
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: Instance
+  nameWithType: GameManager.Instance
+  fullName: GameManager.Instance
+  type: Property
+  source:
+    id: Instance
+    path: ''
+    startLine: 28583
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static GameManager Instance { get; }
+    parameters: []
+    return:
+      type: Global.GameManager
+    content.vb: Public Shared ReadOnly Property Instance As GameManager
+  overload: Global.GameManager.Instance*
+  modifiers.csharp:
+  - public
+  - static
+  - get
+  modifiers.vb:
+  - Public
+  - Shared
+  - ReadOnly
+- uid: Global.GameManager.Guns
+  commentId: F:Global.GameManager.Guns
+  id: Guns
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: Guns
+  nameWithType: GameManager.Guns
+  fullName: GameManager.Guns
+  type: Field
+  source:
+    id: Guns
+    path: ''
+    startLine: 28585
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public List<Gun> Guns
+    return:
+      type: System.Collections.Generic.List{Gun}
+    content.vb: Public Guns As List(Of Gun)
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GameManager.GameVersion
+  commentId: F:Global.GameManager.GameVersion
+  id: GameVersion
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: GameVersion
+  nameWithType: GameManager.GameVersion
+  fullName: GameManager.GameVersion
+  type: Field
+  source:
+    id: GameVersion
+    path: ''
+    startLine: 28588
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public int GameVersion
+    return:
+      type: System.Int32
+    content.vb: Public GameVersion As Integer
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GameManager.blackMask
+  commentId: F:Global.GameManager.blackMask
+  id: blackMask
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: blackMask
+  nameWithType: GameManager.blackMask
+  fullName: GameManager.blackMask
+  type: Field
+  source:
+    id: blackMask
+    path: ''
+    startLine: 28604
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public Transform blackMask
+    return:
+      type: Global.Transform
+    content.vb: Public blackMask As Transform
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GameManager.SetBlackMask(System.Boolean)
+  commentId: M:Global.GameManager.SetBlackMask(System.Boolean)
+  id: SetBlackMask(System.Boolean)
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: SetBlackMask(Boolean)
+  nameWithType: GameManager.SetBlackMask(Boolean)
+  fullName: GameManager.SetBlackMask(System.Boolean)
+  type: Method
+  source:
+    id: SetBlackMask
+    path: ''
+    startLine: 28606
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void SetBlackMask(bool v)
+    parameters:
+    - id: v
+      type: System.Boolean
+    content.vb: Public Sub SetBlackMask(v As Boolean)
+  overload: Global.GameManager.SetBlackMask*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GameManager.reloadSound
+  commentId: F:Global.GameManager.reloadSound
+  id: reloadSound
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: reloadSound
+  nameWithType: GameManager.reloadSound
+  fullName: GameManager.reloadSound
+  type: Field
+  source:
+    id: reloadSound
+    path: ''
+    startLine: 28608
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public AudioClip reloadSound
+    return:
+      type: Global.AudioClip
+    content.vb: Public reloadSound As AudioClip
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GameManager.noAmmoSound
+  commentId: F:Global.GameManager.noAmmoSound
+  id: noAmmoSound
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: noAmmoSound
+  nameWithType: GameManager.noAmmoSound
+  fullName: GameManager.noAmmoSound
+  type: Field
+  source:
+    id: noAmmoSound
+    path: ''
+    startLine: 28609
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public AudioClip noAmmoSound
+    return:
+      type: Global.AudioClip
+    content.vb: Public noAmmoSound As AudioClip
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GameManager.hurtSound
+  commentId: F:Global.GameManager.hurtSound
+  id: hurtSound
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: hurtSound
+  nameWithType: GameManager.hurtSound
+  fullName: GameManager.hurtSound
+  type: Field
+  source:
+    id: hurtSound
+    path: ''
+    startLine: 28610
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public AudioClip hurtSound
+    return:
+      type: Global.AudioClip
+    content.vb: Public hurtSound As AudioClip
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GameManager.CheckScene
+  commentId: M:Global.GameManager.CheckScene
+  id: CheckScene
+  parent: Global.GameManager
+  langs:
+  - csharp
+  - vb
+  name: CheckScene()
+  nameWithType: GameManager.CheckScene()
+  fullName: GameManager.CheckScene()
+  type: Method
+  source:
+    id: CheckScene
+    path: ''
+    startLine: 28612
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static bool CheckScene()
+    return:
+      type: System.Boolean
+    content.vb: Public Shared Function CheckScene As Boolean
+  overload: Global.GameManager.CheckScene*
+  modifiers.csharp:
+  - public
+  - static
+  modifiers.vb:
+  - Public
+  - Shared
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Global.GameManager.Instance*
+  commentId: Overload:Global.GameManager.Instance
+  name: Instance
+  nameWithType: GameManager.Instance
+  fullName: GameManager.Instance
+- uid: Global.GameManager
+  commentId: T:Global.GameManager
+  name: GameManager
+  nameWithType: GameManager
+  fullName: GameManager
+- uid: System.Collections.Generic.List{Gun}
+  commentId: T:System.Collections.Generic.List{Gun}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  name: List<Gun>
+  nameWithType: List<Gun>
+  fullName: System.Collections.Generic.List<Gun>
+  nameWithType.vb: List(Of Gun)
+  fullName.vb: System.Collections.Generic.List(Of Gun)
+  name.vb: List(Of Gun)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    nameWithType: List
+    fullName: System.Collections.Generic.List
+    isExternal: true
+  - name: <
+    nameWithType: <
+    fullName: <
+  - uid: Global.Gun
+    name: Gun
+    nameWithType: Gun
+    fullName: Gun
+  - name: '>'
+    nameWithType: '>'
+    fullName: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    nameWithType: List
+    fullName: System.Collections.Generic.List
+    isExternal: true
+  - name: '(Of '
+    nameWithType: '(Of '
+    fullName: '(Of '
+  - uid: Global.Gun
+    name: Gun
+    nameWithType: Gun
+    fullName: Gun
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    nameWithType: List
+    fullName: System.Collections.Generic.List
+    isExternal: true
+  - name: <
+    nameWithType: <
+    fullName: <
+  - name: T
+    nameWithType: T
+    fullName: T
+  - name: '>'
+    nameWithType: '>'
+    fullName: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    nameWithType: List
+    fullName: System.Collections.Generic.List
+    isExternal: true
+  - name: '(Of '
+    nameWithType: '(Of '
+    fullName: '(Of '
+  - name: T
+    nameWithType: T
+    fullName: T
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: Global.Transform
+  isExternal: true
+  name: Transform
+  nameWithType: Transform
+  fullName: Transform
+- uid: Global.GameManager.SetBlackMask*
+  commentId: Overload:Global.GameManager.SetBlackMask
+  name: SetBlackMask
+  nameWithType: GameManager.SetBlackMask
+  fullName: GameManager.SetBlackMask
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  name: Boolean
+  nameWithType: Boolean
+  fullName: System.Boolean
+- uid: Global.AudioClip
+  isExternal: true
+  name: AudioClip
+  nameWithType: AudioClip
+  fullName: AudioClip
+- uid: Global.GameManager.CheckScene*
+  commentId: Overload:Global.GameManager.CheckScene
+  name: CheckScene
+  nameWithType: GameManager.CheckScene
+  fullName: GameManager.CheckScene

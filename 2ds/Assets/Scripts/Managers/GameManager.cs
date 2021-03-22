@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Gitmanik.Networked;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     {
         DataManager.MaxFPS = MaxFPS;
         Application.targetFrameRate = DataManager.MaxFPS;
+        NetworkedNotification.Setup();
     }
 
     public Transform blackMask;

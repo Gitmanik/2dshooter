@@ -1,0 +1,167 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.Pickupable
+  commentId: T:Global.Pickupable
+  id: Pickupable
+  parent: Global
+  children:
+  - Global.Pickupable.OnTrigger(Player)
+  - Global.Pickupable.parent
+  - Global.Pickupable.Start
+  langs:
+  - csharp
+  - vb
+  name: Pickupable
+  nameWithType: Pickupable
+  fullName: Pickupable
+  type: Class
+  source:
+    id: Pickupable
+    path: ''
+    startLine: 29981
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public abstract class Pickupable : NetworkBehaviour'
+    content.vb: >-
+      Public MustInherit Class Pickupable
+          Inherits NetworkBehaviour
+  inheritance:
+  - System.Object
+  derivedClasses:
+  - Global.AddHealthPickup
+  - Global.GiveAmmoPickup
+  modifiers.csharp:
+  - public
+  - abstract
+  - class
+  modifiers.vb:
+  - Public
+  - MustInherit
+  - Class
+- uid: Global.Pickupable.parent
+  commentId: F:Global.Pickupable.parent
+  id: parent
+  parent: Global.Pickupable
+  langs:
+  - csharp
+  - vb
+  name: parent
+  nameWithType: Pickupable.parent
+  fullName: Pickupable.parent
+  type: Field
+  source:
+    id: parent
+    path: ''
+    startLine: 29983
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public PrefabSpawner parent
+    return:
+      type: Global.PrefabSpawner
+    content.vb: Public parent As PrefabSpawner
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.Pickupable.Start
+  commentId: M:Global.Pickupable.Start
+  id: Start
+  parent: Global.Pickupable
+  langs:
+  - csharp
+  - vb
+  name: Start()
+  nameWithType: Pickupable.Start()
+  fullName: Pickupable.Start()
+  type: Method
+  source:
+    id: Start
+    path: ''
+    startLine: 29990
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void Start()
+    content.vb: Public Sub Start
+  overload: Global.Pickupable.Start*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.Pickupable.OnTrigger(Player)
+  commentId: M:Global.Pickupable.OnTrigger(Player)
+  id: OnTrigger(Player)
+  parent: Global.Pickupable
+  langs:
+  - csharp
+  - vb
+  name: OnTrigger(Player)
+  nameWithType: Pickupable.OnTrigger(Player)
+  fullName: Pickupable.OnTrigger(Player)
+  type: Method
+  source:
+    id: OnTrigger
+    path: ''
+    startLine: 30010
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public virtual void OnTrigger(Player player)
+    parameters:
+    - id: player
+      type: Global.Player
+    content.vb: Public Overridable Sub OnTrigger(player As Player)
+  overload: Global.Pickupable.OnTrigger*
+  modifiers.csharp:
+  - public
+  - virtual
+  modifiers.vb:
+  - Public
+  - Overridable
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Global.PrefabSpawner
+  commentId: T:Global.PrefabSpawner
+  name: PrefabSpawner
+  nameWithType: PrefabSpawner
+  fullName: PrefabSpawner
+- uid: Global.Pickupable.Start*
+  commentId: Overload:Global.Pickupable.Start
+  name: Start
+  nameWithType: Pickupable.Start
+  fullName: Pickupable.Start
+- uid: Global.Pickupable.OnTrigger*
+  commentId: Overload:Global.Pickupable.OnTrigger
+  name: OnTrigger
+  nameWithType: Pickupable.OnTrigger
+  fullName: Pickupable.OnTrigger
+- uid: Global.Player
+  commentId: T:Global.Player
+  name: Player
+  nameWithType: Player
+  fullName: Player

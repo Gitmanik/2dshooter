@@ -1528,7 +1528,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e06568e7f2867184e90c42e2a864034f, type: 2}
   - {fileID: 11400000, guid: 1f0cc845ae7b4dd4c920512cad7fff8f, type: 2}
   - {fileID: 11400000, guid: 4b54bb6929789e44b8ac9fdffebb8722, type: 2}
-  GameVersion: 0
+  - {fileID: 11400000, guid: 8bf1fd39a71d55442a58e56dfc274a08, type: 2}
+  GameVersion: 1
   MaxFPS: 60
   blackMask: {fileID: 1164248923}
   reloadSound: {fileID: 8300000, guid: eb1f2a378000e654882d359829c61bc1, type: 3}
@@ -1592,12 +1593,12 @@ MonoBehaviour:
   runInBackground: 1
   autoStartServerBuild: 0
   showDebugMessages: 0
-  serverTickRate: 90
+  serverTickRate: 60
   offlineScene: Assets/_Scenes/menu.unity
   onlineScene: Assets/_Scenes/game.unity
   transport: {fileID: 1036736811}
   networkAddress: localhost
-  maxConnections: 4
+  maxConnections: 8
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 1036736816}

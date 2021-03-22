@@ -14,6 +14,7 @@ public class Gun : ScriptableObject
     public int magazineCount;
     public int magazineCapacity;
 
+    public bool melee;
     public AnimationCurve damageCurve;
     public float firerate;
     public float damage;

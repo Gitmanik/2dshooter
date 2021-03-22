@@ -1,0 +1,212 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.GiveAmmoPickup
+  commentId: T:Global.GiveAmmoPickup
+  id: GiveAmmoPickup
+  parent: Global
+  children:
+  - Global.GiveAmmoPickup.magazineCount
+  - Global.GiveAmmoPickup.OnTrigger(Player)
+  langs:
+  - csharp
+  - vb
+  name: GiveAmmoPickup
+  nameWithType: GiveAmmoPickup
+  fullName: GiveAmmoPickup
+  type: Class
+  source:
+    id: GiveAmmoPickup
+    path: ''
+    startLine: 29962
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class GiveAmmoPickup : Pickupable'
+    content.vb: >-
+      Public Class GiveAmmoPickup
+          Inherits Pickupable
+  inheritance:
+  - System.Object
+  - Global.Pickupable
+  inheritedMembers:
+  - Global.Pickupable.parent
+  - Global.Pickupable.Start
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.GiveAmmoPickup.magazineCount
+  commentId: F:Global.GiveAmmoPickup.magazineCount
+  id: magazineCount
+  parent: Global.GiveAmmoPickup
+  langs:
+  - csharp
+  - vb
+  name: magazineCount
+  nameWithType: GiveAmmoPickup.magazineCount
+  fullName: GiveAmmoPickup.magazineCount
+  type: Field
+  source:
+    id: magazineCount
+    path: ''
+    startLine: 29964
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public int magazineCount
+    return:
+      type: System.Int32
+    content.vb: Public magazineCount As Integer
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.GiveAmmoPickup.OnTrigger(Player)
+  commentId: M:Global.GiveAmmoPickup.OnTrigger(Player)
+  id: OnTrigger(Player)
+  parent: Global.GiveAmmoPickup
+  langs:
+  - csharp
+  - vb
+  name: OnTrigger(Player)
+  nameWithType: GiveAmmoPickup.OnTrigger(Player)
+  fullName: GiveAmmoPickup.OnTrigger(Player)
+  type: Method
+  source:
+    id: OnTrigger
+    path: ''
+    startLine: 29965
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public override void OnTrigger(Player player)
+    parameters:
+    - id: player
+      type: Global.Player
+    content.vb: Public Overrides Sub OnTrigger(player As Player)
+  overridden: Global.Pickupable.OnTrigger(Player)
+  overload: Global.GiveAmmoPickup.OnTrigger*
+  modifiers.csharp:
+  - public
+  - override
+  modifiers.vb:
+  - Public
+  - Overrides
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: Global.Pickupable
+  commentId: T:Global.Pickupable
+  name: Pickupable
+  nameWithType: Pickupable
+  fullName: Pickupable
+- uid: Global.Pickupable.parent
+  commentId: F:Global.Pickupable.parent
+  parent: Global.Pickupable
+  name: parent
+  nameWithType: Pickupable.parent
+  fullName: Pickupable.parent
+- uid: Global.Pickupable.Start
+  commentId: M:Global.Pickupable.Start
+  parent: Global.Pickupable
+  name: Start()
+  nameWithType: Pickupable.Start()
+  fullName: Pickupable.Start()
+  spec.csharp:
+  - uid: Global.Pickupable.Start
+    name: Start
+    nameWithType: Pickupable.Start
+    fullName: Pickupable.Start
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: Global.Pickupable.Start
+    name: Start
+    nameWithType: Pickupable.Start
+    fullName: Pickupable.Start
+  - name: (
+    nameWithType: (
+    fullName: (
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: Global.Pickupable.OnTrigger(Player)
+  commentId: M:Global.Pickupable.OnTrigger(Player)
+  parent: Global.Pickupable
+  name: OnTrigger(Player)
+  nameWithType: Pickupable.OnTrigger(Player)
+  fullName: Pickupable.OnTrigger(Player)
+  spec.csharp:
+  - uid: Global.Pickupable.OnTrigger(Player)
+    name: OnTrigger
+    nameWithType: Pickupable.OnTrigger
+    fullName: Pickupable.OnTrigger
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: Global.Player
+    name: Player
+    nameWithType: Player
+    fullName: Player
+  - name: )
+    nameWithType: )
+    fullName: )
+  spec.vb:
+  - uid: Global.Pickupable.OnTrigger(Player)
+    name: OnTrigger
+    nameWithType: Pickupable.OnTrigger
+    fullName: Pickupable.OnTrigger
+  - name: (
+    nameWithType: (
+    fullName: (
+  - uid: Global.Player
+    name: Player
+    nameWithType: Player
+    fullName: Player
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: Global.GiveAmmoPickup.OnTrigger*
+  commentId: Overload:Global.GiveAmmoPickup.OnTrigger
+  name: OnTrigger
+  nameWithType: GiveAmmoPickup.OnTrigger
+  fullName: GiveAmmoPickup.OnTrigger
+- uid: Global.Player
+  commentId: T:Global.Player
+  name: Player
+  nameWithType: Player
+  fullName: Player

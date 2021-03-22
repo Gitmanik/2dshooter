@@ -23,13 +23,14 @@ public class Level : MonoBehaviour
         NetworkManager.singleton.authenticator.OnServerAuthenticated.AddListener(OnPlayerConnected);
         CustomNetworkManager.Instance.onClientDisconnected.AddListener(OnClientDisconnect);
 
-        NetworkServer.RegisterHandler<PlayerPingMessage>(OnServerReceivePing);
+        NetworkServer.ReplaceHandler<PlayerPingMessage>(OnServerReceivePing);
     }
 
     private void OnDestroy()
     {
         IngameHUDManager.Instance.DisableAll();
         NetworkManager.singleton.authenticator.OnServerAuthenticated.RemoveListener(OnPlayerConnected);
+        CustomNetworkManager.Instance.onClientDisconnected.RemoveListener(OnClientDisconnect);
     }
     #endregion
 
@@ -37,7 +38,6 @@ public class Level : MonoBehaviour
     {
         Player.allPlayers.Find(x => x.connectionToClient == conn).ping = message.ping;
     }
-
 
     public void OnPlayerConnected(NetworkConnection conn)
     {
@@ -57,10 +57,9 @@ public class Level : MonoBehaviour
         NetworkedNotification.Spawn($"{Player.allPlayers.Find(x => x.connectionToClient == conn).info.Nickname} has disconnected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
     }
 
-    private void RespawnPlayer(Player player, Vector3 newPos)
+    private void RespawnPlayer(Player player)
     {
         player.health = 100;
-        player.TargetTeleport(newPos);
         player.i.ResetInventory();
         player.Respawn();
         NetworkedNotification.Spawn($"{player.info.Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
@@ -73,7 +72,9 @@ public class Level : MonoBehaviour
         if (playerKiller != null)
             killer = playerKiller.info.Nickname;
 
+        player.TargetTeleport(NetworkManager.singleton.GetStartPosition().position);
+
         NetworkedNotification.Spawn($"{killer} > {player.info.Nickname}", new Color(0, 0, 0, 0.8f), 5f);
-        LeanTween.delayedCall(2.5f, () => RespawnPlayer(player, NetworkManager.singleton.GetStartPosition().position));
+        LeanTween.delayedCall(2.5f, () => RespawnPlayer(player));
     }
 }

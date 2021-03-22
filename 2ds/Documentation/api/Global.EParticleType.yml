@@ -1,0 +1,101 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.EParticleType
+  commentId: T:Global.EParticleType
+  id: EParticleType
+  parent: Global
+  children:
+  - Global.EParticleType.BLOOD
+  - Global.EParticleType.SHOOT
+  langs:
+  - csharp
+  - vb
+  name: EParticleType
+  nameWithType: EParticleType
+  fullName: EParticleType
+  type: Enum
+  source:
+    id: EParticleType
+    path: ''
+    startLine: 28653
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public enum EParticleType
+    content.vb: Public Enum EParticleType
+  modifiers.csharp:
+  - public
+  - enum
+  modifiers.vb:
+  - Public
+  - Enum
+- uid: Global.EParticleType.SHOOT
+  commentId: F:Global.EParticleType.SHOOT
+  id: SHOOT
+  parent: Global.EParticleType
+  langs:
+  - csharp
+  - vb
+  name: SHOOT
+  nameWithType: EParticleType.SHOOT
+  fullName: EParticleType.SHOOT
+  type: Field
+  source:
+    id: SHOOT
+    path: ''
+    startLine: 28655
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: SHOOT = 0
+    return:
+      type: Global.EParticleType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+- uid: Global.EParticleType.BLOOD
+  commentId: F:Global.EParticleType.BLOOD
+  id: BLOOD
+  parent: Global.EParticleType
+  langs:
+  - csharp
+  - vb
+  name: BLOOD
+  nameWithType: EParticleType.BLOOD
+  fullName: EParticleType.BLOOD
+  type: Field
+  source:
+    id: BLOOD
+    path: ''
+    startLine: 28656
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: BLOOD = 1
+    return:
+      type: Global.EParticleType
+  modifiers.csharp:
+  - public
+  - const
+  modifiers.vb:
+  - Public
+  - Const
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.EParticleType
+  commentId: T:Global.EParticleType
+  name: EParticleType
+  nameWithType: EParticleType
+  fullName: EParticleType

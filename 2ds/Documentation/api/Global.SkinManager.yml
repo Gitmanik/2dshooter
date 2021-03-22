@@ -1,0 +1,151 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.SkinManager
+  commentId: T:Global.SkinManager
+  id: SkinManager
+  parent: Global
+  children:
+  - Global.SkinManager.AllSkins
+  - Global.SkinManager.Instance
+  langs:
+  - csharp
+  - vb
+  name: SkinManager
+  nameWithType: SkinManager
+  fullName: SkinManager
+  type: Class
+  source:
+    id: SkinManager
+    path: ''
+    startLine: 28685
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class SkinManager : MonoBehaviour'
+    content.vb: >-
+      Public Class SkinManager
+          Inherits MonoBehaviour
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.SkinManager.AllSkins
+  commentId: F:Global.SkinManager.AllSkins
+  id: AllSkins
+  parent: Global.SkinManager
+  langs:
+  - csharp
+  - vb
+  name: AllSkins
+  nameWithType: SkinManager.AllSkins
+  fullName: SkinManager.AllSkins
+  type: Field
+  source:
+    id: AllSkins
+    path: ''
+    startLine: 28687
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public Skin[] AllSkins
+    return:
+      type: Global.Skin[]
+    content.vb: Public AllSkins As Skin()
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.SkinManager.Instance
+  commentId: P:Global.SkinManager.Instance
+  id: Instance
+  parent: Global.SkinManager
+  langs:
+  - csharp
+  - vb
+  name: Instance
+  nameWithType: SkinManager.Instance
+  fullName: SkinManager.Instance
+  type: Property
+  source:
+    id: Instance
+    path: ''
+    startLine: 28689
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static SkinManager Instance { get; }
+    parameters: []
+    return:
+      type: Global.SkinManager
+    content.vb: Public Shared ReadOnly Property Instance As SkinManager
+  overload: Global.SkinManager.Instance*
+  modifiers.csharp:
+  - public
+  - static
+  - get
+  modifiers.vb:
+  - Public
+  - Shared
+  - ReadOnly
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Global.Skin[]
+  isExternal: true
+  name: Skin[]
+  nameWithType: Skin[]
+  fullName: Skin[]
+  nameWithType.vb: Skin()
+  fullName.vb: Skin()
+  name.vb: Skin()
+  spec.csharp:
+  - uid: Global.Skin
+    name: Skin
+    nameWithType: Skin
+    fullName: Skin
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+  spec.vb:
+  - uid: Global.Skin
+    name: Skin
+    nameWithType: Skin
+    fullName: Skin
+  - name: ()
+    nameWithType: ()
+    fullName: ()
+- uid: Global.SkinManager.Instance*
+  commentId: Overload:Global.SkinManager.Instance
+  name: Instance
+  nameWithType: SkinManager.Instance
+  fullName: SkinManager.Instance
+- uid: Global.SkinManager
+  commentId: T:Global.SkinManager
+  name: SkinManager
+  nameWithType: SkinManager
+  fullName: SkinManager

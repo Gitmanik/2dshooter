@@ -1,0 +1,125 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.ParticleEntry
+  commentId: T:Global.ParticleEntry
+  id: ParticleEntry
+  parent: Global
+  children:
+  - Global.ParticleEntry.gameObj
+  - Global.ParticleEntry.ParticleType
+  langs:
+  - csharp
+  - vb
+  name: ParticleEntry
+  nameWithType: ParticleEntry
+  fullName: ParticleEntry
+  type: Struct
+  source:
+    id: ParticleEntry
+    path: ''
+    startLine: 28659
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public struct ParticleEntry
+    content.vb: Public Structure ParticleEntry
+  modifiers.csharp:
+  - public
+  - struct
+  modifiers.vb:
+  - Public
+  - Structure
+- uid: Global.ParticleEntry.ParticleType
+  commentId: F:Global.ParticleEntry.ParticleType
+  id: ParticleType
+  parent: Global.ParticleEntry
+  langs:
+  - csharp
+  - vb
+  name: ParticleType
+  nameWithType: ParticleEntry.ParticleType
+  fullName: ParticleEntry.ParticleType
+  type: Field
+  source:
+    id: ParticleType
+    path: ''
+    startLine: 28662
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public EParticleType ParticleType
+    return:
+      type: Global.EParticleType
+    content.vb: Public ParticleType As EParticleType
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.ParticleEntry.gameObj
+  commentId: F:Global.ParticleEntry.gameObj
+  id: gameObj
+  parent: Global.ParticleEntry
+  langs:
+  - csharp
+  - vb
+  name: gameObj
+  nameWithType: ParticleEntry.gameObj
+  fullName: ParticleEntry.gameObj
+  type: Field
+  source:
+    id: gameObj
+    path: ''
+    startLine: 28663
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public GameObject[] gameObj
+    return:
+      type: Global.GameObject[]
+    content.vb: Public gameObj As GameObject()
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.EParticleType
+  commentId: T:Global.EParticleType
+  name: EParticleType
+  nameWithType: EParticleType
+  fullName: EParticleType
+- uid: Global.GameObject[]
+  isExternal: true
+  name: GameObject[]
+  nameWithType: GameObject[]
+  fullName: GameObject[]
+  nameWithType.vb: GameObject()
+  fullName.vb: GameObject()
+  name.vb: GameObject()
+  spec.csharp:
+  - uid: Global.GameObject
+    name: GameObject
+    nameWithType: GameObject
+    fullName: GameObject
+    isExternal: true
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+  spec.vb:
+  - uid: Global.GameObject
+    name: GameObject
+    nameWithType: GameObject
+    fullName: GameObject
+    isExternal: true
+  - name: ()
+    nameWithType: ()
+    fullName: ()

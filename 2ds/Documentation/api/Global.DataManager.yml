@@ -1,0 +1,266 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.DataManager
+  commentId: T:Global.DataManager
+  id: DataManager
+  parent: Global
+  children:
+  - Global.DataManager.Load
+  - Global.DataManager.MainVolume
+  - Global.DataManager.MaxFPS
+  - Global.DataManager.Name
+  - Global.DataManager.RecentIP
+  langs:
+  - csharp
+  - vb
+  name: DataManager
+  nameWithType: DataManager
+  fullName: DataManager
+  type: Class
+  source:
+    id: DataManager
+    path: ''
+    startLine: 28532
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class DataManager : MonoBehaviour'
+    content.vb: >-
+      Public Class DataManager
+          Inherits MonoBehaviour
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.DataManager.Name
+  commentId: P:Global.DataManager.Name
+  id: Name
+  parent: Global.DataManager
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: DataManager.Name
+  fullName: DataManager.Name
+  type: Property
+  source:
+    id: Name
+    path: ''
+    startLine: 28534
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static string Name { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Shared Property Name As String
+  overload: Global.DataManager.Name*
+  modifiers.csharp:
+  - public
+  - static
+  - get
+  - set
+  modifiers.vb:
+  - Public
+  - Shared
+- uid: Global.DataManager.RecentIP
+  commentId: P:Global.DataManager.RecentIP
+  id: RecentIP
+  parent: Global.DataManager
+  langs:
+  - csharp
+  - vb
+  name: RecentIP
+  nameWithType: DataManager.RecentIP
+  fullName: DataManager.RecentIP
+  type: Property
+  source:
+    id: RecentIP
+    path: ''
+    startLine: 28551
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static string RecentIP { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Shared Property RecentIP As String
+  overload: Global.DataManager.RecentIP*
+  modifiers.csharp:
+  - public
+  - static
+  - get
+  - set
+  modifiers.vb:
+  - Public
+  - Shared
+- uid: Global.DataManager.MainVolume
+  commentId: P:Global.DataManager.MainVolume
+  id: MainVolume
+  parent: Global.DataManager
+  langs:
+  - csharp
+  - vb
+  name: MainVolume
+  nameWithType: DataManager.MainVolume
+  fullName: DataManager.MainVolume
+  type: Property
+  source:
+    id: MainVolume
+    path: ''
+    startLine: 28557
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static float MainVolume { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Shared Property MainVolume As Single
+  overload: Global.DataManager.MainVolume*
+  modifiers.csharp:
+  - public
+  - static
+  - get
+  - set
+  modifiers.vb:
+  - Public
+  - Shared
+- uid: Global.DataManager.MaxFPS
+  commentId: P:Global.DataManager.MaxFPS
+  id: MaxFPS
+  parent: Global.DataManager
+  langs:
+  - csharp
+  - vb
+  name: MaxFPS
+  nameWithType: DataManager.MaxFPS
+  fullName: DataManager.MaxFPS
+  type: Property
+  source:
+    id: MaxFPS
+    path: ''
+    startLine: 28563
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static int MaxFPS { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Shared Property MaxFPS As Integer
+  overload: Global.DataManager.MaxFPS*
+  modifiers.csharp:
+  - public
+  - static
+  - get
+  - set
+  modifiers.vb:
+  - Public
+  - Shared
+- uid: Global.DataManager.Load
+  commentId: M:Global.DataManager.Load
+  id: Load
+  parent: Global.DataManager
+  langs:
+  - csharp
+  - vb
+  name: Load()
+  nameWithType: DataManager.Load()
+  fullName: DataManager.Load()
+  type: Method
+  source:
+    id: Load
+    path: ''
+    startLine: 28569
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static void Load()
+    content.vb: Public Shared Sub Load
+  overload: Global.DataManager.Load*
+  modifiers.csharp:
+  - public
+  - static
+  modifiers.vb:
+  - Public
+  - Shared
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Global.DataManager.Name*
+  commentId: Overload:Global.DataManager.Name
+  name: Name
+  nameWithType: DataManager.Name
+  fullName: DataManager.Name
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  name: String
+  nameWithType: String
+  fullName: System.String
+- uid: Global.DataManager.RecentIP*
+  commentId: Overload:Global.DataManager.RecentIP
+  name: RecentIP
+  nameWithType: DataManager.RecentIP
+  fullName: DataManager.RecentIP
+- uid: Global.DataManager.MainVolume*
+  commentId: Overload:Global.DataManager.MainVolume
+  name: MainVolume
+  nameWithType: DataManager.MainVolume
+  fullName: DataManager.MainVolume
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  name: Single
+  nameWithType: Single
+  fullName: System.Single
+- uid: Global.DataManager.MaxFPS*
+  commentId: Overload:Global.DataManager.MaxFPS
+  name: MaxFPS
+  nameWithType: DataManager.MaxFPS
+  fullName: DataManager.MaxFPS
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: Global.DataManager.Load*
+  commentId: Overload:Global.DataManager.Load
+  name: Load
+  nameWithType: DataManager.Load
+  fullName: DataManager.Load

@@ -1,0 +1,296 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.CustomAuthenticator
+  commentId: T:Global.CustomAuthenticator
+  id: CustomAuthenticator
+  parent: Global
+  children:
+  - Global.CustomAuthenticator.OnAuthRequestMessage(NetworkConnection,AuthRequestMessage)
+  - Global.CustomAuthenticator.OnAuthResponseMessage(NetworkConnection,AuthResponseMessage)
+  - Global.CustomAuthenticator.OnClientAuthenticate(NetworkConnection)
+  - Global.CustomAuthenticator.OnServerAuthenticate(NetworkConnection)
+  - Global.CustomAuthenticator.OnStartClient
+  - Global.CustomAuthenticator.OnStartServer
+  langs:
+  - csharp
+  - vb
+  name: CustomAuthenticator
+  nameWithType: CustomAuthenticator
+  fullName: CustomAuthenticator
+  type: Class
+  source:
+    id: CustomAuthenticator
+    path: ''
+    startLine: 28730
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class CustomAuthenticator : NetworkAuthenticator'
+    content.vb: >-
+      Public Class CustomAuthenticator
+          Inherits NetworkAuthenticator
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.CustomAuthenticator.OnStartServer
+  commentId: M:Global.CustomAuthenticator.OnStartServer
+  id: OnStartServer
+  parent: Global.CustomAuthenticator
+  langs:
+  - csharp
+  - vb
+  name: OnStartServer()
+  nameWithType: CustomAuthenticator.OnStartServer()
+  fullName: CustomAuthenticator.OnStartServer()
+  type: Method
+  source:
+    id: OnStartServer
+    path: ''
+    startLine: 28738
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  summary: "\nCalled on server from StartServer to initialize the Authenticator\n<p>Server message handlers should be registered in this method.</p>\n"
+  example: []
+  syntax:
+    content: public override void OnStartServer()
+    content.vb: Public Overrides Sub OnStartServer
+  overload: Global.CustomAuthenticator.OnStartServer*
+  modifiers.csharp:
+  - public
+  - override
+  modifiers.vb:
+  - Public
+  - Overrides
+- uid: Global.CustomAuthenticator.OnServerAuthenticate(NetworkConnection)
+  commentId: M:Global.CustomAuthenticator.OnServerAuthenticate(NetworkConnection)
+  id: OnServerAuthenticate(NetworkConnection)
+  parent: Global.CustomAuthenticator
+  langs:
+  - csharp
+  - vb
+  name: OnServerAuthenticate(NetworkConnection)
+  nameWithType: CustomAuthenticator.OnServerAuthenticate(NetworkConnection)
+  fullName: CustomAuthenticator.OnServerAuthenticate(NetworkConnection)
+  type: Method
+  source:
+    id: OnServerAuthenticate
+    path: ''
+    startLine: 28748
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  summary: "\nCalled on server from OnServerAuthenticateInternal when a client needs to authenticate\n"
+  example: []
+  syntax:
+    content: public override void OnServerAuthenticate(NetworkConnection conn)
+    parameters:
+    - id: conn
+      type: Global.NetworkConnection
+      description: Connection to client.
+    content.vb: Public Overrides Sub OnServerAuthenticate(conn As NetworkConnection)
+  overload: Global.CustomAuthenticator.OnServerAuthenticate*
+  modifiers.csharp:
+  - public
+  - override
+  modifiers.vb:
+  - Public
+  - Overrides
+- uid: Global.CustomAuthenticator.OnAuthRequestMessage(NetworkConnection,AuthRequestMessage)
+  commentId: M:Global.CustomAuthenticator.OnAuthRequestMessage(NetworkConnection,AuthRequestMessage)
+  id: OnAuthRequestMessage(NetworkConnection,AuthRequestMessage)
+  parent: Global.CustomAuthenticator
+  langs:
+  - csharp
+  - vb
+  name: OnAuthRequestMessage(NetworkConnection, AuthRequestMessage)
+  nameWithType: CustomAuthenticator.OnAuthRequestMessage(NetworkConnection, AuthRequestMessage)
+  fullName: CustomAuthenticator.OnAuthRequestMessage(NetworkConnection, AuthRequestMessage)
+  type: Method
+  source:
+    id: OnAuthRequestMessage
+    path: ''
+    startLine: 28750
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void OnAuthRequestMessage(NetworkConnection conn, AuthRequestMessage authData)
+    parameters:
+    - id: conn
+      type: Global.NetworkConnection
+    - id: authData
+      type: Global.AuthRequestMessage
+    content.vb: Public Sub OnAuthRequestMessage(conn As NetworkConnection, authData As AuthRequestMessage)
+  overload: Global.CustomAuthenticator.OnAuthRequestMessage*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.CustomAuthenticator.OnStartClient
+  commentId: M:Global.CustomAuthenticator.OnStartClient
+  id: OnStartClient
+  parent: Global.CustomAuthenticator
+  langs:
+  - csharp
+  - vb
+  name: OnStartClient()
+  nameWithType: CustomAuthenticator.OnStartClient()
+  fullName: CustomAuthenticator.OnStartClient()
+  type: Method
+  source:
+    id: OnStartClient
+    path: ''
+    startLine: 28773
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  summary: "\nCalled on client from StartClient to initialize the Authenticator\n<p>Client message handlers should be registered in this method.</p>\n"
+  example: []
+  syntax:
+    content: public override void OnStartClient()
+    content.vb: Public Overrides Sub OnStartClient
+  overload: Global.CustomAuthenticator.OnStartClient*
+  modifiers.csharp:
+  - public
+  - override
+  modifiers.vb:
+  - Public
+  - Overrides
+- uid: Global.CustomAuthenticator.OnClientAuthenticate(NetworkConnection)
+  commentId: M:Global.CustomAuthenticator.OnClientAuthenticate(NetworkConnection)
+  id: OnClientAuthenticate(NetworkConnection)
+  parent: Global.CustomAuthenticator
+  langs:
+  - csharp
+  - vb
+  name: OnClientAuthenticate(NetworkConnection)
+  nameWithType: CustomAuthenticator.OnClientAuthenticate(NetworkConnection)
+  fullName: CustomAuthenticator.OnClientAuthenticate(NetworkConnection)
+  type: Method
+  source:
+    id: OnClientAuthenticate
+    path: ''
+    startLine: 28783
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  summary: "\nCalled on client from OnClientAuthenticateInternal when a client needs to authenticate\n"
+  example: []
+  syntax:
+    content: public override void OnClientAuthenticate(NetworkConnection conn)
+    parameters:
+    - id: conn
+      type: Global.NetworkConnection
+      description: Connection of the client.
+    content.vb: Public Overrides Sub OnClientAuthenticate(conn As NetworkConnection)
+  overload: Global.CustomAuthenticator.OnClientAuthenticate*
+  modifiers.csharp:
+  - public
+  - override
+  modifiers.vb:
+  - Public
+  - Overrides
+- uid: Global.CustomAuthenticator.OnAuthResponseMessage(NetworkConnection,AuthResponseMessage)
+  commentId: M:Global.CustomAuthenticator.OnAuthResponseMessage(NetworkConnection,AuthResponseMessage)
+  id: OnAuthResponseMessage(NetworkConnection,AuthResponseMessage)
+  parent: Global.CustomAuthenticator
+  langs:
+  - csharp
+  - vb
+  name: OnAuthResponseMessage(NetworkConnection, AuthResponseMessage)
+  nameWithType: CustomAuthenticator.OnAuthResponseMessage(NetworkConnection, AuthResponseMessage)
+  fullName: CustomAuthenticator.OnAuthResponseMessage(NetworkConnection, AuthResponseMessage)
+  type: Method
+  source:
+    id: OnAuthResponseMessage
+    path: ''
+    startLine: 28789
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void OnAuthResponseMessage(NetworkConnection conn, AuthResponseMessage arg2)
+    parameters:
+    - id: conn
+      type: Global.NetworkConnection
+    - id: arg2
+      type: Global.AuthResponseMessage
+    content.vb: Public Sub OnAuthResponseMessage(conn As NetworkConnection, arg2 As AuthResponseMessage)
+  overload: Global.CustomAuthenticator.OnAuthResponseMessage*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: Global.CustomAuthenticator.OnStartServer*
+  commentId: Overload:Global.CustomAuthenticator.OnStartServer
+  name: OnStartServer
+  nameWithType: CustomAuthenticator.OnStartServer
+  fullName: CustomAuthenticator.OnStartServer
+- uid: Global.CustomAuthenticator.OnServerAuthenticate*
+  commentId: Overload:Global.CustomAuthenticator.OnServerAuthenticate
+  name: OnServerAuthenticate
+  nameWithType: CustomAuthenticator.OnServerAuthenticate
+  fullName: CustomAuthenticator.OnServerAuthenticate
+- uid: Global.NetworkConnection
+  isExternal: true
+  name: NetworkConnection
+  nameWithType: NetworkConnection
+  fullName: NetworkConnection
+- uid: Global.CustomAuthenticator.OnAuthRequestMessage*
+  commentId: Overload:Global.CustomAuthenticator.OnAuthRequestMessage
+  name: OnAuthRequestMessage
+  nameWithType: CustomAuthenticator.OnAuthRequestMessage
+  fullName: CustomAuthenticator.OnAuthRequestMessage
+- uid: Global.AuthRequestMessage
+  commentId: T:Global.AuthRequestMessage
+  name: AuthRequestMessage
+  nameWithType: AuthRequestMessage
+  fullName: AuthRequestMessage
+- uid: Global.CustomAuthenticator.OnStartClient*
+  commentId: Overload:Global.CustomAuthenticator.OnStartClient
+  name: OnStartClient
+  nameWithType: CustomAuthenticator.OnStartClient
+  fullName: CustomAuthenticator.OnStartClient
+- uid: Global.CustomAuthenticator.OnClientAuthenticate*
+  commentId: Overload:Global.CustomAuthenticator.OnClientAuthenticate
+  name: OnClientAuthenticate
+  nameWithType: CustomAuthenticator.OnClientAuthenticate
+  fullName: CustomAuthenticator.OnClientAuthenticate
+- uid: Global.CustomAuthenticator.OnAuthResponseMessage*
+  commentId: Overload:Global.CustomAuthenticator.OnAuthResponseMessage
+  name: OnAuthResponseMessage
+  nameWithType: CustomAuthenticator.OnAuthResponseMessage
+  fullName: CustomAuthenticator.OnAuthResponseMessage
+- uid: Global.AuthResponseMessage
+  commentId: T:Global.AuthResponseMessage
+  name: AuthResponseMessage
+  nameWithType: AuthResponseMessage
+  fullName: AuthResponseMessage

@@ -1,0 +1,88 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.PlayerPingMessage
+  commentId: T:Global.PlayerPingMessage
+  id: PlayerPingMessage
+  parent: Global
+  children:
+  - Global.PlayerPingMessage.ping
+  langs:
+  - csharp
+  - vb
+  name: PlayerPingMessage
+  nameWithType: PlayerPingMessage
+  fullName: PlayerPingMessage
+  type: Struct
+  source:
+    id: PlayerPingMessage
+    path: ''
+    startLine: 28878
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public struct PlayerPingMessage : NetworkMessage'
+    content.vb: >-
+      Public Structure PlayerPingMessage
+          Implements NetworkMessage
+  implements:
+  - Global.NetworkMessage
+  modifiers.csharp:
+  - public
+  - struct
+  modifiers.vb:
+  - Public
+  - Structure
+- uid: Global.PlayerPingMessage.ping
+  commentId: F:Global.PlayerPingMessage.ping
+  id: ping
+  parent: Global.PlayerPingMessage
+  langs:
+  - csharp
+  - vb
+  name: ping
+  nameWithType: PlayerPingMessage.ping
+  fullName: PlayerPingMessage.ping
+  type: Field
+  source:
+    id: ping
+    path: ''
+    startLine: 28880
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public int ping
+    return:
+      type: System.Int32
+    content.vb: Public ping As Integer
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.NetworkMessage
+  isExternal: true
+  name: NetworkMessage
+  nameWithType: NetworkMessage
+  fullName: NetworkMessage
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System

@@ -1,0 +1,89 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.Target
+  commentId: T:Global.Target
+  id: Target
+  parent: Global
+  children:
+  - Global.Target.Damage(GameObject,System.Single)
+  langs:
+  - csharp
+  - vb
+  name: Target
+  nameWithType: Target
+  fullName: Target
+  type: Interface
+  source:
+    id: Target
+    path: ''
+    startLine: 29684
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public interface Target
+    content.vb: Public Interface Target
+  modifiers.csharp:
+  - public
+  - interface
+  modifiers.vb:
+  - Public
+  - Interface
+- uid: Global.Target.Damage(GameObject,System.Single)
+  commentId: M:Global.Target.Damage(GameObject,System.Single)
+  id: Damage(GameObject,System.Single)
+  parent: Global.Target
+  langs:
+  - csharp
+  - vb
+  name: Damage(GameObject, Single)
+  nameWithType: Target.Damage(GameObject, Single)
+  fullName: Target.Damage(GameObject, System.Single)
+  type: Method
+  source:
+    id: Damage
+    path: ''
+    startLine: 29686
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: void Damage(GameObject x, float v)
+    parameters:
+    - id: x
+      type: Global.GameObject
+    - id: v
+      type: System.Single
+    content.vb: Sub Damage(x As GameObject, v As Single)
+  overload: Global.Target.Damage*
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.Target.Damage*
+  commentId: Overload:Global.Target.Damage
+  name: Damage
+  nameWithType: Target.Damage
+  fullName: Target.Damage
+- uid: Global.GameObject
+  isExternal: true
+  name: GameObject
+  nameWithType: GameObject
+  fullName: GameObject
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  name: Single
+  nameWithType: Single
+  fullName: System.Single
+- uid: System
+  commentId: N:System
+  isExternal: true
+  name: System
+  nameWithType: System
+  fullName: System
