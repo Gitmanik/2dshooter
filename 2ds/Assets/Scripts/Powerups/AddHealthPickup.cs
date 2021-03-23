@@ -8,6 +8,6 @@ public class AddHealthPickup : Pickupable
     {
         base.OnTrigger(player);
         player.health += healthAmount;
-        NetworkedNotification.Spawn($"{player.info.Nickname} has picked up HealthPack for {healthAmount}!", Color.yellow - new Color(0, 0, 0, 0.4f), 1f);
+        NetworkedNotification.Spawn($"{player.Nickname} has picked up HealthPack for {healthAmount}!", Color.yellow - new Color(0, 0, 0, 0.4f), 1f);
     }
 }

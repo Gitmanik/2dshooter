@@ -227,6 +227,10 @@ MonoBehaviour:
   source: {fileID: 3672295732143018294}
   rotateTransform: {fileID: 8422484375046999334}
   muzzleTransform: {fileID: 4207019758551021079}
+  PlayerSkinIndex: 0
+  Nickname: 
+  killCount: 0
+  deathCount: 0
   health: 100
   ping: -1
   isAlive: 1
@@ -236,7 +240,6 @@ MonoBehaviour:
   destroyOnNonLocal:
   - {fileID: 7846575566296478125}
   DisableOnDead:
-  - {fileID: 8422484375046999334}
   - {fileID: 8104677187130984593}
 --- !u!114 &3139722972798333471
 MonoBehaviour:

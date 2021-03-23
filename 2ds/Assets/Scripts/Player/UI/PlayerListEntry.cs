@@ -6,10 +6,10 @@ public class PlayerListEntry : MonoBehaviour
     [SerializeField] private TMPro.TMP_Text ping;
     [SerializeField] private TMPro.TMP_Text stats;
 
-    public void Setup(PlayerInformation info, int pingv)
+    public void Setup(Player p)
     {
-        nickname.text = info.Nickname;
-        ping.text = $"{pingv}ms";
-        stats.text = $"{info.killCount}/{info.deathCount}";
+        nickname.text = p.Nickname;
+        ping.text = $"{p.ping}ms";
+        stats.text = $"{p.killCount}/{p.deathCount}";
     }
 }

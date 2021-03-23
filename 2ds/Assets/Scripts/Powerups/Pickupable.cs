@@ -32,7 +32,7 @@ public abstract class Pickupable : NetworkBehaviour
 
     public virtual void OnTrigger(Player player)
     {
-        Debug.Log($"{player.info.Nickname} just triggered with {name}!");
+        Debug.Log($"{player.Nickname} just triggered with {name}!");
         RpcPickedUp();
         parent?.Pickedup();
         Destroy(GetComponent<Collider2D>());

@@ -99,11 +99,9 @@ public class IngameHUDManager : MonoBehaviour
     public void UpdateAmmo()
     {
         if (!owner.i.HasAnyGun || owner.i.CurrentGun.melee)
-        {
             ammoText.text = "--";
-            return;
-        }
-        ammoText.text = $"{owner.i.CurrentGunData.currentAmmo}/{owner.i.CurrentGun.magazineCapacity} ({owner.i.CurrentGunData.totalAmmo})";
+        else
+            ammoText.text = $"{owner.i.CurrentGunData.currentAmmo}/{owner.i.CurrentGun.magazineCapacity} ({owner.i.CurrentGunData.totalAmmo})";
     }
     #endregion
 
@@ -134,7 +132,7 @@ public class IngameHUDManager : MonoBehaviour
 
         foreach (Player p in Player.allPlayers)
         {
-            Instantiate(panelEntryPrefab, listPanel.transform).GetComponent<PlayerListEntry>().Setup(p.info, p.ping);
+            Instantiate(panelEntryPrefab, listPanel.transform).GetComponent<PlayerListEntry>().Setup(p);
         }
     }
 

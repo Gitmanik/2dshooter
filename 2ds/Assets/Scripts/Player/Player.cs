@@ -26,9 +26,12 @@ public class Player : NetworkBehaviour, Target
     [SerializeField] private Transform muzzleTransform;
 
     [Header("Server-owned variables")]
-    [SyncVar(hook = nameof(OnSetInfo))] public PlayerInformation info;
-    [SyncVar(hook = nameof(OnChangedHealth))] public float health = -1f;
-    [SyncVar(hook = nameof(OnUpdatePing))] public int ping = -1;
+    [SyncVar(hook = nameof(OnUpdateSkinIndex))]  public int PlayerSkinIndex;
+    [SyncVar(hook = nameof(OnSetNickname))]      public string Nickname;
+    [SyncVar(hook = nameof(OnUpdatePlayerInfo))] public int killCount;
+    [SyncVar(hook = nameof(OnUpdatePlayerInfo))] public int deathCount;
+    [SyncVar(hook = nameof(OnChangedHealth))]    public float health = -1f;
+    [SyncVar(hook = nameof(OnUpdatePlayerInfo))] public int ping = -1;
     [SyncVar] public bool isAlive = true;
     [SyncVar] public bool isReloading = false;
     [SyncVar] public float reloadingState;
@@ -49,9 +52,9 @@ public class Player : NetworkBehaviour, Target
     {
         allPlayers.Add(this);
 
-        skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
+        skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, i.CurrentGun.SkinIndex);
 
-        if (!hasAuthority)
+        if (!isLocalPlayer)
         {
             foreach (Transform b in destroyOnNonLocal)
             {
@@ -89,19 +92,20 @@ public class Player : NetworkBehaviour, Target
                 ServerGunReloaded();
         }
 
-        if (!hasAuthority)
+        if (!isLocalPlayer)
             return;
 
         IngameHUDManager.Instance.UpdateDebug();
 
+        #region RTT Synchronization
         pingCtr += Time.unscaledDeltaTime;
 
         if (pingCtr >= .5f)
-
         {
-            NetworkClient.Send(new PlayerPingMessage { ping = (int)(NetworkTime.rtt * 1000) });
+            CmdSetPlayerPing((int)(NetworkTime.rtt * 1000));
             pingCtr = 0;
         }
+        #endregion
 
         shootDelay -= Time.deltaTime;
 
@@ -123,7 +127,7 @@ public class Player : NetworkBehaviour, Target
         #endregion
 
         if (Input.GetKeyDown(KeyCode.K))
-            CmdSetSkinIndex((info.SkinIndex + 1) % SkinManager.Instance.AllSkins.Length);
+            CmdSetSkinIndex((PlayerSkinIndex + 1) % SkinManager.Instance.AllSkins.Length);
 
         if (!isAlive)
         {
@@ -146,6 +150,7 @@ public class Player : NetworkBehaviour, Target
         if (Input.GetKeyDown(KeyCode.Escape))
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
+        #region Player Movement 
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
 
@@ -154,8 +159,9 @@ public class Player : NetworkBehaviour, Target
 
         if (RotateTowardsCamera() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
-    }
 
+        #endregion
+    }
     #endregion
 
     #region EventPlayer
@@ -168,8 +174,7 @@ public class Player : NetworkBehaviour, Target
         DAMAGED
     }
 
-    [Command]
-    private void CmdPlayEvent(EventType s) => RpcPlayEvent(s);
+    [Command] private void CmdPlayEvent(EventType s) => RpcPlayEvent(s);
 
     [ClientRpc]
     private void RpcPlayEvent(EventType s)
@@ -192,21 +197,25 @@ public class Player : NetworkBehaviour, Target
                 break;
         }
     }
-
+    #endregion
+     
     [ClientRpc]
-    internal void RpcOnPlayerDied(GameObject x)
+    internal void RpcDied(GameObject x)
     {
         Player playerKiller = x.GetComponent<Player>();
         string killer = x.name;
         if (playerKiller != null)
-            killer = playerKiller.info.Nickname;
+            killer = playerKiller.Nickname;
 
         foreach (Transform toDisable in DisableOnDead)
         {
             if (toDisable != null)
                 toDisable.gameObject.SetActive(false);
         }
-        if (hasAuthority)
+
+        skin.material.color = new Color(1f, 1f, 1f, 0.1f);
+
+        if (isLocalPlayer)
         {
             CameraFollow.instance.smooth = false;
             IngameHUDManager.Instance.ToggleAlive(false);
@@ -215,62 +224,60 @@ public class Player : NetworkBehaviour, Target
     }
 
     [ClientRpc]
-    private void RpcOnPlayerRespawned()
+    private void RpcRespawn()
     {
+        skin.material.color = Color.white;
         CameraFollow.instance.smooth = true;
         shootDelay = 0f;
+        isReloading = false;
+        reloadingState = 0f;
         foreach (Transform toDisable in DisableOnDead)
         {
             if (toDisable != null)
                 toDisable.gameObject.SetActive(true);
         }
 
-        if (hasAuthority)
+        if (isLocalPlayer)
         {
             IngameHUDManager.Instance.ToggleAlive(true);
         }
     }
-    #endregion
+
 
     #region SyncVar events
-    private void OnSetInfo(PlayerInformation oldinfo, PlayerInformation newinfo)
+
+    private void OnUpdateSkinIndex(int _, int __)
     {
-        if (oldinfo.Nickname != newinfo.Nickname)
-            nickText.text = info.Nickname;
-
         if (i.CurrentGun != null)
-            skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
+            skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, i.CurrentGun.SkinIndex);
+    }
 
-        name = $"Player {info.Nickname}";
-
-        if (hasAuthority)
+    private void OnSetNickname(string _, string __)
+    {
+        nickText.text = Nickname;
+        name = $"{(isLocalPlayer ? "Local" : "")} Player: {Nickname}";
+        if (isLocalPlayer)
             IngameHUDManager.Instance.UpdatePlayerList();
     }
+
     private void OnChangedHealth(float a, float b)
     {
-        if (hasAuthority)
+        if (isLocalPlayer)
             IngameHUDManager.Instance.UpdateHealth();
     }
-    private void OnUpdatePing(int _, int __)
+    private void OnUpdatePlayerInfo(int _, int __)
     {
         IngameHUDManager.Instance.UpdatePlayerList();
     }
 
     #endregion
 
-    [Command]
-    private void CmdSetSkinIndex(int SkinIndex){
-        PlayerInformation x = info;
-        x.SkinIndex = SkinIndex;
-        info = x;
-        print(SkinIndex);
-    }
+    [Command] private void CmdSetPlayerPing(int v) => ping = v;
+    [Command] private void CmdSetSkinIndex(int SkinIndex) => PlayerSkinIndex = SkinIndex;
 
-    [ClientRpc]
-    private void RpcSetSkin(SkinIndex s)
-    {
-        skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, s);
-    }
+    [ClientRpc] private void RpcSetSkin(SkinIndex s) => skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, s);
+
+    [TargetRpc] public void TargetTeleport(Vector3 newPos) => transform.position = newPos;
 
     private void OnSelectedSlot()
     {
@@ -281,16 +288,12 @@ public class Player : NetworkBehaviour, Target
         fovmesh.Setup();
         fovmesh.UpdateMesh();
 
-        skin.sprite = SkinManager.Instance.GetSprite(info.SkinIndex, i.CurrentGun.SkinIndex);
+        skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, i.CurrentGun.SkinIndex);
 
         IngameHUDManager.Instance.UpdateAmmo();
     }
 
-    [TargetRpc]
-    public void TargetTeleport(Vector3 newPos)
-    {
-        transform.position = newPos;
-    }
+
 
     /// <summary>
     /// Sets sound to attached AudioSource and plays it.
@@ -317,13 +320,24 @@ public class Player : NetworkBehaviour, Target
 
     #region Server
 
-    /// <summary>
-    /// Sets up client's representation.
-    /// </summary>
-    /// <param name="data">Client data</param>
     public void Setup(AuthRequestMessage data)
     {
-        info = new PlayerInformation() { Nickname = data.nick, SkinIndex = data.skinindex };
+        Nickname = data.nick;
+        PlayerSkinIndex = data.skinindex;
+    }
+
+    #region Reloading
+    [Command]
+    private void CmdStartReload()
+    {
+        if (reloadingState > 0f)
+            return;
+
+        reloadingState = i.CurrentGun.reloadTime;
+        isReloading = true;
+
+        RpcPlayEvent(EventType.RELOAD);
+        RpcSetSkin(SkinIndex.HOLD);
     }
 
     [Server]
@@ -341,25 +355,12 @@ public class Player : NetworkBehaviour, Target
         isReloading = false;
         RpcSetSkin(i.CurrentGun.SkinIndex);
     }
-
+    #endregion
     [Server]
     internal void Respawn()
     {
         isAlive = true;
-        RpcOnPlayerRespawned();
-    }
-
-    [Command]
-    private void CmdStartReload()
-    {
-        if (reloadingState > 0f)
-            return;
-
-        reloadingState = i.CurrentGun.reloadTime;
-        isReloading = true;
-
-        RpcPlayEvent(EventType.RELOAD);
-        RpcSetSkin(SkinIndex.HOLD);
+        RpcRespawn();
     }
 
     [Command]
@@ -388,30 +389,29 @@ public class Player : NetworkBehaviour, Target
     }
 
     [Server]
-    public void Damage(GameObject from, float damage)
+    public void Damage(GameObject killer, float damage)
     {
+        if (!isAlive)
+            return;
+
         RpcPlayEvent(EventType.DAMAGED);
-        health -= damage;
-        if (health <= 0f)
+        if ((health - damage) <= 0f)
         {
+            health = 0f;
             isAlive = false;
-            RpcOnPlayerDied(from);
+            RpcDied(killer);
 
-            PlayerInformation xx = info;
-            xx.deathCount++;
-            info = xx;
+            deathCount++;
 
-            Player playerKiller = from.GetComponent<Player>();
-            if (playerKiller != null)
-            {
-                PlayerInformation asaa = playerKiller.info;
-                asaa.killCount++;
-                playerKiller.info = asaa;
-            }
+            Player killerPlayer = killer.GetComponent<Player>();
+            killerPlayer.killCount++;
 
-            Level.Instance.PlayerDied(this, from);
+            Level.Instance.PlayerDied(this, killer);
         }
+        else
+        {
+            health -= damage;
+        }
+        #endregion
     }
-    #endregion
-
 }
