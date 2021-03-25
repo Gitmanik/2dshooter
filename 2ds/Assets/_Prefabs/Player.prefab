@@ -221,8 +221,8 @@ MonoBehaviour:
   syncInterval: 0
   fovmesh: {fileID: 2744804017362845048}
   nickText: {fileID: 6158331761349561413}
-  skin: {fileID: 3485887599398561574}
-  i: {fileID: 3139722972798333471}
+  skinRenderer: {fileID: 3485887599398561574}
+  inventory: {fileID: 3139722972798333471}
   rb: {fileID: 6682056720755215061}
   source: {fileID: 3672295732143018294}
   rotateTransform: {fileID: 8422484375046999334}

@@ -18,8 +18,8 @@ public class Player : NetworkBehaviour, Target
     [Header("Component references")]
     [SerializeField] private FOVMesh fovmesh;
     [SerializeField] private TMP_Text nickText;
-    [SerializeField] private SpriteRenderer skin;
-    [SerializeField] public PlayerInventory i;
+    [SerializeField] private SpriteRenderer skinRenderer;
+    [SerializeField] public PlayerInventory inventory;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private AudioSource source;
     [SerializeField] private Transform rotateTransform;
@@ -43,8 +43,8 @@ public class Player : NetworkBehaviour, Target
 
     [Header("Client-owned variables")]
     private float shootDelay;
+    private float pingDelay;
     private Vector2 change = Vector2.zero;
-    private float pingCtr = 0;
 
     #region MonoBehaviour
 
@@ -52,7 +52,7 @@ public class Player : NetworkBehaviour, Target
     {
         allPlayers.Add(this);
 
-        skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, i.CurrentGun.SkinIndex);
+        skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, inventory.CurrentGun.SkinIndex);
 
         if (!isLocalPlayer)
         {
@@ -63,12 +63,12 @@ public class Player : NetworkBehaviour, Target
             return;
         }
 
-        i.OnSelectedSlot += OnSelectedSlot;
-        i.OnSlotUpdate += IngameHUDManager.Instance.UpdateAmmo;
+        inventory.OnSelectedSlot += OnSelectedSlot;
+        inventory.OnSlotUpdate += IngameHUDManager.Instance.UpdateAmmo;
         IngameHUDManager.Instance.SetupPlayer(this);
         IngameHUDManager.Instance.ToggleAlive(true);
         IngameHUDManager.Instance.ToggleDebug(true);
-        IngameHUDManager.Instance.OnGunSelectorSelected += i.CmdSelectSlot;
+        IngameHUDManager.Instance.OnGunSelectorSelected += inventory.CmdSelectSlot;
         CameraFollow.instance.targetTransform = transform;
 
         Local = this;
@@ -78,7 +78,7 @@ public class Player : NetworkBehaviour, Target
 
     private void OnDestroy()
     {
-        IngameHUDManager.Instance.OnGunSelectorSelected -= i.CmdSelectSlot;
+        IngameHUDManager.Instance.OnGunSelectorSelected -= inventory.CmdSelectSlot;
         allPlayers.Remove(this);
     }
 
@@ -98,12 +98,12 @@ public class Player : NetworkBehaviour, Target
         IngameHUDManager.Instance.UpdateDebug();
 
         #region RTT Synchronization
-        pingCtr += Time.unscaledDeltaTime;
+        pingDelay += Time.unscaledDeltaTime;
 
-        if (pingCtr >= .5f)
+        if (pingDelay >= .5f)
         {
             CmdSetPlayerPing((int)(NetworkTime.rtt * 1000));
-            pingCtr = 0;
+            pingDelay = 0;
         }
         #endregion
 
@@ -135,13 +135,13 @@ public class Player : NetworkBehaviour, Target
             return;
         }
 
-        if (!isReloading && i.HasAnyGun && shootDelay <= 0f && (i.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse0)))
+        if (!isReloading && inventory.HasAnyGun && shootDelay <= 0f && inventory.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0))
         {
-            shootDelay = 1f / i.CurrentGun.firerate;
+            shootDelay = 1f / inventory.CurrentGun.firerate;
             CmdShoot(Input.GetKeyDown(KeyCode.Mouse0));
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && i.CurrentGunData.totalAmmo > 0 && i.CurrentGunData.currentAmmo != i.CurrentGun.magazineCapacity)
+        if (Input.GetKeyDown(KeyCode.R) && inventory.CurrentGunData.totalAmmo > 0 && inventory.CurrentGunData.currentAmmo != inventory.CurrentGun.magazineCapacity)
             CmdStartReload();
 
         if (Input.GetKeyDown(KeyCode.T))
@@ -189,7 +189,7 @@ public class Player : NetworkBehaviour, Target
                 break;
             case EventType.SHOOT:
                 ParticleManager.Spawn(EParticleType.SHOOT, muzzleTransform);
-                PlaySound(i.CurrentGun.shootSount);
+                PlaySound(inventory.CurrentGun.shootSount);
                 break;
             case EventType.DAMAGED:
                 PlaySound(GameManager.Instance.hurtSound);
@@ -213,7 +213,7 @@ public class Player : NetworkBehaviour, Target
                 toDisable.gameObject.SetActive(false);
         }
 
-        skin.material.color = new Color(1f, 1f, 1f, 0.1f);
+        skinRenderer.material.color = new Color(1f, 1f, 1f, 0.1f);
 
         if (isLocalPlayer)
         {
@@ -226,7 +226,7 @@ public class Player : NetworkBehaviour, Target
     [ClientRpc]
     private void RpcRespawn()
     {
-        skin.material.color = Color.white;
+        skinRenderer.material.color = Color.white;
         CameraFollow.instance.smooth = true;
         shootDelay = 0f;
         isReloading = false;
@@ -248,8 +248,8 @@ public class Player : NetworkBehaviour, Target
 
     private void OnUpdateSkinIndex(int _, int __)
     {
-        if (i.CurrentGun != null)
-            skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, i.CurrentGun.SkinIndex);
+        if (inventory.CurrentGun != null)
+            skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, inventory.CurrentGun.SkinIndex);
     }
 
     private void OnSetNickname(string _, string __)
@@ -275,7 +275,7 @@ public class Player : NetworkBehaviour, Target
     [Command] private void CmdSetPlayerPing(int v) => ping = v;
     [Command] private void CmdSetSkinIndex(int SkinIndex) => PlayerSkinIndex = SkinIndex;
 
-    [ClientRpc] private void RpcSetSkin(SkinIndex s) => skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, s);
+    [ClientRpc] private void RpcSetSkin(SkinIndex s) => skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, s);
 
     [TargetRpc] public void TargetTeleport(Vector3 newPos) => transform.position = newPos;
 
@@ -283,38 +283,27 @@ public class Player : NetworkBehaviour, Target
     {
         shootDelay = 0f;
 
-        fovmesh.fov.viewAngle = i.CurrentGun.viewAngle;
-        fovmesh.fov.viewRadius = i.CurrentGun.viewRadius;
+        fovmesh.fov.viewAngle = inventory.CurrentGun.viewAngle;
+        fovmesh.fov.viewRadius = inventory.CurrentGun.viewRadius;
         fovmesh.Setup();
         fovmesh.UpdateMesh();
 
-        skin.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, i.CurrentGun.SkinIndex);
+        skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, inventory.CurrentGun.SkinIndex);
 
         IngameHUDManager.Instance.UpdateAmmo();
     }
 
-
-
-    /// <summary>
-    /// Sets sound to attached AudioSource and plays it.
-    /// </summary>
-    /// <param name="clip">Sound to play</param>
     private void PlaySound(AudioClip clip)
     {
         source.clip = clip;
         source.Play();
     }
 
-
-    /// <summary>
-    /// Rotates rotateTransform towards mouse pointer.
-    /// </summary>
     private bool RotateTowardsCamera()
     {
-        Vector3 dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        Vector2 dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
         Quaternion r = rotateTransform.rotation;
-        rotateTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        rotateTransform.rotation = Quaternion.AngleAxis(Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg, Vector3.forward);
         return r != rotateTransform.rotation;
     }
 
@@ -333,7 +322,7 @@ public class Player : NetworkBehaviour, Target
         if (reloadingState > 0f)
             return;
 
-        reloadingState = i.CurrentGun.reloadTime;
+        reloadingState = inventory.CurrentGun.reloadTime;
         isReloading = true;
 
         RpcPlayEvent(EventType.RELOAD);
@@ -343,19 +332,20 @@ public class Player : NetworkBehaviour, Target
     [Server]
     private void ServerGunReloaded()
     {
-        int zaladowane = Mathf.Min(i.CurrentGun.magazineCapacity - i.CurrentGunData.currentAmmo, i.CurrentGunData.totalAmmo);
+        int zaladowane = Mathf.Min(inventory.CurrentGun.magazineCapacity - inventory.CurrentGunData.currentAmmo, inventory.CurrentGunData.totalAmmo);
 
-        GunData gd = i.CurrentGunData;
+        GunData gd = inventory.CurrentGunData;
 
         gd.totalAmmo -= zaladowane;
         gd.currentAmmo += zaladowane;
 
-        i.CurrentGunData = gd;
+        inventory.CurrentGunData = gd;
         reloadingState = 0f;
         isReloading = false;
-        RpcSetSkin(i.CurrentGun.SkinIndex);
+        RpcSetSkin(inventory.CurrentGun.SkinIndex);
     }
     #endregion
+    
     [Server]
     internal void Respawn()
     {
@@ -366,8 +356,8 @@ public class Player : NetworkBehaviour, Target
     [Command]
     private void CmdShoot(bool mouseDown)
     {
-        GunData gd = i.CurrentGunData;
-        if (!i.CurrentGun.melee && gd.currentAmmo <= 0)
+        GunData gd = inventory.CurrentGunData;
+        if (!inventory.CurrentGun.melee && gd.currentAmmo <= 0)
         {
             if (mouseDown)
                 RpcPlayEvent(EventType.NO_AMMO);
@@ -375,16 +365,16 @@ public class Player : NetworkBehaviour, Target
         }
 
         gd.currentAmmo--;
-        i.CurrentGunData = gd;
+        inventory.CurrentGunData = gd;
 
         RaycastHit2D hit = Physics2D.Raycast(rotateTransform.position, rotateTransform.right, 99f);
-        if (i.CurrentGun.melee && hit.distance > 1.5f)
+        if (inventory.CurrentGun.melee && hit.distance > 1.5f)
             return;
 
         RpcPlayEvent(EventType.SHOOT);
         if (hit.collider != null)
         {
-            hit.transform.GetComponent<Target>()?.Damage(gameObject, i.CurrentGun.damageCurve.Evaluate(hit.distance) * i.CurrentGun.damage);
+            hit.transform.GetComponent<Target>()?.Damage(gameObject, inventory.CurrentGun.damageCurve.Evaluate(hit.distance) * inventory.CurrentGun.damage);
         }
     }
 

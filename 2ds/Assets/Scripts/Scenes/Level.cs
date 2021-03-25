@@ -54,7 +54,7 @@ public class Level : MonoBehaviour
     {
         player.TargetTeleport(NetworkManager.singleton.GetStartPosition().position);
         player.health = 100;
-        player.i.ResetInventory();
+        player.inventory.ResetInventory();
         player.Respawn();
         NetworkedNotification.Spawn($"{player.Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
     }

@@ -98,10 +98,10 @@ public class IngameHUDManager : MonoBehaviour
 
     public void UpdateAmmo()
     {
-        if (!owner.i.HasAnyGun || owner.i.CurrentGun.melee)
+        if (!owner.inventory.HasAnyGun || owner.inventory.CurrentGun.melee)
             ammoText.text = "--";
         else
-            ammoText.text = $"{owner.i.CurrentGunData.currentAmmo}/{owner.i.CurrentGun.magazineCapacity} ({owner.i.CurrentGunData.totalAmmo})";
+            ammoText.text = $"{owner.inventory.CurrentGunData.currentAmmo}/{owner.inventory.CurrentGun.magazineCapacity} ({owner.inventory.CurrentGunData.totalAmmo})";
     }
     #endregion
 
@@ -151,7 +151,7 @@ public class IngameHUDManager : MonoBehaviour
                 Destroy(child.gameObject);
             }
 
-            foreach (var gun in Player.Local.i.inventory)
+            foreach (var gun in Player.Local.inventory.inventory)
             {
                 Instantiate(gunSelectorEntryPrefab, gunSelectorPanel.transform).GetComponent<GunSelectorElement>().Setup(this, GameManager.Instance.Guns[gun.Value.gunIndex], gun.Key);
             }
