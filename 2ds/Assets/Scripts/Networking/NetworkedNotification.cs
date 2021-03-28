@@ -8,7 +8,7 @@ namespace Gitmanik.Networked
     {
         public static void Setup()
         {
-            NetworkClient.RegisterHandler<NotificationMessage>(OnClientReceiveNotification);
+            NetworkManager.singleton.authenticator.OnClientAuthenticated.AddListener((_) => NetworkClient.RegisterHandler<NotificationMessage>(OnClientReceiveNotification));
         }
 
         public static void Spawn(string text, Color color, float aliveTime)

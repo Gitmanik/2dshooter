@@ -19,20 +19,19 @@ public class OptionsMenuController : MonoBehaviour
 
     public void OnDisconnectClick()
     {
-        NetworkManager manager = NetworkManager.singleton;
-        if (manager == null)
+        if (NetworkManager.singleton == null)
             return;
 
-        switch (manager.mode)
+        switch (NetworkManager.singleton.mode)
         {
             case NetworkManagerMode.ServerOnly:
-                manager.StopServer();
+                NetworkManager.singleton.StopServer();
                 break;
             case NetworkManagerMode.Host:
-                manager.StopHost();
+                NetworkManager.singleton.StopHost();
                 break;
             case NetworkManagerMode.ClientOnly:
-                manager.StopClient();
+                NetworkManager.singleton.StopClient();
                 break;
         }
         IngameHUDManager.Instance.ToggleOptionsMenu(false);

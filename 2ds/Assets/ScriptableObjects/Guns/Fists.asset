@@ -17,7 +17,7 @@ MonoBehaviour:
   desc: melee
   uiSprite: {fileID: 21300000, guid: c4b4e065e4d0f8d409c36040495a9d6d, type: 3}
   viewRadius: 6
-  viewAngle: 0
+  viewAngle: 90
   autofire: 0
   reloadTime: 0
   magazineCount: 0

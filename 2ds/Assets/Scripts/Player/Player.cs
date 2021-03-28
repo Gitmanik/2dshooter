@@ -69,7 +69,7 @@ public class Player : NetworkBehaviour, Target
         IngameHUDManager.Instance.ToggleAlive(true);
         IngameHUDManager.Instance.ToggleDebug(true);
         IngameHUDManager.Instance.OnGunSelectorSelected += inventory.CmdSelectSlot;
-        CameraFollow.instance.targetTransform = transform;
+        GameCamera.instance.targetTransform = transform;
 
         Local = this;
 
@@ -135,7 +135,7 @@ public class Player : NetworkBehaviour, Target
             return;
         }
 
-        if (!isReloading && inventory.HasAnyGun && shootDelay <= 0f && inventory.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0))
+        if (!isReloading && inventory.HasAnyGun && shootDelay <= 0f && ((inventory.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0)) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
             shootDelay = 1f / inventory.CurrentGun.firerate;
             CmdShoot(Input.GetKeyDown(KeyCode.Mouse0));
@@ -149,6 +149,9 @@ public class Player : NetworkBehaviour, Target
 
         if (Input.GetKeyDown(KeyCode.Escape))
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
+
+        if (Input.GetKeyDown(KeyCode.U))
+            ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
 
         #region Player Movement 
         change.x = Input.GetAxisRaw("Horizontal");
@@ -192,6 +195,7 @@ public class Player : NetworkBehaviour, Target
                 PlaySound(inventory.CurrentGun.shootSount);
                 break;
             case EventType.DAMAGED:
+                if (isLocalPlayer) GameCamera.ShakeOnce(0.2f, 5, new Vector3(0.2f, 0.2f, 0.0f));
                 PlaySound(GameManager.Instance.hurtSound);
                 ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
                 break;
@@ -217,7 +221,7 @@ public class Player : NetworkBehaviour, Target
 
         if (isLocalPlayer)
         {
-            CameraFollow.instance.smooth = false;
+            GameCamera.instance.smooth = false;
             IngameHUDManager.Instance.ToggleAlive(false);
             IngameHUDManager.Instance.UpdateKilledBy(killer);
         }
@@ -227,7 +231,7 @@ public class Player : NetworkBehaviour, Target
     private void RpcRespawn()
     {
         skinRenderer.material.color = Color.white;
-        CameraFollow.instance.smooth = true;
+        GameCamera.instance.smooth = true;
         shootDelay = 0f;
         isReloading = false;
         reloadingState = 0f;
@@ -356,6 +360,7 @@ public class Player : NetworkBehaviour, Target
     [Command]
     private void CmdShoot(bool mouseDown)
     {
+        print("shoow");
         GunData gd = inventory.CurrentGunData;
         if (!inventory.CurrentGun.melee && gd.currentAmmo <= 0)
         {
