@@ -37,10 +37,28 @@ public class DataManager : MonoBehaviour
         get => PlayerPrefs.GetInt("MaxFPS");
         set => PlayerPrefs.SetInt("MaxFPS", value);
     }
+    public static bool Fullscreen
+    {
+        get => PlayerPrefs.GetInt("Fullscreen", 0) == 1;
+        set => PlayerPrefs.SetInt("Fullscreen", value ? 1 : 0);
+    }
+
+    public static int ResolutionWidth
+    {
+        get => PlayerPrefs.GetInt("ResWidth", 640);
+        set => PlayerPrefs.SetInt("ResWidth", value);
+    }
+
+    public static int ResolutionHeight
+    {
+        get => PlayerPrefs.GetInt("ResHeight", 480);
+        set => PlayerPrefs.SetInt("ResHeight", value);
+    }
 
     public static void Load()
     {
         AudioListener.volume = MainVolume;
+        Screen.SetResolution(ResolutionWidth, ResolutionHeight, Fullscreen, 0);
     }
 
 }

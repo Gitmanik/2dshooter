@@ -126,9 +126,6 @@ public class Player : NetworkBehaviour, Target
             IngameHUDManager.Instance.ToggleList(false);
         #endregion
 
-        if (Input.GetKeyDown(KeyCode.K))
-            CmdSetSkinIndex((PlayerSkinIndex + 1) % SkinManager.Instance.AllSkins.Length);
-
         if (!isAlive)
         {
             rb.velocity = Vector2.zero;
@@ -149,9 +146,6 @@ public class Player : NetworkBehaviour, Target
 
         if (Input.GetKeyDown(KeyCode.Escape))
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
-
-        if (Input.GetKeyDown(KeyCode.U))
-            ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
 
         #region Player Movement 
         change.x = Input.GetAxisRaw("Horizontal");
@@ -360,7 +354,6 @@ public class Player : NetworkBehaviour, Target
     [Command]
     private void CmdShoot(bool mouseDown)
     {
-        print("shoow");
         GunData gd = inventory.CurrentGunData;
         if (!inventory.CurrentGun.melee && gd.currentAmmo <= 0)
         {

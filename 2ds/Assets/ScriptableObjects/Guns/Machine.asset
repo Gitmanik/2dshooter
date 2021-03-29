@@ -22,6 +22,7 @@ MonoBehaviour:
   reloadTime: 2
   magazineCount: 3
   magazineCapacity: 30
+  melee: 0
   damageCurve:
     serializedVersion: 2
     m_Curve:
@@ -46,6 +47,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  firerate: 20
+  firerate: 10
   damage: 7
   shootSount: {fileID: 8300000, guid: 3061c7b9b32d894478e4126ccce25ca3, type: 3}
