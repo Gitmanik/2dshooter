@@ -10,6 +10,7 @@ public class Menu : MonoBehaviour
     [SerializeField] private TMP_InputField ipInput;
     [SerializeField] private Button joinButton;
     [SerializeField] private Button hostButton;
+    [SerializeField] private Button exitButton;
     [SerializeField] private TMP_Text compileDate;
 
     void OnValueChanged(string _)
@@ -58,5 +59,13 @@ public class Menu : MonoBehaviour
     public void OnHostClick()
     {
         NetworkManager.singleton.StartHost();
+    }
+
+    public void OnExitClick()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
     }
 }
