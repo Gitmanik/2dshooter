@@ -90,14 +90,6 @@ public class Player : NetworkBehaviour, Target
 
     private void Update()
     {
-        if (isReloading && NetworkServer.active)
-        {
-            if (reloadingState >= 0f)
-                reloadingState -= Time.deltaTime;
-            else
-                ServerGunReloaded();
-        }
-
         if (NetworkServer.active)
         {
             #region Footstep Handling
@@ -109,6 +101,14 @@ public class Player : NetworkBehaviour, Target
                 S_footstepCtr = 0;
             }
             #endregion
+
+            if (isReloading) // Reload Handling
+            {
+                if (reloadingState >= 0f)
+                    reloadingState -= Time.deltaTime;
+                else
+                    ServerGunReloaded();
+            }
         }
 
         if (!isLocalPlayer)
@@ -167,7 +167,7 @@ public class Player : NetworkBehaviour, Target
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
-            CmdToggleCrouch();
+            CmdToggleRunning();
 
         #region Player Movement
         Vector2 change;
@@ -297,9 +297,10 @@ public class Player : NetworkBehaviour, Target
     #endregion
 
     [Command]
-    private void CmdToggleCrouch()
+    private void CmdToggleRunning()
     {
         speed = (speed == 5f) ? 2.5f : 5f;
+        IngameHUDManager.Instance.UpdateRunning(speed == 5f ? "Running" : "Walking");
     }
 
     [Command] private void CmdSetPlayerPing(int v) => ping = v;

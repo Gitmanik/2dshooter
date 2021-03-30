@@ -11,6 +11,7 @@ public class IngameHUDManager : MonoBehaviour
     [SerializeField] private GameObject alivePanel;
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private TMP_Text ammoText;
+    [SerializeField] private TMP_Text crouchText;
 
     [Header("Dead")]
     [SerializeField] private GameObject deadPanel;
@@ -94,6 +95,11 @@ public class IngameHUDManager : MonoBehaviour
     {
         healthText.text = $"{owner.health} HP";
         healthText.color = new Color(1f - owner.health * 0.01f, owner.health * 0.01f, 0f);
+    }
+
+    public void UpdateRunning(string text)
+    {
+        crouchText.text = text;
     }
 
     public void UpdateAmmo()
