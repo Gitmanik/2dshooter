@@ -21,7 +21,8 @@ public class Player : NetworkBehaviour, Target
     [SerializeField] private SpriteRenderer skinRenderer;
     [SerializeField] public PlayerInventory inventory;
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private AudioSource source;
+    [SerializeField] private AudioSource gunAudioSource;
+    [SerializeField] private AudioSource footstepAudioSource;
     [SerializeField] private Transform rotateTransform;
     [SerializeField] private Transform muzzleTransform;
 
@@ -44,7 +45,9 @@ public class Player : NetworkBehaviour, Target
     [Header("Client-owned variables")]
     private float shootDelay;
     private float pingDelay;
-    private Vector2 change = Vector2.zero;
+
+    private float footstepCtr;
+    private Vector3 oldMove;
 
     #region MonoBehaviour
 
@@ -70,6 +73,8 @@ public class Player : NetworkBehaviour, Target
         IngameHUDManager.Instance.ToggleDebug(true);
         IngameHUDManager.Instance.OnGunSelectorSelected += inventory.CmdSelectSlot;
         GameCamera.instance.targetTransform = transform;
+
+        oldMove = transform.position;
 
         Local = this;
 
@@ -147,13 +152,22 @@ public class Player : NetworkBehaviour, Target
         if (Input.GetKeyDown(KeyCode.Escape))
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
-        #region Player Movement 
+        #region Player Movement
+        Vector2 change;
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
+
 
         Vector2 newPos = change.normalized * speed * Time.deltaTime * 60f;
         rb.velocity = newPos;
 
+        footstepCtr += (transform.position - oldMove).magnitude;
+        oldMove = transform.position;
+        if (footstepCtr > 1.5f)
+        {
+            CmdPlayEvent(EventType.FOOTSTEP);
+            footstepCtr = 0;
+        }
         if (RotateTowardsCamera() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
 
@@ -168,7 +182,8 @@ public class Player : NetworkBehaviour, Target
         NO_AMMO,
         RELOAD,
         SHOOT,
-        DAMAGED
+        DAMAGED,
+        FOOTSTEP
     }
 
     [Command] private void CmdPlayEvent(EventType s) => RpcPlayEvent(s);
@@ -193,10 +208,13 @@ public class Player : NetworkBehaviour, Target
                 PlaySound(GameManager.Instance.hurtSound);
                 ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
                 break;
+            case EventType.FOOTSTEP:
+                PlaySound(GameManager.Instance.footstep, footstepAudioSource, 0.4f, 0.2f);
+                break;
         }
     }
     #endregion
-     
+
     [ClientRpc]
     internal void RpcDied(GameObject x)
     {
@@ -291,8 +309,13 @@ public class Player : NetworkBehaviour, Target
         IngameHUDManager.Instance.UpdateAmmo();
     }
 
-    private void PlaySound(AudioClip clip)
+    private void PlaySound(AudioClip clip, AudioSource source = null, float volume = 1f, float pitchChange = 0f)
     {
+        if (source == null)
+            source = gunAudioSource;
+
+        source.pitch = 1f + UnityEngine.Random.Range(-pitchChange, pitchChange);
+        source.volume = volume;
         source.clip = clip;
         source.Play();
     }

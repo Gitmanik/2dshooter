@@ -34,6 +34,10 @@ public class GameManager : MonoBehaviour
     public AudioClip noAmmoSound;
     public AudioClip hurtSound;
 
+    public AudioClip[] footsteps;
+
+    public AudioClip footstep { get => footsteps[Random.Range(0, footsteps.Length)]; }
+
     public static bool CheckScene()
     {
         if (Instance == null)

@@ -2189,6 +2189,12 @@ MonoBehaviour:
   reloadSound: {fileID: 8300000, guid: eb1f2a378000e654882d359829c61bc1, type: 3}
   noAmmoSound: {fileID: 8300000, guid: 24c399d9c82ba074a9217e9be3403dbd, type: 3}
   hurtSound: {fileID: 8300000, guid: 676e26a70252b9048b0a57276a2ad921, type: 3}
+  footsteps:
+  - {fileID: 8300000, guid: bc05bd3af66b44a428b87c6897ae0468, type: 3}
+  - {fileID: 8300000, guid: 6d31c97b494005947b55c306ef7ec998, type: 3}
+  - {fileID: 8300000, guid: 123a95c58f28f2549ad76694a4f9bf6c, type: 3}
+  - {fileID: 8300000, guid: 5e97a99c39b24814e9eed0931790ad38, type: 3}
+  - {fileID: 8300000, guid: 7ae0f044dd748da4d91aa9e5dcfe664e, type: 3}
 --- !u!114 &1036736811
 MonoBehaviour:
   m_ObjectHideFlags: 0
