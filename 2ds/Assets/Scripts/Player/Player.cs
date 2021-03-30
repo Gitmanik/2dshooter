@@ -37,16 +37,17 @@ public class Player : NetworkBehaviour, Target
     [SyncVar] public bool isReloading = false;
     [SyncVar] public float reloadingState;
     [SyncVar] public float speed;
+    private float S_crouchdelay;
+    private float S_footstepCtr;
 
     [Header("Transforms to modify on events")]
     [SerializeField] private Transform[] destroyOnNonLocal;
     [SerializeField] private Transform[] DisableOnDead;
 
     [Header("Client-owned variables")]
-    private float shootDelay;
-    private float pingDelay;
+    private float C_shootDelay;
+    private float C_pingDelay;
 
-    private float footstepCtr;
     private Vector3 oldMove;
 
     #region MonoBehaviour
@@ -97,22 +98,35 @@ public class Player : NetworkBehaviour, Target
                 ServerGunReloaded();
         }
 
+        if (NetworkServer.active)
+        {
+            #region Footstep Handling
+            S_footstepCtr += (transform.position - oldMove).magnitude;
+            oldMove = transform.position;
+            if (S_footstepCtr > 1.5f)
+            {
+                RpcPlayEvent(EventType.FOOTSTEP);
+                S_footstepCtr = 0;
+            }
+            #endregion
+        }
+
         if (!isLocalPlayer)
             return;
 
         IngameHUDManager.Instance.UpdateDebug();
 
         #region RTT Synchronization
-        pingDelay += Time.unscaledDeltaTime;
+        C_pingDelay += Time.unscaledDeltaTime;
 
-        if (pingDelay >= .5f)
+        if (C_pingDelay >= .5f)
         {
             CmdSetPlayerPing((int)(NetworkTime.rtt * 1000));
-            pingDelay = 0;
+            C_pingDelay = 0;
         }
         #endregion
 
-        shootDelay -= Time.deltaTime;
+        C_shootDelay -= Time.deltaTime;
 
         if (LockMovement)
         {
@@ -137,9 +151,9 @@ public class Player : NetworkBehaviour, Target
             return;
         }
 
-        if (!isReloading && inventory.HasAnyGun && shootDelay <= 0f && ((inventory.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0)) || Input.GetKeyDown(KeyCode.Mouse0)))
+        if (!isReloading && inventory.HasAnyGun && C_shootDelay <= 0f && ((inventory.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0)) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
-            shootDelay = 1f / inventory.CurrentGun.firerate;
+            C_shootDelay = 1f / inventory.CurrentGun.firerate;
             CmdShoot(Input.GetKeyDown(KeyCode.Mouse0));
         }
 
@@ -152,22 +166,16 @@ public class Player : NetworkBehaviour, Target
         if (Input.GetKeyDown(KeyCode.Escape))
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+            CmdToggleCrouch();
+
         #region Player Movement
         Vector2 change;
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
 
-
         Vector2 newPos = change.normalized * speed * Time.deltaTime * 60f;
         rb.velocity = newPos;
-
-        footstepCtr += (transform.position - oldMove).magnitude;
-        oldMove = transform.position;
-        if (footstepCtr > 1.5f)
-        {
-            CmdPlayEvent(EventType.FOOTSTEP);
-            footstepCtr = 0;
-        }
         if (RotateTowardsCamera() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
 
@@ -209,7 +217,7 @@ public class Player : NetworkBehaviour, Target
                 ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
                 break;
             case EventType.FOOTSTEP:
-                PlaySound(GameManager.Instance.footstep, footstepAudioSource, 0.4f, 0.2f);
+                PlaySound(GameManager.Instance.footstep, footstepAudioSource, speed ==  5f ? 0.4f : 0.1f, 0.2f);
                 break;
         }
     }
@@ -244,7 +252,7 @@ public class Player : NetworkBehaviour, Target
     {
         skinRenderer.material.color = Color.white;
         GameCamera.instance.smooth = true;
-        shootDelay = 0f;
+        C_shootDelay = 0f;
         isReloading = false;
         reloadingState = 0f;
         foreach (Transform toDisable in DisableOnDead)
@@ -288,6 +296,12 @@ public class Player : NetworkBehaviour, Target
 
     #endregion
 
+    [Command]
+    private void CmdToggleCrouch()
+    {
+        speed = (speed == 5f) ? 2.5f : 5f;
+    }
+
     [Command] private void CmdSetPlayerPing(int v) => ping = v;
     [Command] private void CmdSetSkinIndex(int SkinIndex) => PlayerSkinIndex = SkinIndex;
 
@@ -297,7 +311,7 @@ public class Player : NetworkBehaviour, Target
 
     private void OnSelectedSlot()
     {
-        shootDelay = 0f;
+        C_shootDelay = 0f;
 
         fovmesh.fov.viewAngle = inventory.CurrentGun.viewAngle;
         fovmesh.fov.viewRadius = inventory.CurrentGun.viewRadius;
@@ -366,7 +380,7 @@ public class Player : NetworkBehaviour, Target
         RpcSetSkin(inventory.CurrentGun.SkinIndex);
     }
     #endregion
-    
+
     [Server]
     internal void Respawn()
     {
