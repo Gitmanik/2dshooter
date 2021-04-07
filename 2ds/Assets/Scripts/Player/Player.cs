@@ -168,19 +168,23 @@ public class Player : NetworkBehaviour, Target
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
             CmdToggleRunning();
+    }
 
+    private void FixedUpdate()
+    {
         #region Player Movement
         Vector2 change;
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
 
-        Vector2 newPos = change.normalized * speed * Time.deltaTime * 60f;
+        Vector2 newPos = change.normalized * speed * Time.fixedDeltaTime * 50f;
         rb.velocity = newPos;
         if (RotateTowardsCamera() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
 
         #endregion
     }
+
     #endregion
 
     #region EventPlayer
