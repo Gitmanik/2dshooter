@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 [CreateAssetMenu()]
 public class Gun : ScriptableObject
@@ -21,20 +22,49 @@ public class Gun : ScriptableObject
 
     public AudioClip shootSount;
 
-    public GunData GenerateGunData()
+    public GunHolder GetGunHolder()
     {
-        return new GunData
+        return new GunHolder
         {
             totalAmmo = magazineCapacity * (magazineCount - 1),
             currentAmmo = magazineCapacity,
-            gunIndex = GameManager.Instance.Guns.IndexOf(this)
+            gunIndex = (byte) GameManager.Instance.Guns.IndexOf(this)
         };
     }
 }
 
-public struct GunData : NetworkMessage
+[Serializable]
+public class GunHolder
 {
-    public int gunIndex;
+    public byte gunIndex;
     public int totalAmmo;
     public int currentAmmo;
+
+    public static object Deserialize(byte[] data)
+    {
+        var result = new GunHolder();
+        result.gunIndex = data[0];
+        result.totalAmmo = BitConverter.ToInt32(data, 1);
+        result.currentAmmo = result.totalAmmo = BitConverter.ToInt32(data, 4);
+        return result;
+    }
+
+    public static byte[] Serialize(object customType)
+    {
+        List<byte> bytes = new List<byte>();
+        var c = (GunHolder)customType;
+        bytes.AddRange(new byte[] { c.gunIndex });
+        bytes.AddRange(BitConverter.GetBytes(c.totalAmmo));
+        bytes.AddRange(BitConverter.GetBytes(c.currentAmmo));
+        return bytes.ToArray();
+    }
+}
+public static class Extensions
+{
+    public static T[] SubArray<T>(this T[] array, int offset, int length)
+    {
+        T[] result = new T[length];
+        Array.Copy(array, offset, result, 0, length);
+        return result;
+    }
 }

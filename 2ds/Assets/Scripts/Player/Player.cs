@@ -1,53 +1,64 @@
 ﻿using Gitmanik.FOV2D;
-using Gitmanik.Multiplayer.Inventory;
-using Mirror;
-using System;
+using Gitmanik.Notification;
+using Photon.Pun;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 [RequireComponent(typeof(AudioSource))]
-[RequireComponent(typeof(PlayerInventory))]
-public class Player : NetworkBehaviour, Target
+public class Player : MonoBehaviourPun, Target
 {
     public static List<Player> allPlayers = new List<Player>();
     public static Player Local;
-
-    public bool LockMovement { get => IngameHUDManager.Instance.GunSelectorActive || IngameHUDManager.Instance.OptionsActive; }
 
     [Header("Component references")]
     [SerializeField] private FOVMesh fovmesh;
     [SerializeField] private TMP_Text nickText;
     [SerializeField] private SpriteRenderer skinRenderer;
-    [SerializeField] public PlayerInventory inventory;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private AudioSource gunAudioSource;
     [SerializeField] private AudioSource footstepAudioSource;
     [SerializeField] private Transform rotateTransform;
     [SerializeField] private Transform muzzleTransform;
 
-    [Header("Server-owned variables")]
-    [SyncVar(hook = nameof(OnUpdateSkinIndex))]  public int PlayerSkinIndex;
-    [SyncVar(hook = nameof(OnSetNickname))]      public string Nickname;
-    [SyncVar(hook = nameof(OnUpdatePlayerInfo))] public int killCount;
-    [SyncVar(hook = nameof(OnUpdatePlayerInfo))] public int deathCount;
-    [SyncVar(hook = nameof(OnChangedHealth))]    public float health = -1f;
-    [SyncVar(hook = nameof(OnUpdatePlayerInfo))] public int ping = -1;
-    [SyncVar] public bool isAlive = true;
-    [SyncVar] public bool isReloading = false;
-    [SyncVar] public float reloadingState;
-    [SyncVar] public float speed;
-    private float S_crouchdelay;
-    private float S_footstepCtr;
-
     [Header("Transforms to modify on events")]
     [SerializeField] private Transform[] destroyOnNonLocal;
     [SerializeField] private Transform[] DisableOnDead;
 
-    [Header("Client-owned variables")]
-    private float C_shootDelay;
-    private float C_pingDelay;
+    [Header("Inventory")]
+    public GunHolder[] Inventory;
+    private int InventoryIndex;
+    public GunHolder CurrentGun => Inventory[InventoryIndex];
+    public Gun CurrentGunSO => GameManager.Instance.Guns[CurrentGunIndex];
 
+    [Header("Synced variables")]
+    public int PlayerSkinIndex;
+    private int CurrentGunIndex;
+    public string Nickname => photonView.Owner.NickName;
+    public int Ping => photonView.IsMine ? PhotonNetwork.GetPing() : _ping; public int _ping;
+    public int Health { get => _health; set => photonView.RPC("SetHealth", RpcTarget.AllBuffered, value); } [SerializeField] private int _health;
+    public bool Running
+    {
+        get => _running;
+        set
+        {
+            _running = value;
+            IngameHUDManager.Instance.UpdateRunning();
+        }
+    } [SerializeField] private bool _running;
+
+    public bool IsAlive = true;
+
+    [Header("Local variables")]
+    public bool IsReloading = false;
+    public bool LockMovement { get => IngameHUDManager.Instance.GunSelectorActive || IngameHUDManager.Instance.OptionsActive; }
+    private float reloadingState;
+
+    private float ctr_crouch;
+    private float ctr_footstep;
+    private float ctr_ping;
+    private float ctr_shoot;
     private Vector3 oldMove;
 
     #region MonoBehaviour
@@ -55,10 +66,13 @@ public class Player : NetworkBehaviour, Target
     private void Start()
     {
         allPlayers.Add(this);
+        name = Nickname;
+        nickText.text = Nickname;
 
-        skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, inventory.CurrentGun.SkinIndex);
+        PlayerSkinIndex = (int)photonView.InstantiationData[0];
+        skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, SkinIndex.HOLD);
 
-        if (!isLocalPlayer)
+        if (!photonView.IsMine)
         {
             foreach (Transform b in destroyOnNonLocal)
             {
@@ -67,66 +81,102 @@ public class Player : NetworkBehaviour, Target
             return;
         }
 
-        inventory.OnSelectedSlot += OnSelectedSlot;
-        inventory.OnSlotUpdate += IngameHUDManager.Instance.UpdateAmmo;
+        Hashtable hash = new Hashtable
+        {
+            ["Deaths"] = 0,
+            ["Kills"] = 0
+        };
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
+        Inventory = new GunHolder[GameManager.Instance.Guns.Count];
+        for (int i = 0; i < GameManager.Instance.Guns.Count; i++)
+        {
+            Inventory[i] = GameManager.Instance.Guns[i].GetGunHolder();
+        }
+
         IngameHUDManager.Instance.SetupPlayer(this);
         IngameHUDManager.Instance.ToggleAlive(true);
         IngameHUDManager.Instance.ToggleDebug(true);
-        IngameHUDManager.Instance.OnGunSelectorSelected += inventory.CmdSelectSlot;
+        IngameHUDManager.Instance.OnGunSelectorSelected += SelectInventorySlot;
+
+        SelectInventorySlot(0);
+        Health = 100;
+        Running = true;
         GameCamera.instance.targetTransform = transform;
 
         oldMove = transform.position;
 
         Local = this;
-
-        OnSelectedSlot(); //Force Fovmesh generation
     }
+
+    public void Damage(int id, float damage) => photonView.RPC("InternalDamage", RpcTarget.All, new object[] { id, damage });
+
+    [PunRPC] public void SetCurrentGunIndex(byte gunindex)
+    {
+        CurrentGunIndex = gunindex;
+        SetSubSkin(CurrentGunSO.SkinIndex);
+    }
+
+    public void SelectInventorySlot(int index)
+    {
+        InventoryIndex = index;
+
+        if (!photonView.IsMine)
+            return;
+
+        photonView.RPC("SetCurrentGunIndex", RpcTarget.All, CurrentGun.gunIndex);
+
+        ctr_shoot = 0f;
+
+        fovmesh.fov.viewAngle = CurrentGunSO.viewAngle;
+        fovmesh.fov.viewRadius = CurrentGunSO.viewRadius;
+        fovmesh.Setup();
+        fovmesh.UpdateMesh();
+
+        IngameHUDManager.Instance.UpdateAmmo();
+    }
+
 
     private void OnDestroy()
     {
-        IngameHUDManager.Instance.OnGunSelectorSelected -= inventory.CmdSelectSlot;
         allPlayers.Remove(this);
     }
 
     private void Update()
     {
-        if (NetworkServer.active)
-        {
-            #region Footstep Handling
-            S_footstepCtr += (transform.position - oldMove).magnitude;
-            oldMove = transform.position;
-            if (S_footstepCtr > 1.5f)
-            {
-                RpcPlayEvent(EventType.FOOTSTEP);
-                S_footstepCtr = 0;
-            }
-            #endregion
-
-            if (isReloading) // Reload Handling
-            {
-                if (reloadingState >= 0f)
-                    reloadingState -= Time.deltaTime;
-                else
-                    ServerGunReloaded();
-            }
-        }
-
-        if (!isLocalPlayer)
+        if (!photonView.IsMine)
             return;
 
-        IngameHUDManager.Instance.UpdateDebug();
+        ctr_ping += Time.deltaTime;
 
-        #region RTT Synchronization
-        C_pingDelay += Time.unscaledDeltaTime;
-
-        if (C_pingDelay >= .5f)
+        if (ctr_ping > 2.5f)
         {
-            CmdSetPlayerPing((int)(NetworkTime.rtt * 1000));
-            C_pingDelay = 0;
+            ctr_ping = 0f;
+            photonView.RPC("UpdatePing", RpcTarget.All, PhotonNetwork.GetPing());
+        }
+
+        #region Footstep Handling
+        ctr_footstep += (transform.position - oldMove).magnitude;
+        oldMove = transform.position;
+        if (ctr_footstep > 1.5f)
+        {
+            photonView.RPC("PlayEvent", RpcTarget.AllViaServer, EventType.FOOTSTEP);
+            ctr_footstep = 0;
         }
         #endregion
 
-        C_shootDelay -= Time.deltaTime;
+        if (IsReloading) // Reload Handling
+        {
+            if (reloadingState >= 0f)
+                reloadingState -= Time.deltaTime;
+            else
+                GunReloaded();
+        }
+
+        IngameHUDManager.Instance.UpdateDebug();
+        IngameHUDManager.Instance.UpdateHealth();
+
+        ctr_shoot -= Time.deltaTime;
 
         if (LockMovement)
         {
@@ -145,20 +195,20 @@ public class Player : NetworkBehaviour, Target
             IngameHUDManager.Instance.ToggleList(false);
         #endregion
 
-        if (!isAlive)
+        if (!IsAlive)
         {
             rb.velocity = Vector2.zero;
             return;
         }
 
-        if (!isReloading && inventory.HasAnyGun && C_shootDelay <= 0f && ((inventory.CurrentGun.autofire && Input.GetKey(KeyCode.Mouse0)) || Input.GetKeyDown(KeyCode.Mouse0)))
+        if (!IsReloading && CurrentGun != null && ctr_shoot <= 0f && ((CurrentGunSO.autofire && Input.GetKey(KeyCode.Mouse0)) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
-            C_shootDelay = 1f / inventory.CurrentGun.firerate;
-            CmdShoot(Input.GetKeyDown(KeyCode.Mouse0));
+            ctr_shoot = 1f / CurrentGunSO.firerate;
+            Shoot(Input.GetKeyDown(KeyCode.Mouse0));
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && inventory.CurrentGunData.totalAmmo > 0 && inventory.CurrentGunData.currentAmmo != inventory.CurrentGun.magazineCapacity)
-            CmdStartReload();
+        if (Input.GetKeyDown(KeyCode.R) && CurrentGun.totalAmmo > 0 && CurrentGun.currentAmmo != CurrentGunSO.magazineCapacity)
+            StartReload();
 
         if (Input.GetKeyDown(KeyCode.T))
             IngameHUDManager.Instance.ToggleGunSelector(true);
@@ -167,17 +217,20 @@ public class Player : NetworkBehaviour, Target
             IngameHUDManager.Instance.ToggleOptionsMenu(true);
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
-            CmdToggleRunning();
+            Running = !Running;
     }
 
     private void FixedUpdate()
     {
+        if (!photonView.IsMine || LockMovement)
+            return;
+
         #region Player Movement
         Vector2 change;
         change.x = Input.GetAxisRaw("Horizontal");
         change.y = Input.GetAxisRaw("Vertical");
 
-        Vector2 newPos = change.normalized * speed * Time.fixedDeltaTime * 50f;
+        Vector2 newPos = change.normalized * (Running ? 5f : 2.5f) * Time.fixedDeltaTime * 50f;
         rb.velocity = newPos;
         if (RotateTowardsCamera() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
@@ -198,10 +251,8 @@ public class Player : NetworkBehaviour, Target
         FOOTSTEP
     }
 
-    [Command] private void CmdPlayEvent(EventType s) => RpcPlayEvent(s);
-
-    [ClientRpc]
-    private void RpcPlayEvent(EventType s)
+    [PunRPC]
+    private void PlayEvent(EventType s)
     {
         switch (s)
         {
@@ -213,119 +264,44 @@ public class Player : NetworkBehaviour, Target
                 break;
             case EventType.SHOOT:
                 ParticleManager.Spawn(EParticleType.SHOOT, muzzleTransform);
-                PlaySound(inventory.CurrentGun.shootSount);
+                PlaySound(CurrentGunSO.shootSount);
                 break;
             case EventType.DAMAGED:
-                if (isLocalPlayer) GameCamera.ShakeOnce(0.2f, 5, new Vector3(0.2f, 0.2f, 0.0f));
+                if (photonView.IsMine) GameCamera.ShakeOnce(0.2f, 5, new Vector3(0.2f, 0.2f, 0.0f));
                 PlaySound(GameManager.Instance.hurtSound);
                 ParticleManager.Spawn(EParticleType.BLOOD, transform.position);
                 break;
             case EventType.FOOTSTEP:
-                PlaySound(GameManager.Instance.footstep, footstepAudioSource, speed ==  5f ? 0.4f : 0.1f, 0.2f);
+                PlaySound(GameManager.Instance.footstep, footstepAudioSource, Running ? 0.4f : 0.1f, 0.2f);
                 break;
         }
     }
     #endregion
 
-    [ClientRpc]
-    internal void RpcDied(GameObject x)
+    [PunRPC] public void UpdatePing(int newPing) => _ping = newPing;
+
+    [PunRPC]
+    private void RPC_Respawn()
     {
-        Player playerKiller = x.GetComponent<Player>();
-        string killer = x.name;
-        if (playerKiller != null)
-            killer = playerKiller.Nickname;
-
-        foreach (Transform toDisable in DisableOnDead)
-        {
-            if (toDisable != null)
-                toDisable.gameObject.SetActive(false);
-        }
-
-        skinRenderer.material.color = new Color(1f, 1f, 1f, 0.1f);
-
-        if (isLocalPlayer)
-        {
-            GameCamera.instance.smooth = false;
-            IngameHUDManager.Instance.ToggleAlive(false);
-            IngameHUDManager.Instance.UpdateKilledBy(killer);
-        }
-    }
-
-    [ClientRpc]
-    private void RpcRespawn()
-    {
+        IsAlive = true;
         skinRenderer.material.color = Color.white;
-        GameCamera.instance.smooth = true;
-        C_shootDelay = 0f;
-        isReloading = false;
-        reloadingState = 0f;
         foreach (Transform toDisable in DisableOnDead)
         {
             if (toDisable != null)
                 toDisable.gameObject.SetActive(true);
         }
 
-        if (isLocalPlayer)
+        if (photonView.IsMine)
         {
+            ctr_shoot = 0f;
+            IsReloading = false;
+            reloadingState = 0f;
+            GameCamera.instance.smooth = true;
             IngameHUDManager.Instance.ToggleAlive(true);
+            transform.position = Level.Instance.GetStartPosition().position;
+            Health = 100;
+            NotificationManager.Instance.RemoteSpawn($"{Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
         }
-    }
-
-
-    #region SyncVar events
-
-    private void OnUpdateSkinIndex(int _, int __)
-    {
-        if (inventory.CurrentGun != null)
-            skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, inventory.CurrentGun.SkinIndex);
-    }
-
-    private void OnSetNickname(string _, string __)
-    {
-        nickText.text = Nickname;
-        name = $"{(isLocalPlayer ? "Local" : "")} Player: {Nickname}";
-        if (isLocalPlayer)
-            IngameHUDManager.Instance.UpdatePlayerList();
-    }
-
-    private void OnChangedHealth(float a, float b)
-    {
-        if (isLocalPlayer)
-            IngameHUDManager.Instance.UpdateHealth();
-    }
-    private void OnUpdatePlayerInfo(int _, int __)
-    {
-        IngameHUDManager.Instance.UpdatePlayerList();
-    }
-
-    #endregion
-
-    [Command]
-    private void CmdToggleRunning()
-    {
-        speed = (speed == 5f) ? 2.5f : 5f;
-        IngameHUDManager.Instance.UpdateRunning(speed == 5f ? "Running" : "Walking");
-    }
-
-    [Command] private void CmdSetPlayerPing(int v) => ping = v;
-    [Command] private void CmdSetSkinIndex(int SkinIndex) => PlayerSkinIndex = SkinIndex;
-
-    [ClientRpc] private void RpcSetSkin(SkinIndex s) => skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, s);
-
-    [TargetRpc] public void TargetTeleport(Vector3 newPos) => transform.position = newPos;
-
-    private void OnSelectedSlot()
-    {
-        C_shootDelay = 0f;
-
-        fovmesh.fov.viewAngle = inventory.CurrentGun.viewAngle;
-        fovmesh.fov.viewRadius = inventory.CurrentGun.viewRadius;
-        fovmesh.Setup();
-        fovmesh.UpdateMesh();
-
-        skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, inventory.CurrentGun.SkinIndex);
-
-        IngameHUDManager.Instance.UpdateAmmo();
     }
 
     private void PlaySound(AudioClip clip, AudioSource source = null, float volume = 1f, float pitchChange = 0f)
@@ -333,7 +309,7 @@ public class Player : NetworkBehaviour, Target
         if (source == null)
             source = gunAudioSource;
 
-        source.pitch = 1f + UnityEngine.Random.Range(-pitchChange, pitchChange);
+        source.pitch = 1f + Random.Range(-pitchChange, pitchChange);
         source.volume = volume;
         source.clip = clip;
         source.Play();
@@ -347,101 +323,121 @@ public class Player : NetworkBehaviour, Target
         return r != rotateTransform.rotation;
     }
 
-    #region Server
-
-    public void Setup(AuthRequestMessage data)
-    {
-        Nickname = data.nick;
-        PlayerSkinIndex = data.skinindex;
-    }
-
-    #region Reloading
-    [Command]
-    private void CmdStartReload()
+    private void StartReload()
     {
         if (reloadingState > 0f)
             return;
 
-        reloadingState = inventory.CurrentGun.reloadTime;
-        isReloading = true;
+        reloadingState = CurrentGunSO.reloadTime;
+        IsReloading = true;
 
-        RpcPlayEvent(EventType.RELOAD);
-        RpcSetSkin(SkinIndex.HOLD);
+        photonView.RPC("PlayEvent", RpcTarget.All, EventType.RELOAD);
+        photonView.RPC("SetSubSkin", RpcTarget.All, SkinIndex.HOLD);
     }
 
-    [Server]
-    private void ServerGunReloaded()
+    private void GunReloaded()
     {
-        int zaladowane = Mathf.Min(inventory.CurrentGun.magazineCapacity - inventory.CurrentGunData.currentAmmo, inventory.CurrentGunData.totalAmmo);
+        int zaladowane = Mathf.Min(CurrentGunSO.magazineCapacity - CurrentGun.currentAmmo, CurrentGun.totalAmmo);
 
-        GunData gd = inventory.CurrentGunData;
+        CurrentGun.totalAmmo -= zaladowane;
+        CurrentGun.currentAmmo += zaladowane;
 
-        gd.totalAmmo -= zaladowane;
-        gd.currentAmmo += zaladowane;
-
-        inventory.CurrentGunData = gd;
         reloadingState = 0f;
-        isReloading = false;
-        RpcSetSkin(inventory.CurrentGun.SkinIndex);
-    }
-    #endregion
-
-    [Server]
-    internal void Respawn()
-    {
-        isAlive = true;
-        RpcRespawn();
+        IsReloading = false;
+        photonView.RPC("SetSubSkin", RpcTarget.All, CurrentGunSO.SkinIndex);
+        IngameHUDManager.Instance.UpdateAmmo();
     }
 
-    [Command]
-    private void CmdShoot(bool mouseDown)
+    [PunRPC] public void SetSubSkin(SkinIndex subs) => skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, subs);
+    private void Shoot(bool mouseDown)
     {
-        GunData gd = inventory.CurrentGunData;
-        if (!inventory.CurrentGun.melee && gd.currentAmmo <= 0)
+        if (!photonView.IsMine)
+        {
+            Debug.LogError("Shoot called on non-owned Player!");
+            return;
+        }
+        if (!CurrentGunSO.melee && CurrentGun.currentAmmo <= 0)
         {
             if (mouseDown)
-                RpcPlayEvent(EventType.NO_AMMO);
+                photonView.RPC("PlayEvent", RpcTarget.All, EventType.NO_AMMO);
             return;
         }
 
-        gd.currentAmmo--;
-        inventory.CurrentGunData = gd;
+        CurrentGun.currentAmmo--;
 
         RaycastHit2D hit = Physics2D.Raycast(rotateTransform.position, rotateTransform.right, 99f);
-        if (inventory.CurrentGun.melee && hit.distance > 1.5f)
+        if (CurrentGunSO.melee && hit.distance > 1.5f)
             return;
 
-        RpcPlayEvent(EventType.SHOOT);
+        photonView.RPC("PlayEvent", RpcTarget.All, EventType.SHOOT);
         if (hit.collider != null)
         {
-            hit.transform.GetComponent<Target>()?.Damage(gameObject, inventory.CurrentGun.damageCurve.Evaluate(hit.distance) * inventory.CurrentGun.damage);
+            hit.transform.GetComponent<Target>()?.Damage(photonView.ViewID, CurrentGunSO.damageCurve.Evaluate(hit.distance) * CurrentGunSO.damage);
         }
+        IngameHUDManager.Instance.UpdateAmmo();
     }
 
-    [Server]
-    public void Damage(GameObject killer, float damage)
+    [PunRPC] public void SetHealth(int amount) => _health = amount;
+
+    [PunRPC]
+    public void InternalDamage(int id, float damage)
     {
-        if (!isAlive)
+        if (!IsAlive)
             return;
 
-        RpcPlayEvent(EventType.DAMAGED);
-        if ((health - damage) <= 0f)
+        PlayEvent(EventType.DAMAGED);
+
+        if (!photonView.IsMine)
+            return;
+
+        Health -= Mathf.CeilToInt(damage);
+
+        IngameHUDManager.Instance.UpdateHealth();
+
+        if (Health <= 0)
         {
-            health = 0f;
-            isAlive = false;
-            RpcDied(killer);
-
-            deathCount++;
-
-            Player killerPlayer = killer.GetComponent<Player>();
-            killerPlayer.killCount++;
-
-            Level.Instance.PlayerDied(this, killer);
+            Health = 0;
+            photonView.RPC("RPC_Died", RpcTarget.All, id);
         }
-        else
+
+    }
+
+    public void SetCP(string key, object v)
+    {
+        Hashtable hash = PhotonNetwork.LocalPlayer.CustomProperties;
+        hash[key] = v;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+    }
+    public object GetCP(string key) => PhotonNetwork.LocalPlayer.CustomProperties[key];
+
+    [PunRPC]
+    public void RPC_Died(int killerID)
+    {
+        foreach (Transform toDisable in DisableOnDead)
         {
-            health -= damage;
+            if (toDisable != null)
+                toDisable.gameObject.SetActive(false);
         }
-        #endregion
+
+        NotificationManager.Instance.LocalSpawn($"{PhotonView.Find(killerID).Owner.NickName} > {Nickname}", new Color(0, 0, 0, 0.8f), 5f);
+
+        if (killerID == Local.photonView.ViewID)
+        {
+            SetCP("Kills", (int)GetCP("Kills") + 1);
+        }
+
+        IsAlive = false;
+
+        skinRenderer.material.color = new Color(1f, 1f, 1f, 0.1f);
+        if (photonView.IsMine)
+        {
+            SetCP("Deaths", (int)GetCP("Deaths") + 1);
+
+            GameCamera.instance.smooth = false;
+            IngameHUDManager.Instance.ToggleAlive(false);
+            IngameHUDManager.Instance.UpdateKilledBy(PhotonView.Find(killerID).Owner.NickName);
+
+            LeanTween.delayedCall(2.5f, () => photonView.RPC("RPC_Respawn", RpcTarget.All));
+        }
     }
 }

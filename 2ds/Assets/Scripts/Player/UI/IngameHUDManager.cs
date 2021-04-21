@@ -1,4 +1,4 @@
-﻿using Mirror;
+﻿using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -59,7 +59,7 @@ public class IngameHUDManager : MonoBehaviour
 
     public void UpdateDebug()
     {
-        debugPanel.text = string.Format("ping: {0}ms", (int)(NetworkTime.rtt * 1000));
+        debugPanel.text = string.Format("ping: {0}ms", PhotonNetwork.GetPing());
     }
 
     public void ToggleOptions()
@@ -93,21 +93,21 @@ public class IngameHUDManager : MonoBehaviour
     #region AliveHUD
     public void UpdateHealth()
     {
-        healthText.text = $"{owner.health} HP";
-        healthText.color = new Color(1f - owner.health * 0.01f, owner.health * 0.01f, 0f);
+        healthText.text = $"{owner.Health} HP";
+        healthText.color = new Color(1f - owner.Health * 0.01f, owner.Health * 0.01f, 0f);
     }
 
-    public void UpdateRunning(string text)
+    public void UpdateRunning()
     {
-        crouchText.text = text;
+        crouchText.text = owner.Running ? "Running" : "Walking";
     }
 
     public void UpdateAmmo()
     {
-        if (!owner.inventory.HasAnyGun || owner.inventory.CurrentGun.melee)
+        if (owner.CurrentGun == null || owner.CurrentGunSO.melee)
             ammoText.text = "--";
         else
-            ammoText.text = $"{owner.inventory.CurrentGunData.currentAmmo}/{owner.inventory.CurrentGun.magazineCapacity} ({owner.inventory.CurrentGunData.totalAmmo})";
+            ammoText.text = $"{owner.CurrentGun.currentAmmo}/{owner.CurrentGunSO.magazineCapacity} ({owner.CurrentGun.totalAmmo})";
     }
     #endregion
 
@@ -157,9 +157,12 @@ public class IngameHUDManager : MonoBehaviour
                 Destroy(child.gameObject);
             }
 
-            foreach (var gun in Player.Local.inventory.inventory)
+            for (int i = 0; i < Player.Local.Inventory.Length; i++)
             {
-                Instantiate(gunSelectorEntryPrefab, gunSelectorPanel.transform).GetComponent<GunSelectorElement>().Setup(this, GameManager.Instance.Guns[gun.Value.gunIndex], gun.Key);
+                if (Player.Local.Inventory[i] == null)
+                    continue;
+
+                Instantiate(gunSelectorEntryPrefab, gunSelectorPanel.transform).GetComponent<GunSelectorElement>().Setup(this, Player.Local.Inventory[i], i);
             }
         }
     }

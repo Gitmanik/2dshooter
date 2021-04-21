@@ -178,7 +178,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 122011757}
-  - component: {fileID: 122011758}
   m_Layer: 0
   m_Name: Spawn (1)
   m_TagString: Untagged
@@ -200,18 +199,6 @@ Transform:
   m_Father: {fileID: 1167454078}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &122011758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 122011756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &225365732
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,7 +518,8 @@ PrefabInstance:
       propertyPath: sceneId
       value: 4271229166
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8419746065771396634, guid: 5da497faf45f19640b1045d3752e1c9d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5da497faf45f19640b1045d3752e1c9d, type: 3}
 --- !u!4 &440346019 stripped
 Transform:
@@ -4607,7 +4595,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 874545006}
-  - component: {fileID: 874545007}
   m_Layer: 0
   m_Name: Spawn (3)
   m_TagString: Untagged
@@ -4629,18 +4616,6 @@ Transform:
   m_Father: {fileID: 1167454078}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &874545007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 874545005}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &933591832
 GameObject:
   m_ObjectHideFlags: 0
@@ -4650,7 +4625,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 933591833}
-  - component: {fileID: 933591834}
   m_Layer: 0
   m_Name: Spawn
   m_TagString: Untagged
@@ -4672,18 +4646,6 @@ Transform:
   m_Father: {fileID: 1167454078}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &933591834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 933591832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1167454077
 GameObject:
   m_ObjectHideFlags: 0
@@ -7194,6 +7156,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6451305a5c2d144488f09da1e4d2f047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startPositions:
+  - {fileID: 933591833}
+  - {fileID: 122011757}
+  - {fileID: 1449395228}
+  - {fileID: 874545006}
   preGameMask: {fileID: 1656249961}
 --- !u!1 &1449395227
 GameObject:
@@ -7204,7 +7171,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1449395228}
-  - component: {fileID: 1449395229}
   m_Layer: 0
   m_Name: Spawn (2)
   m_TagString: Untagged
@@ -7226,18 +7192,6 @@ Transform:
   m_Father: {fileID: 1167454078}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1449395229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1449395227}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1656249960
 GameObject:
   m_ObjectHideFlags: 0
@@ -7379,5 +7333,6 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1047757205
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8419746065771396634, guid: 5da497faf45f19640b1045d3752e1c9d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5da497faf45f19640b1045d3752e1c9d, type: 3}

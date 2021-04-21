@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public interface Target
+﻿public interface Target
 {
-    void Damage(GameObject x, float v);
+    void Damage(int id, float v);
 }

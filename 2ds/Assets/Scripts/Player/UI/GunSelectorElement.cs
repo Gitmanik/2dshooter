@@ -8,13 +8,14 @@ public class GunSelectorElement : MonoBehaviour
 
     private IngameHUDManager parent;
     private int idx;
-    public void Setup(IngameHUDManager parent, Gun gun, int idx)
+    
+    public void Setup(IngameHUDManager parent, GunHolder gun, int idx)
     {
         this.idx = idx;
         this.parent = parent;
-        transform.name = gun.title;
-        image.sprite = gun.uiSprite;
-        text.text = gun.title;
+        transform.name = GameManager.Instance.Guns[gun.gunIndex].title;
+        image.sprite = GameManager.Instance.Guns[gun.gunIndex].uiSprite;
+        text.text = GameManager.Instance.Guns[gun.gunIndex].title;
     }
     public void OnClick()
     {

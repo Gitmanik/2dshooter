@@ -1,7 +1,7 @@
-﻿using Mirror;
+﻿using Photon.Pun;
 using UnityEngine;
 
-public class PrefabSpawner : NetworkBehaviour
+public class PrefabSpawner : MonoBehaviourPun
 {
     [SerializeField] private GameObject[] prefabs;
     [SerializeField] private float spawnEvery;
@@ -12,7 +12,7 @@ public class PrefabSpawner : NetworkBehaviour
     private void Start()
     {
         passed = spawnEvery;
-        if (!NetworkServer.active)
+        if (!PhotonNetwork.IsMasterClient)
             Destroy(this);
     }
 
@@ -25,17 +25,14 @@ public class PrefabSpawner : NetworkBehaviour
 
         if (passed >= spawnEvery)
         {
-            passed = 0f;
             containsPrefab = true;
-
-            GameObject x = Instantiate(prefabs[Random.Range(0, prefabs.Length)], transform.position, Quaternion.identity);
-            x.GetComponent<Pickupable>().parent = this;
-            NetworkServer.Spawn(x);
+            PhotonNetwork.Instantiate(prefabs[Random.Range(0, prefabs.Length)].name, transform.position, Quaternion.identity).GetComponent<Pickupable>().parent = this;
         }
     }
 
     public void Pickedup()
     {
         containsPrefab = false;
+        passed = 0f;
     }
 }

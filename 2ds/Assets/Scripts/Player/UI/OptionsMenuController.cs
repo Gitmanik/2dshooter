@@ -1,4 +1,4 @@
-﻿using Mirror;
+﻿using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,21 +54,7 @@ public class OptionsMenuController : MonoBehaviour
 
     public void OnDisconnectClick()
     {
-        if (NetworkManager.singleton == null)
-            return;
-
-        switch (NetworkManager.singleton.mode)
-        {
-            case NetworkManagerMode.ServerOnly:
-                NetworkManager.singleton.StopServer();
-                break;
-            case NetworkManagerMode.Host:
-                NetworkManager.singleton.StopHost();
-                break;
-            case NetworkManagerMode.ClientOnly:
-                NetworkManager.singleton.StopClient();
-                break;
-        }
+        PhotonNetwork.LeaveRoom();
         IngameHUDManager.Instance.ToggleOptionsMenu(false);
     }
 }

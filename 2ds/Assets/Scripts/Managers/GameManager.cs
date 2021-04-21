@@ -1,5 +1,4 @@
-﻿using Gitmanik.Networked;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,13 +16,13 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
         DataManager.MaxFPS = MaxFPS;
         Application.targetFrameRate = DataManager.MaxFPS;
-        NetworkedNotification.Setup();
     }
 
     public Transform blackMask;
@@ -42,6 +41,7 @@ public class GameManager : MonoBehaviour
     {
         if (Instance == null)
         {
+            Debug.LogWarning("No GameManager Instance found.");
             SceneManager.LoadScene("Preloader");
             return false;
         }

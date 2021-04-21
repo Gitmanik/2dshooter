@@ -1,7 +1,7 @@
-﻿using Mirror;
+﻿using Photon.Pun;
 using UnityEngine;
 
-public abstract class Pickupable : NetworkBehaviour
+public abstract class Pickupable : MonoBehaviourPun
 {
     public PrefabSpawner parent;
     [SerializeField] private AudioClip playOnPickup;
@@ -14,11 +14,6 @@ public abstract class Pickupable : NetworkBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = playOnPickup;
-        if (!NetworkServer.active)
-        {
-            Destroy(GetComponent<Collider2D>());
-            return;
-        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -33,17 +28,16 @@ public abstract class Pickupable : NetworkBehaviour
     public virtual void OnTrigger(Player player)
     {
         Debug.Log($"{player.Nickname} just triggered with {name}!");
-        RpcPickedUp();
-        parent?.Pickedup();
-        Destroy(GetComponent<Collider2D>());
-        pickedup = true;
-        LeanTween.delayedCall(2.5f, () => NetworkServer.Destroy(gameObject));
-    }
-
-    [ClientRpc]
-    private void RpcPickedUp()
-    {
         sprite.SetActive(false);
         audioSource.Play();
+        pickedup = true;
+        photonView.RPC("RpcPickedUp", RpcTarget.MasterClient);
+    }
+
+    [PunRPC]
+    public void RpcPickedUp()
+    {
+        parent?.Pickedup();
+        LeanTween.delayedCall(2.5f, () => PhotonNetwork.Destroy(gameObject));
     }
 }

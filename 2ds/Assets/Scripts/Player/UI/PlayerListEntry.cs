@@ -9,7 +9,7 @@ public class PlayerListEntry : MonoBehaviour
     public void Setup(Player p)
     {
         nickname.text = p.Nickname;
-        ping.text = $"{p.ping}ms";
-        stats.text = $"{p.killCount}/{p.deathCount}";
+        ping.text = $"{p.Ping}ms";
+        stats.text = $"{(int) p.photonView.Owner.CustomProperties["Kills"]}/{(int)p.photonView.Owner.CustomProperties["Deaths"]}";
     }
 }

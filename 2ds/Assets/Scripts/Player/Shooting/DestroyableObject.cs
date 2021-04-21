@@ -1,18 +1,16 @@
-﻿using Mirror;
-using UnityEngine;
+﻿using Photon.Pun;
 
-public class DestroyableObject : NetworkBehaviour, Target
+public class DestroyableObject : MonoBehaviourPun, Target
 {
     public float health;
 
-    [Server]
-    public void Damage(GameObject x, float damage)
+    public void Damage(int viewID, float damage)
     {
         health -= damage;
 
         if (health <= 0f)
         {
-            Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 }

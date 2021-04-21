@@ -1,15 +1,14 @@
 ﻿using Gitmanik.BaseCode;
-using Mirror;
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Menu : MonoBehaviour
+public class Menu : MonoBehaviourPunCallbacks
 {
     [SerializeField] private TMP_InputField nickInput;
     [SerializeField] private TMP_InputField ipInput;
     [SerializeField] private Button joinButton;
-    [SerializeField] private Button hostButton;
     [SerializeField] private Button exitButton;
     [SerializeField] private TMP_Text compileDate;
 
@@ -17,6 +16,7 @@ public class Menu : MonoBehaviour
     {
         DataManager.Name = nickInput.text;
         DataManager.RecentIP = ipInput.text;
+        PhotonNetwork.NickName = nickInput.text;
 
         if (InputValid())
         {
@@ -43,7 +43,7 @@ public class Menu : MonoBehaviour
         joinButton.interactable = InputValid();
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
-        compileDate.text = $"{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}";
+        compileDate.text = $"{PhotonNetwork.CloudRegion}\n{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}";
     }
 
     public void OnConnectClick()
@@ -51,14 +51,32 @@ public class Menu : MonoBehaviour
         if (!InputValid())
             return;
 
-        NetworkManager.singleton.networkAddress = DataManager.RecentIP;
-        NetworkManager.singleton.StartClient();
-        hostButton.interactable = false;
+        PhotonNetwork.NickName = nickInput.text;
+        PhotonNetwork.JoinOrCreateRoom(ipInput.text, new Photon.Realtime.RoomOptions() { IsVisible = true, MaxPlayers = 4 }, Photon.Realtime.TypedLobby.Default);
+        joinButton.interactable = false;
     }
 
-    public void OnHostClick()
+    public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        NetworkManager.singleton.StartHost();
+        Debug.Log(message);
+        joinButton.interactable = true;
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.Log(message);
+        joinButton.interactable = true;
+    }
+
+    public override void OnCreatedRoom()
+    {
+        Debug.Log("Created room");
+        PhotonNetwork.LoadLevel("Game");
+    }
+
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("Joined room");
     }
 
     public void OnExitClick()
