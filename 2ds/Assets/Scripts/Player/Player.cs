@@ -37,7 +37,7 @@ public class Player : MonoBehaviourPun, Target
     private int CurrentGunIndex;
     public string Nickname => photonView.Owner.NickName;
     public int Ping => photonView.IsMine ? PhotonNetwork.GetPing() : _ping; public int _ping;
-    public int Health { get => _health; set => photonView.RPC("SetHealth", RpcTarget.AllBuffered, value); } [SerializeField] private int _health;
+    public int Health { get => _health; set => photonView.RPC("RPC_SetHealth", RpcTarget.AllBuffered, value); } [SerializeField] private int _health;
     public bool Running
     {
         get => _running;
@@ -119,17 +119,19 @@ public class Player : MonoBehaviourPun, Target
         if (!photonView.IsMine)
             return;
 
-        ctr_ping += Time.deltaTime;
         ctr_crouch -= Time.deltaTime;
         ctr_shoot -= Time.deltaTime;
 
+        // Ping Update Handling
+        ctr_ping += Time.deltaTime;
         if (ctr_ping > 2.5f)
         {
             ctr_ping = 0f;
-            photonView.RPC("UpdatePing", RpcTarget.All, PhotonNetwork.GetPing());
+            photonView.RPC("RPC_UpdatePing", RpcTarget.All, PhotonNetwork.GetPing());
         }
+        // ---------------------
 
-        #region Footstep Handling
+        // Footstep Handling
         ctr_footstep += (transform.position - oldMove).magnitude;
         oldMove = transform.position;
         if (ctr_footstep > 1.5f)
@@ -137,7 +139,7 @@ public class Player : MonoBehaviourPun, Target
             photonView.RPC("PlayEvent", RpcTarget.AllViaServer, EventType.FOOTSTEP);
             ctr_footstep = 0;
         }
-        #endregion
+        // ---------------------
 
         if (IsReloading) // Reload Handling
         {
@@ -273,7 +275,7 @@ public class Player : MonoBehaviourPun, Target
     public void SetCurrentGunIndex(byte gunindex)
     {
         CurrentGunIndex = gunindex;
-        SetSubSkin(CurrentGunSO.SkinIndex);
+        RPC_SetSubSkin(CurrentGunSO.SkinIndex);
     }
 
     public void SelectInventorySlot(int index)
@@ -297,9 +299,9 @@ public class Player : MonoBehaviourPun, Target
     #endregion
 
     #region PunRPCs
-    [PunRPC] public void UpdatePing(int newPing) => _ping = newPing;
-    [PunRPC] public void SetHealth(int amount) => _health = amount;
-    [PunRPC] public void SetSubSkin(SkinIndex subs) => skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, subs);
+    [PunRPC] public void RPC_UpdatePing(int newPing) => _ping = newPing;
+    [PunRPC] public void RPC_SetHealth(int amount) => _health = amount;
+    [PunRPC] public void RPC_SetSubSkin(SkinIndex subs) => skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, subs);
 
     [PunRPC]
     private void RPC_Respawn()
@@ -310,18 +312,6 @@ public class Player : MonoBehaviourPun, Target
         {
             if (toDisable != null)
                 toDisable.gameObject.SetActive(true);
-        }
-
-        if (photonView.IsMine)
-        {
-            ctr_shoot = 0f;
-            IsReloading = false;
-            reloadingState = 0f;
-            GameCamera.instance.smooth = true;
-            IngameHUDManager.Instance.ToggleAlive(true);
-            transform.position = Level.Instance.GetStartPosition().position;
-            Health = 100;
-            NotificationManager.Instance.RemoteSpawn($"{Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
         }
     }
 
@@ -352,12 +342,12 @@ public class Player : MonoBehaviourPun, Target
             IngameHUDManager.Instance.ToggleAlive(false);
             IngameHUDManager.Instance.UpdateKilledBy(PhotonView.Find(killerID).Owner.NickName);
 
-            LeanTween.delayedCall(2.5f, () => photonView.RPC("RPC_Respawn", RpcTarget.All));
+            LeanTween.delayedCall(2.5f, Respawn);
         }
     }
 
     [PunRPC]
-    public void InternalDamage(int id, float damage)
+    public void RPC_Damage(int id, float damage)
     {
         if (!IsAlive)
             return;
@@ -389,7 +379,7 @@ public class Player : MonoBehaviourPun, Target
         IsReloading = true;
 
         photonView.RPC("PlayEvent", RpcTarget.All, EventType.RELOAD);
-        photonView.RPC("SetSubSkin", RpcTarget.All, SkinIndex.HOLD);
+        photonView.RPC("RPC_SetSubSkin", RpcTarget.All, SkinIndex.HOLD);
     }
 
     private void GunReloaded()
@@ -402,12 +392,12 @@ public class Player : MonoBehaviourPun, Target
         reloadingState = 0f;
         IsReloading = false;
 
-        photonView.RPC("SetSubSkin", RpcTarget.All, CurrentGunSO.SkinIndex);
+        photonView.RPC("RPC_SetSubSkin", RpcTarget.All, CurrentGunSO.SkinIndex);
         IngameHUDManager.Instance.UpdateAmmo();
     }
     #endregion
 
-    public void Damage(int id, float damage) => photonView.RPC("InternalDamage", RpcTarget.All, new object[] { id, damage });
+    public void Damage(int id, float damage) => photonView.RPC("RPC_Damage", RpcTarget.All, new object[] { id, damage });
     private void Shoot(bool mouseDown)
     {
         if (!photonView.IsMine)
@@ -434,6 +424,18 @@ public class Player : MonoBehaviourPun, Target
             hit.transform.GetComponent<Target>()?.Damage(photonView.ViewID, CurrentGunSO.damageCurve.Evaluate(hit.distance) * CurrentGunSO.damage);
         }
         IngameHUDManager.Instance.UpdateAmmo();
+    }
+    private void Respawn()
+    {
+        transform.position = Level.Instance.GetStartPosition().position;
+        ctr_shoot = 0f;
+        IsReloading = false;
+        reloadingState = 0f;
+        GameCamera.instance.smooth = true;
+        IngameHUDManager.Instance.ToggleAlive(true);
+        Health = 100;
+        NotificationManager.Instance.RemoteSpawn($"{Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
+        photonView.RPC("RPC_Respawn", RpcTarget.All);
     }
 
     #region CustomProperties
