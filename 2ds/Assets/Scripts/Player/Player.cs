@@ -61,7 +61,7 @@ public class Player : MonoBehaviourPun, Target
     private float ctr_shoot;
     private Vector3 oldMove;
 
-    #region MonoBehaviour
+    #region MonoBehaviour and Movement
 
     private void Start()
     {
@@ -109,34 +109,6 @@ public class Player : MonoBehaviourPun, Target
         Local = this;
     }
 
-    public void Damage(int id, float damage) => photonView.RPC("InternalDamage", RpcTarget.All, new object[] { id, damage });
-
-    [PunRPC] public void SetCurrentGunIndex(byte gunindex)
-    {
-        CurrentGunIndex = gunindex;
-        SetSubSkin(CurrentGunSO.SkinIndex);
-    }
-
-    public void SelectInventorySlot(int index)
-    {
-        InventoryIndex = index;
-
-        if (!photonView.IsMine)
-            return;
-
-        photonView.RPC("SetCurrentGunIndex", RpcTarget.All, CurrentGun.gunIndex);
-
-        ctr_shoot = 0f;
-
-        fovmesh.fov.viewAngle = CurrentGunSO.viewAngle;
-        fovmesh.fov.viewRadius = CurrentGunSO.viewRadius;
-        fovmesh.Setup();
-        fovmesh.UpdateMesh();
-
-        IngameHUDManager.Instance.UpdateAmmo();
-    }
-
-
     private void OnDestroy()
     {
         allPlayers.Remove(this);
@@ -148,6 +120,8 @@ public class Player : MonoBehaviourPun, Target
             return;
 
         ctr_ping += Time.deltaTime;
+        ctr_crouch -= Time.deltaTime;
+        ctr_shoot -= Time.deltaTime;
 
         if (ctr_ping > 2.5f)
         {
@@ -175,8 +149,6 @@ public class Player : MonoBehaviourPun, Target
 
         IngameHUDManager.Instance.UpdateDebug();
         IngameHUDManager.Instance.UpdateHealth();
-
-        ctr_shoot -= Time.deltaTime;
 
         if (LockMovement)
         {
@@ -237,8 +209,16 @@ public class Player : MonoBehaviourPun, Target
 
         #endregion
     }
+    private bool RotateTowardsCamera()
+    {
+        Vector2 dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        Quaternion r = rotateTransform.rotation;
+        rotateTransform.rotation = Quaternion.AngleAxis(Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg, Vector3.forward);
+        return r != rotateTransform.rotation;
+    }
 
     #endregion
+
 
     #region EventPlayer
 
@@ -276,9 +256,50 @@ public class Player : MonoBehaviourPun, Target
                 break;
         }
     }
+
+    private void PlaySound(AudioClip clip, AudioSource source = null, float volume = 1f, float pitchChange = 0f)
+    {
+        if (source == null)
+            source = gunAudioSource;
+
+        source.pitch = 1f + Random.Range(-pitchChange, pitchChange);
+        source.volume = volume;
+        source.clip = clip;
+        source.Play();
+    }
+    #endregion
+    #region Inventory and Guns
+    [PunRPC]
+    public void SetCurrentGunIndex(byte gunindex)
+    {
+        CurrentGunIndex = gunindex;
+        SetSubSkin(CurrentGunSO.SkinIndex);
+    }
+
+    public void SelectInventorySlot(int index)
+    {
+        InventoryIndex = index;
+
+        if (!photonView.IsMine)
+            return;
+
+        photonView.RPC("SetCurrentGunIndex", RpcTarget.All, CurrentGun.gunIndex);
+
+        ctr_shoot = 0f;
+
+        fovmesh.fov.viewAngle = CurrentGunSO.viewAngle;
+        fovmesh.fov.viewRadius = CurrentGunSO.viewRadius;
+        fovmesh.Setup();
+        fovmesh.UpdateMesh();
+
+        IngameHUDManager.Instance.UpdateAmmo();
+    }
     #endregion
 
+    #region PunRPCs
     [PunRPC] public void UpdatePing(int newPing) => _ping = newPing;
+    [PunRPC] public void SetHealth(int amount) => _health = amount;
+    [PunRPC] public void SetSubSkin(SkinIndex subs) => skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, subs);
 
     [PunRPC]
     private void RPC_Respawn()
@@ -303,112 +324,6 @@ public class Player : MonoBehaviourPun, Target
             NotificationManager.Instance.RemoteSpawn($"{Nickname} respawned!", new Color(105f / 255f, 181f / 255f, 120f / 255f, 0.4f), 1f);
         }
     }
-
-    private void PlaySound(AudioClip clip, AudioSource source = null, float volume = 1f, float pitchChange = 0f)
-    {
-        if (source == null)
-            source = gunAudioSource;
-
-        source.pitch = 1f + Random.Range(-pitchChange, pitchChange);
-        source.volume = volume;
-        source.clip = clip;
-        source.Play();
-    }
-
-    private bool RotateTowardsCamera()
-    {
-        Vector2 dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
-        Quaternion r = rotateTransform.rotation;
-        rotateTransform.rotation = Quaternion.AngleAxis(Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg, Vector3.forward);
-        return r != rotateTransform.rotation;
-    }
-
-    private void StartReload()
-    {
-        if (reloadingState > 0f)
-            return;
-
-        reloadingState = CurrentGunSO.reloadTime;
-        IsReloading = true;
-
-        photonView.RPC("PlayEvent", RpcTarget.All, EventType.RELOAD);
-        photonView.RPC("SetSubSkin", RpcTarget.All, SkinIndex.HOLD);
-    }
-
-    private void GunReloaded()
-    {
-        int zaladowane = Mathf.Min(CurrentGunSO.magazineCapacity - CurrentGun.currentAmmo, CurrentGun.totalAmmo);
-
-        CurrentGun.totalAmmo -= zaladowane;
-        CurrentGun.currentAmmo += zaladowane;
-
-        reloadingState = 0f;
-        IsReloading = false;
-        photonView.RPC("SetSubSkin", RpcTarget.All, CurrentGunSO.SkinIndex);
-        IngameHUDManager.Instance.UpdateAmmo();
-    }
-
-    [PunRPC] public void SetSubSkin(SkinIndex subs) => skinRenderer.sprite = SkinManager.Instance.GetSprite(PlayerSkinIndex, subs);
-    private void Shoot(bool mouseDown)
-    {
-        if (!photonView.IsMine)
-        {
-            Debug.LogError("Shoot called on non-owned Player!");
-            return;
-        }
-        if (!CurrentGunSO.melee && CurrentGun.currentAmmo <= 0)
-        {
-            if (mouseDown)
-                photonView.RPC("PlayEvent", RpcTarget.All, EventType.NO_AMMO);
-            return;
-        }
-
-        CurrentGun.currentAmmo--;
-
-        RaycastHit2D hit = Physics2D.Raycast(rotateTransform.position, rotateTransform.right, 99f);
-        if (CurrentGunSO.melee && hit.distance > 1.5f)
-            return;
-
-        photonView.RPC("PlayEvent", RpcTarget.All, EventType.SHOOT);
-        if (hit.collider != null)
-        {
-            hit.transform.GetComponent<Target>()?.Damage(photonView.ViewID, CurrentGunSO.damageCurve.Evaluate(hit.distance) * CurrentGunSO.damage);
-        }
-        IngameHUDManager.Instance.UpdateAmmo();
-    }
-
-    [PunRPC] public void SetHealth(int amount) => _health = amount;
-
-    [PunRPC]
-    public void InternalDamage(int id, float damage)
-    {
-        if (!IsAlive)
-            return;
-
-        PlayEvent(EventType.DAMAGED);
-
-        if (!photonView.IsMine)
-            return;
-
-        Health -= Mathf.CeilToInt(damage);
-
-        IngameHUDManager.Instance.UpdateHealth();
-
-        if (Health <= 0)
-        {
-            Health = 0;
-            photonView.RPC("RPC_Died", RpcTarget.All, id);
-        }
-
-    }
-
-    public void SetCP(string key, object v)
-    {
-        Hashtable hash = PhotonNetwork.LocalPlayer.CustomProperties;
-        hash[key] = v;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
-    }
-    public object GetCP(string key) => PhotonNetwork.LocalPlayer.CustomProperties[key];
 
     [PunRPC]
     public void RPC_Died(int killerID)
@@ -440,4 +355,94 @@ public class Player : MonoBehaviourPun, Target
             LeanTween.delayedCall(2.5f, () => photonView.RPC("RPC_Respawn", RpcTarget.All));
         }
     }
+
+    [PunRPC]
+    public void InternalDamage(int id, float damage)
+    {
+        if (!IsAlive)
+            return;
+
+        PlayEvent(EventType.DAMAGED);
+
+        if (!photonView.IsMine)
+            return;
+
+        Health -= Mathf.CeilToInt(damage);
+
+        IngameHUDManager.Instance.UpdateHealth();
+
+        if (Health <= 0)
+        {
+            Health = 0;
+            photonView.RPC("RPC_Died", RpcTarget.All, id);
+        }
+    }
+    #endregion
+
+    #region Reloading
+    private void StartReload()
+    {
+        if (reloadingState > 0f)
+            return;
+
+        reloadingState = CurrentGunSO.reloadTime;
+        IsReloading = true;
+
+        photonView.RPC("PlayEvent", RpcTarget.All, EventType.RELOAD);
+        photonView.RPC("SetSubSkin", RpcTarget.All, SkinIndex.HOLD);
+    }
+
+    private void GunReloaded()
+    {
+        int zaladowane = Mathf.Min(CurrentGunSO.magazineCapacity - CurrentGun.currentAmmo, CurrentGun.totalAmmo);
+
+        CurrentGun.totalAmmo -= zaladowane;
+        CurrentGun.currentAmmo += zaladowane;
+
+        reloadingState = 0f;
+        IsReloading = false;
+
+        photonView.RPC("SetSubSkin", RpcTarget.All, CurrentGunSO.SkinIndex);
+        IngameHUDManager.Instance.UpdateAmmo();
+    }
+    #endregion
+
+    public void Damage(int id, float damage) => photonView.RPC("InternalDamage", RpcTarget.All, new object[] { id, damage });
+    private void Shoot(bool mouseDown)
+    {
+        if (!photonView.IsMine)
+        {
+            Debug.LogError("Shoot called on non-owned Player!");
+            return;
+        }
+        if (!CurrentGunSO.melee && CurrentGun.currentAmmo <= 0)
+        {
+            if (mouseDown)
+                photonView.RPC("PlayEvent", RpcTarget.All, EventType.NO_AMMO);
+            return;
+        }
+
+        CurrentGun.currentAmmo--;
+
+        RaycastHit2D hit = Physics2D.Raycast(rotateTransform.position, rotateTransform.right, 99f);
+        if (CurrentGunSO.melee && hit.distance > 1.5f)
+            return;
+
+        photonView.RPC("PlayEvent", RpcTarget.All, EventType.SHOOT);
+        if (hit.collider != null)
+        {
+            hit.transform.GetComponent<Target>()?.Damage(photonView.ViewID, CurrentGunSO.damageCurve.Evaluate(hit.distance) * CurrentGunSO.damage);
+        }
+        IngameHUDManager.Instance.UpdateAmmo();
+    }
+
+    #region CustomProperties
+    public void SetCP(string key, object v)
+    {
+        Hashtable hash = PhotonNetwork.LocalPlayer.CustomProperties;
+        hash[key] = v;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+    }
+    public object GetCP(string key) => PhotonNetwork.LocalPlayer.CustomProperties[key];
+    #endregion
 }
