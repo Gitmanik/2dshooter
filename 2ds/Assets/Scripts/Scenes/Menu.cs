@@ -44,6 +44,11 @@ public class Menu : MonoBehaviourPunCallbacks
             DestroyImmediate(this);
     }
 
+    public override void OnConnectedToMaster()
+    {
+        PhotonNetwork.JoinLobby();
+    }
+
     void Start()
     {
         Instance = this;
@@ -53,13 +58,6 @@ public class Menu : MonoBehaviourPunCallbacks
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
         compileDate.text = $"{PhotonNetwork.CloudRegion} [{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}]";
-        NetworkManager.OnRoom.AddListener(ReloadRooms);
-        ReloadRooms();
-    }
-
-    private void OnDestroy()
-    {
-        NetworkManager.OnRoom.RemoveListener(ReloadRooms);
     }
 
     public void OnConnectClick()
@@ -72,36 +70,20 @@ public class Menu : MonoBehaviourPunCallbacks
         joinButton.interactable = false;
     }
 
-    public void ReloadRooms()
+    public override void OnRoomListUpdate(List<RoomInfo> roomInfos)
     {
         foreach (RoomEntry e in entries)
         {
-            print(e.info.Name);
+            Destroy(e.gameObject);
         }
-        foreach (RoomInfo r in NetworkManager.Instance.roomInfos)
+        entries.Clear();
+        foreach (RoomInfo r in roomInfos)
         {
-            RoomEntry e = entries.Find(x => x.info.Name == r.Name);
-            if (e != null)
-            {
-                if (r.RemovedFromList)
-                {
-                    if (e != null)
-                    {
-                        entries.Remove(e);
-                        Destroy(e.gameObject);
-                    }
-                }
-                else
-                {
-                    e.UpdateInfo(r);
-                }
-            }
-            else
-            {
-                RoomEntry ee = Instantiate(RoomEntryPrefab, RoomEntryTransform).GetComponent<RoomEntry>();
-                ee.Setup(r);
-                entries.Add(ee);
-            }
+            if (r.RemovedFromList)
+                continue;
+            RoomEntry ee = Instantiate(RoomEntryPrefab, RoomEntryTransform).GetComponent<RoomEntry>();
+            ee.Setup(r);
+            entries.Add(ee);
         }
     }
 

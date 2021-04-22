@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OptionsMenuController : MonoBehaviour
+public class OptionsMenuController : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Slider VolumeSlider;
     [SerializeField] private Toggle FullscreenToggle;
