@@ -29,17 +29,18 @@ public class IngameHUDManager : MonoBehaviour
     [Header("Debug Info")]
     [SerializeField] private TMP_Text debugPanel;
 
-    [Header("Ingame Options")]
-    [SerializeField] private GameObject optionsPanel;
-    public bool OptionsActive { get => optionsPanel.activeSelf; }
+    [Header("Ingame Pause Panel")]
+    [SerializeField] private GameObject ingamePausePanel;
+    private CanvasGroup ingamePauseCanvasGroup;
+    public bool OptionsActive { get => ingamePausePanel.activeSelf; }
 
-    internal void DisableAll()
+    public void DisableAll()
     {
         if (alivePanel != null) alivePanel.SetActive(false);
         if (deadPanel != null) deadPanel.SetActive(false);
         if (gunSelectorPanel != null) gunSelectorPanel.SetActive(false);
         if (listPanel != null) listPanel.SetActive(false);
-        if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (ingamePausePanel != null) ingamePausePanel.SetActive(false);
         if (debugPanel != null) debugPanel.gameObject.SetActive(false);
     }
 
@@ -50,6 +51,7 @@ public class IngameHUDManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        ingamePauseCanvasGroup = ingamePausePanel.GetComponent<CanvasGroup>();
     }
 
     public void ToggleDebug(bool v)
@@ -177,7 +179,15 @@ public class IngameHUDManager : MonoBehaviour
     #region Options
     public void ToggleOptionsMenu(bool v)
     {
-        optionsPanel.SetActive(v);
+        if (v)
+        {
+            ingamePausePanel.SetActive(true);
+            LeanTween.alphaCanvas(ingamePauseCanvasGroup, 1f, 0.15f);
+        }
+        else
+        {
+            LeanTween.alphaCanvas(ingamePauseCanvasGroup, 0f, 0.15f).setOnComplete(() => ingamePausePanel.SetActive(false));
+        }
     }
     #endregion
 }

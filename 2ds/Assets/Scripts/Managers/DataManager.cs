@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Photon.Pun;
+using System;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -59,6 +60,7 @@ public class DataManager : MonoBehaviour
     {
         AudioListener.volume = MainVolume;
         Screen.SetResolution(ResolutionWidth, ResolutionHeight, Fullscreen, 0);
+        PhotonNetwork.NickName = Name;
     }
 
 }
