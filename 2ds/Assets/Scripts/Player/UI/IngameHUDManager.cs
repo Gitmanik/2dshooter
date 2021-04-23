@@ -182,6 +182,7 @@ public class IngameHUDManager : MonoBehaviour
         if (v)
         {
             ingamePausePanel.SetActive(true);
+            ingamePauseCanvasGroup.alpha = 0f;
             LeanTween.alphaCanvas(ingamePauseCanvasGroup, 1f, 0.15f);
         }
         else
