@@ -1,5 +1,4 @@
-﻿using ExitGames.Client.Photon;
-using Photon.Pun;
+﻿using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,9 +17,7 @@ public class Preloader : MonoBehaviourPunCallbacks
         loadingBar.value = 0;
         Progress(0, "Loading");
         DataManager.Load();
-        PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.GameVersion = GameManager.Instance.GameVersion.ToString();
-        PhotonPeer.RegisterType(typeof(GunHolder), 0, GunHolder.Serialize, GunHolder.Deserialize);
+        NetworkManager.Instance.Connect();
         Progress(.33f, "Loaded Player data, connecting to Photon");
     }
 
@@ -42,14 +39,14 @@ public class Preloader : MonoBehaviourPunCallbacks
         }
     }
 
-    public override void OnConnectedToMaster()
-    {
-        Progress(.5f, $"Connected to the {PhotonNetwork.CloudRegion} server");
-        PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.JoinLobby();
-    }
     public override void OnJoinedLobby()
     {
-        Progress(1f, "Joined lobby");
+        Progress(1f, "Joined Lobby");
+    }
+
+    public override void OnConnectedToMaster()
+    {
+        Progress(.7f, $"Connected to the {PhotonNetwork.CloudRegion} server");
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 }

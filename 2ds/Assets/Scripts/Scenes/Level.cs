@@ -1,13 +1,12 @@
 ﻿using Gitmanik.Notification;
 using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private Transform[] startPositions;
     public static Level Instance;
+    [SerializeField] private Transform[] startPositions;
     public Transform preGameMask;
 
     #region MonoBehaviour
