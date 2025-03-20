@@ -12,21 +12,29 @@ PluginImporter:
   validateReferences: 1
   platformData:
   - first:
-      : Any
+      '': Any
     second:
       enabled: 0
       settings:
         Exclude Android: 0
         Exclude Editor: 0
+        Exclude GameCoreScarlett: 0
+        Exclude GameCoreXboxOne: 0
         Exclude Linux: 0
         Exclude Linux64: 0
         Exclude LinuxUniversal: 0
+        Exclude Lumin: 0
         Exclude OSXUniversal: 0
+        Exclude PS4: 0
+        Exclude PS5: 0
+        Exclude Switch: 0
         Exclude WebGL: 0
         Exclude Win: 0
         Exclude Win64: 0
         Exclude WindowsStoreApps: 0
+        Exclude XboxOne: 0
         Exclude iOS: 0
+        Exclude tvOS: 0
   - first:
       Android: Android
     second:
@@ -117,6 +125,48 @@ PluginImporter:
         AddToEmbeddedBinaries: false
         CompileFlags: 
         FrameworkDependencies: 
+  - first:
+      PS4: PS4
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      PS5: PS5
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      Nintendo Switch: Switch
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      XboxOne: XboxOne
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      GameCoreScarlett: GameCoreScarlett
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      GameCoreXboxOne: GameCoreXboxOne
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      Lumin: Lumin
+    second:
+      enabled: 1
+      settings: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 119922
+  packageName: PUN 2 - FREE
+  packageVersion: 2.49
+  assetPath: Assets/Photon/PhotonLibs/netstandard2.0/Photon3Unity3D.dll
+  uploadId: 722643

@@ -60,12 +60,15 @@ namespace Photon.Pun
             {
                 if (PhotonEditorUtils.IsPrefab(view.gameObject))
                 {
-                    if (view.ViewID != 0)
+                    // prefabs should use 0 as ViewID and sceneViewId
+                    if (view.ViewID != 0 || view.sceneViewId != 0)
                     {
                         view.ViewID = 0;
+                        view.sceneViewId = 0;
                         EditorUtility.SetDirty(view);
                     }
-                    continue;   // skip prefabs
+
+                    continue;   // skip prefabs in further processing
                 }
 
                 photonViewInstances.Add(view);
@@ -174,8 +177,12 @@ namespace Photon.Pun
                 {
                     return instanceField;
                 }
-
+                
+                #if UNITY_6000_0_OR_NEWER
+                instanceField = GameObject.FindFirstObjectByType<PunSceneViews>();
+                #else
                 instanceField = GameObject.FindObjectOfType<PunSceneViews>();
+                #endif
                 if (instanceField == null)
                 {
                     instanceField = ScriptableObject.CreateInstance<PunSceneViews>();
