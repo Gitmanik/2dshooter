@@ -157,7 +157,7 @@ public class Player : MonoBehaviourPun, Target
             if (Input.GetKeyDown(KeyCode.Escape))
                 IngameHUDManager.Instance.ToggleOptions();
 
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             return;
         }
 
@@ -171,7 +171,7 @@ public class Player : MonoBehaviourPun, Target
 
         if (!IsAlive)
         {
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             return;
         }
 
@@ -205,7 +205,7 @@ public class Player : MonoBehaviourPun, Target
         change.y = Input.GetAxisRaw("Vertical");
 
         Vector2 newPos = change.normalized * (Running ? 5f : 2.5f) * Time.fixedDeltaTime * 50f;
-        rb.velocity = newPos;
+        rb.linearVelocity = newPos;
         if (RotateTowardsCamera() || newPos.x != 0 || newPos.y != 0)
             fovmesh.UpdateMesh();
 
