@@ -70,6 +70,8 @@ public class Menu : MonoBehaviourPunCallbacks
         FullscreenToggle.onValueChanged.AddListener(ToggleFullscreen);
         AddRoomTitlebar();
         NetworkManager.OnRoom.AddListener(OnRooms);
+        
+        OnRooms();
     }
 
     private void OnDestroy()
@@ -98,22 +100,21 @@ public class Menu : MonoBehaviourPunCallbacks
 
     public void OnRooms()
     {
-        foreach (RoomEntry e in entries)
-        {
-            Destroy(e.gameObject);
-        }
-        entries.Clear();
-
-        AddRoomTitlebar();
+        Debug.Log("OnRooms");
 
         foreach (RoomInfo r in NetworkManager.Instance.roomInfos)
         {
             if (r.RemovedFromList)
-                continue;
+            {
+                Destroy(entries.Find(x => x.GetComponent<RoomEntry>().info?.Name == r.Name).gameObject);
+            }
+            else
+            {
+                RoomEntry ee = Instantiate(RoomEntryPrefab, RoomEntryTransform).GetComponent<RoomEntry>();
+                ee.Setup(r);
+                entries.Add(ee);
+            }
 
-            RoomEntry ee = Instantiate(RoomEntryPrefab, RoomEntryTransform).GetComponent<RoomEntry>();
-            ee.Setup(r);
-            entries.Add(ee);
         }
     }
 
