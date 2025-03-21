@@ -15,22 +15,17 @@ public class Menu : MonoBehaviourPunCallbacks
     [SerializeField] private TMP_InputField nickInput;
     [SerializeField] private TMP_InputField ipInput;
     [SerializeField] private Button joinButton;
-    [SerializeField] private Button exitButton;
     [SerializeField] private TMP_Text compileDate;
 
     [SerializeField] private Slider VolumeSlider;
-    [SerializeField] private Toggle FullscreenToggle;
 
     [SerializeField] private GameObject RoomEntryPrefab;
     [SerializeField] private Transform RoomEntryTransform;
 
-    [SerializeField] private ResolutionDropdown resdrop;
-    [SerializeField] private Tab tab;
-
     void OnValueChanged(string _)
     {
         DataManager.Name = nickInput.text;
-        DataManager.RecentIP = ipInput.text;
+        DataManager.RecentRoomName = ipInput.text;
         PhotonNetwork.NickName = nickInput.text;
 
         if (InputValid())
@@ -43,7 +38,7 @@ public class Menu : MonoBehaviourPunCallbacks
         }
     }
 
-    private bool InputValid() => !string.IsNullOrWhiteSpace(DataManager.Name) && !string.IsNullOrWhiteSpace(DataManager.RecentIP);
+    private bool InputValid() => !string.IsNullOrWhiteSpace(DataManager.Name) && !string.IsNullOrWhiteSpace(DataManager.RecentRoomName);
 
     private void Awake()
     {
@@ -55,19 +50,15 @@ public class Menu : MonoBehaviourPunCallbacks
     {
         Instance = this;
         nickInput.text = DataManager.Name;
-        ipInput.text = DataManager.RecentIP;
+        ipInput.text = DataManager.RecentRoomName;
         joinButton.interactable = InputValid();
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
         compileDate.text = $"{PhotonNetwork.CloudRegion} [{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}]";
-        resdrop.onChange.AddListener(OnResolutionPicked);
         VolumeSlider.value = AudioListener.volume;
         VolumeSlider.onValueChanged.RemoveAllListeners();
         VolumeSlider.onValueChanged.AddListener(OnChangedVolume);
 
-        FullscreenToggle.isOn = DataManager.Fullscreen;
-        FullscreenToggle.onValueChanged.RemoveAllListeners();
-        FullscreenToggle.onValueChanged.AddListener(ToggleFullscreen);
         AddRoomTitlebar();
         NetworkManager.OnRoom.AddListener(OnRooms);
         
@@ -79,7 +70,6 @@ public class Menu : MonoBehaviourPunCallbacks
         NetworkManager.OnRoom.RemoveListener(OnRooms);
     }
 
-    #region Connect Tab
     public void OnConnectClick()
     {
         if (!InputValid())
@@ -88,9 +78,7 @@ public class Menu : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinOrCreateRoom(ipInput.text, new RoomOptions() { IsVisible = true, MaxPlayers = 4 }, TypedLobby.Default);
         joinButton.interactable = false;
     }
-    #endregion
 
-    #region Room List Tab
     private void AddRoomTitlebar()
     {
         RoomEntry a = Instantiate(RoomEntryPrefab, RoomEntryTransform).GetComponent<RoomEntry>();
@@ -100,21 +88,17 @@ public class Menu : MonoBehaviourPunCallbacks
 
     public void OnRooms()
     {
-        Debug.Log("OnRooms");
-
         foreach (RoomInfo r in NetworkManager.Instance.roomInfos)
         {
-            if (r.RemovedFromList)
-            {
-                Destroy(entries.Find(x => x.GetComponent<RoomEntry>().info?.Name == r.Name).gameObject);
-            }
-            else
+            var existing = entries.Find(x => x.GetComponent<RoomEntry>().info?.Name == r.Name);
+            if (existing != null)
+                Destroy(existing.gameObject);
+            if (!r.RemovedFromList)
             {
                 RoomEntry ee = Instantiate(RoomEntryPrefab, RoomEntryTransform).GetComponent<RoomEntry>();
                 ee.Setup(r);
                 entries.Add(ee);
             }
-
         }
     }
 
@@ -125,47 +109,13 @@ public class Menu : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(i.Name);
         joinButton.interactable = false;
     }
-    #endregion
-
-    #region Options Tab
+    
     private void OnChangedVolume(float newv)
     {
         AudioListener.volume = newv;
         DataManager.MainVolume = newv;
     }
-
-    private void OnResolutionPicked(ResolutionDropdown.Resolution res)
-    {
-        DataManager.ResolutionWidth = res.Width;
-        DataManager.ResolutionHeight = res.Height;
-        Screen.SetResolution(res.Width, res.Height, DataManager.Fullscreen, 0);
-    }
-
-    public void ToggleFullscreen(bool v)
-    {
-        DataManager.Fullscreen = v;
-        Screen.fullScreen = v;
-    }
-
-    #endregion
-
-    #region Exit Tab
-
-    public void ResetTab()
-    {
-        tab.SelectTab(0);
-    }
-
-    public void OnExitClick()
-    {
-        PlayerPrefs.Save();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        Application.Quit();
-    }
-    #endregion
-
+    
     #region Photon
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
@@ -183,11 +133,6 @@ public class Menu : MonoBehaviourPunCallbacks
     {
         Debug.Log("Created room");
         PhotonNetwork.LoadLevel("Game");
-    }
-
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("Joined room");
     }
     #endregion
 }

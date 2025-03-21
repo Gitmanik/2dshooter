@@ -26,9 +26,6 @@ public class IngameHUDManager : MonoBehaviour
     [SerializeField] private GameObject gunSelectorEntryPrefab;
     public bool GunSelectorActive { get => gunSelectorPanel.activeSelf; }
 
-    [Header("Debug Info")]
-    [SerializeField] private TMP_Text debugPanel;
-
     [Header("Ingame Pause Panel")]
     [SerializeField] private GameObject ingamePausePanel;
     private CanvasGroup ingamePauseCanvasGroup;
@@ -41,7 +38,6 @@ public class IngameHUDManager : MonoBehaviour
         if (gunSelectorPanel != null) gunSelectorPanel.SetActive(false);
         if (listPanel != null) listPanel.SetActive(false);
         if (ingamePausePanel != null) ingamePausePanel.SetActive(false);
-        if (debugPanel != null) debugPanel.gameObject.SetActive(false);
     }
 
     public UnityAction<int> OnGunSelectorSelected;
@@ -53,17 +49,7 @@ public class IngameHUDManager : MonoBehaviour
         Instance = this;
         ingamePauseCanvasGroup = ingamePausePanel.GetComponent<CanvasGroup>();
     }
-
-    public void ToggleDebug(bool v)
-    {
-        debugPanel.gameObject.SetActive(v);
-    }
-
-    public void UpdateDebug()
-    {
-        debugPanel.text = string.Format("ping: {0}ms", PhotonNetwork.GetPing());
-    }
-
+    
     public void ToggleOptions()
     {
         if (GunSelectorActive)

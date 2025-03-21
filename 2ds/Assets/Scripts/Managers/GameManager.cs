@@ -21,8 +21,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        DataManager.MaxFPS = MaxFPS;
-        Application.targetFrameRate = DataManager.MaxFPS;
+        Application.targetFrameRate = MaxFPS;
     }
 
     public Transform blackMask;

@@ -22,10 +22,10 @@ public class Level : MonoBehaviourPunCallbacks
         Destroy(preGameMask.gameObject);
         GameManager.Instance.SetBlackMask(true);
 
-        Transform startPos = GetStartPosition();
-        PhotonNetwork.Instantiate("PlayerPrefab", startPos.position, startPos.rotation, 0, new object[] { Random.Range(0, SkinManager.Instance.AllSkins.Length) });
+        if (PhotonNetwork.IsMasterClient)
+            OnJoinedRoom();
     }
-
+    
     private void OnDestroy()
     {
         IngameHUDManager.Instance?.DisableAll();
@@ -44,6 +44,13 @@ public class Level : MonoBehaviourPunCallbacks
         NotificationManager.Instance.LocalSpawn($"{newPlayer.NickName} has disconnected!", Color.blue - new Color(0, 0, 0, 0.2f), 2.5f);
     }
 
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("Joined room");
+        Transform startPos = GetStartPosition();
+        PhotonNetwork.Instantiate("PlayerPrefab", startPos.position, startPos.rotation, 0, new object[] { Random.Range(0, SkinManager.Instance.AllSkins.Length) });
+    }
+    
     public override void OnLeftRoom()
     {
         SceneManager.LoadScene("Menu");

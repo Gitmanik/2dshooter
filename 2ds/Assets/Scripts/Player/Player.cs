@@ -52,7 +52,7 @@ public class Player : MonoBehaviourPun, Target
 
     [Header("Local variables")]
     public bool IsReloading = false;
-    public bool LockMovement { get => IngameHUDManager.Instance.GunSelectorActive || IngameHUDManager.Instance.OptionsActive; }
+    public bool LockMovement { get => !IsAlive || IngameHUDManager.Instance.GunSelectorActive || IngameHUDManager.Instance.OptionsActive; }
     private float reloadingState;
 
     private float ctr_crouch;
@@ -96,7 +96,6 @@ public class Player : MonoBehaviourPun, Target
 
         IngameHUDManager.Instance.SetupPlayer(this);
         IngameHUDManager.Instance.ToggleAlive(true);
-        IngameHUDManager.Instance.ToggleDebug(true);
         IngameHUDManager.Instance.OnGunSelectorSelected += SelectInventorySlot;
 
         SelectInventorySlot(0);
@@ -149,7 +148,6 @@ public class Player : MonoBehaviourPun, Target
                 GunReloaded();
         }
 
-        IngameHUDManager.Instance.UpdateDebug();
         IngameHUDManager.Instance.UpdateHealth();
 
         if (LockMovement)
