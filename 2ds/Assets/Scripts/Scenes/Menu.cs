@@ -54,7 +54,7 @@ public class Menu : MonoBehaviourPunCallbacks
         joinButton.interactable = InputValid();
         nickInput.onValueChanged.AddListener(OnValueChanged);
         ipInput.onValueChanged.AddListener(OnValueChanged);
-        compileDate.text = $"{PhotonNetwork.CloudRegion} [{BuildInfo.Instance.BuildDate} {GameManager.Instance.GameVersion}]";
+        compileDate.text = $"{PhotonNetwork.CloudRegion}, {BuildInfo.Instance.BuildDate}";
         VolumeSlider.value = AudioListener.volume;
         VolumeSlider.onValueChanged.RemoveAllListeners();
         VolumeSlider.onValueChanged.AddListener(OnChangedVolume);
